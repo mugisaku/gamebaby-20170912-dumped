@@ -2,7 +2,7 @@
 #define GAME_routine_HPP_INCLUDED
 
 
-#include"cbes_object.hpp"
+#include"gmbb_object.hpp"
 #include<queue>
 
 
@@ -36,8 +36,8 @@ Place*  get_current_place();
 void  set_next_place(Place*  plc);
 
 
-cbes::Object*  get_current_object();
-void   change_current_object(cbes::Object*  obj);
+gmbb::Object*  get_current_object();
+void   change_current_object(gmbb::Object*  obj);
 
 void       set_this_place_flags(uint32_t  v);
 void     unset_this_place_flags(uint32_t  v);

@@ -1,16 +1,18 @@
-#include"cbes_object.hpp"
+#include"gmbb_object.hpp"
 
 
 
 
-namespace cbes{
+namespace gmbb{
 
 
 
 
 Object::
 Object():
-parent(nullptr)
+parent(nullptr),
+width(0),
+height(0)
 {
 }
 
@@ -23,19 +25,11 @@ Object::
 
 
 
-const Rectangle&
-Object::
-get_rectangle() const
-{
-  return *this;
-}
-
-
 void
 Object::
 change_width(int  v)
 {
-  Rectangle::width = v;
+  width = v;
 }
 
 
@@ -43,15 +37,15 @@ void
 Object::
 change_height(int  v)
 {
-  Rectangle::height = v;
+  height = v;
 }
 
 
 void
 Object::
-change_parent(Object*  obj, int  x, int  y)
+change_parent(Object&  new_parent, int  x, int  y)
 {
-  parent = obj;
+  parent = &new_parent;
 
   change_point(x,y);
 }
@@ -90,7 +84,7 @@ process(Controller&  ctrl)
 
 void
 Object::
-render(CharacterTable&  dst)
+render(Plain&  dst)
 {
 }
 

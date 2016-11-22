@@ -1,11 +1,11 @@
-#include"gmbb.hpp"
-#include"game_xx.hpp"
+#include"game.hpp"
 #include"game_routine.hpp"
 #include"gmbb_controller.hpp"
 #include"game_environment.hpp"
-#include"cbes_screen.hpp"
-#include"fcfont.hpp"
+#include"gmbb_core.hpp"
+#include"gmbb_font.hpp"
 #include<SDL.h>
+#include<SDL_image.h>
 #include<cstdlib>
 
 
@@ -18,57 +18,85 @@
 
 
 
-std::vector<Tag*>
-belongings_list;
+SDL_Window*    window;
+SDL_Surface*  surface;
 
 
-void
-erase_belongings(const Item*  item)
-{
-    for(auto&  blng: belongings_list)
-    {
-        if(blng == item);
-        {
-          blng = nullptr;
-
-          break;
-        }
-    }
-}
+uint32_t
+color_table[16];
 
 
-CommandPillar
-commandpillar;
-
-
-TagTable
-tagtable;
-
-
-Message
-message(22,5);
-
-
-cbes::Window  pillar_window( 8,14);
-cbes::Window  table_window( 26,12);
-
-
-cbes::Container
-container;
+SDL_Surface*   bg_bmp;
+SDL_Surface*  chr_bmp;
 
 
 Controller
 ctrl;
 
 
-uint32_t
-current_time;
-
-
-uint32_t
-get_time()
+template<typename  T>
+void
+write(uint8_t*&  ptr, int  pitch, uint32_t  v)
 {
-  return current_time;
+  auto  dst = reinterpret_cast<T*>(ptr);
+
+  *dst++ = v;
+  *dst   = v;
+
+
+  dst = reinterpret_cast<T*>(ptr+pitch);
+
+  *dst++ = v;
+  *dst   = v;
+
+  ptr += sizeof(T)*2;
+}
+
+
+void
+transfer()
+{
+  auto  base_ptr = static_cast<uint8_t*>(surface->pixels);
+
+  const uint8_t*  src = &gmbb::final_plain.const_pixel(0,0);
+
+  const int  w     = gmbb::Plain::width;
+  const int  h     = gmbb::Plain::height;
+  const int  pitch = surface->pitch;
+  const int  bps   = surface->format->BytesPerPixel;
+
+  SDL_LockSurface(surface);
+
+    for(int  y = 0;  y < h;  y += 1)
+    {
+      auto  ptr = base_ptr           ;
+                  base_ptr += pitch*2;
+
+        for(int  x = 0;  x < w;  x += 1)
+        {
+          auto  pixel = color_table[(*src++)&15];
+
+            switch(bps)
+            {
+          case(1):
+              write<uint8_t>(ptr,pitch,pixel);
+              break;
+          case(2):
+              write<uint16_t>(ptr,pitch,pixel);
+              break;
+          case(4):
+              write<uint32_t>(ptr,pitch,pixel);
+              break;
+          default:
+              return;
+            }
+        }
+    }
+
+
+  SDL_UnlockSurface(surface);
+
+  SDL_UpdateWindowSurface(window);
 }
 
 
@@ -77,8 +105,9 @@ get_time()
 void
 quit()
 {
-  cbes::screen.close();
+  SDL_DestroyWindow(window);
 
+  IMG_Quit();
   SDL_Quit();
 
   std::exit(0);
@@ -142,7 +171,7 @@ main_loop()
              switch(evt.window.event)
              {
            case(SDL_WINDOWEVENT_EXPOSED):
-               cbes::screen.need_to_refresh();
+//               cbes::core::need_to_refresh();
                break;
              }
            break;
@@ -153,7 +182,7 @@ main_loop()
     }
 
 
-  current_time = SDL_GetTicks();
+  change_time(SDL_GetTicks());
 
     if(!step())
     {
@@ -163,7 +192,6 @@ main_loop()
 
   container.update();
 
-
   auto  curobj = get_current_object();
 
     if(curobj)
@@ -172,7 +200,13 @@ main_loop()
     }
 
 
-  cbes::screen.update();
+  gmbb::final_plain.fill(0);
+
+  container.render(gmbb::final_plain);
+
+//  gmbb::compose_plains_all();
+
+  transfer();
 
   ctrl.clean();
 }
@@ -183,19 +217,32 @@ main_loop()
 int
 main(int  argc, char**  argv)
 {
-  cbes::screen.change(&container,0,0);
-
-  container.join(&pillar_window,19, 1);
-  container.join(&table_window,  1,15);
-
-  pillar_window.change_content(&commandpillar,1,1);
-
-  fcfont::Character::reset_table();
-  fcfont::Combined::reset_table();
-
   SDL_Init(SDL_INIT_VIDEO);
+  IMG_Init(IMG_INIT_PNG);
 
-  cbes::screen.open(28,28);
+  window = SDL_CreateWindow("GAME BABY - " __DATE__,SDL_WINDOWPOS_CENTERED,
+                                                    SDL_WINDOWPOS_CENTERED,
+                                                    gmbb::Plain::width*2,
+                                                    gmbb::Plain::height*2,0);
+
+  surface = SDL_GetWindowSurface(window);
+
+    for(int  i = 0;  i < 8;  i += 1)
+    {
+      uint8_t  l = (i<<5)|0x1F;
+
+      color_table[  i] = SDL_MapRGB(surface->format,l,l,l);
+      color_table[8+i] = SDL_MapRGB(surface->format,l,l,l);
+    }
+
+
+  bg_bmp  = IMG_Load("bg.png");
+  chr_bmp = IMG_Load("chr.png");
+
+  container.join(&pillar_window,gmbb::font::base_size*19,gmbb::font::base_size* 1);
+  container.join(&table_window, gmbb::font::base_size* 1,gmbb::font::base_size*15);
+
+  pillar_window.change_content(&commandpillar);
 
   push_routine(newgame);
 

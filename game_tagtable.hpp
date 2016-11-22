@@ -7,7 +7,7 @@
 #include<string>
 #include<vector>
 #include<initializer_list>
-#include"cbes_window.hpp"
+#include"gmbb_window.hpp"
 
 
 
@@ -16,7 +16,7 @@ struct Tag;
 
 
 class
-TagTable: public cbes::Object
+TagTable: public gmbb::Object
 {
   Tag*  tag_table[5*3];
 
@@ -32,7 +32,7 @@ public:
 
   void  process(Controller&  ctrl) override;
 
-  void  render(cbes::CharacterTable&  dst) override;
+  void  render(gmbb::Plain&  dst) override;
 
 };
 

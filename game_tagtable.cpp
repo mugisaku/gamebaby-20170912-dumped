@@ -1,6 +1,5 @@
 #include"game_tagtable.hpp"
-#include"gmbb.hpp"
-#include"cbes_screen.hpp"
+#include"game.hpp"
 
 
 
@@ -119,7 +118,7 @@ process(Controller&  ctrl)
     {
       tag_y -= 1;
 
-      cbes::screen.need_to_refresh();
+      need_to_refresh();
     }
 
   else
@@ -127,7 +126,7 @@ process(Controller&  ctrl)
     {
       tag_y += 1;
 
-      cbes::screen.need_to_refresh();
+      need_to_refresh();
     }
 
   else
@@ -135,7 +134,7 @@ process(Controller&  ctrl)
     {
       tag_x -= 1;
 
-      cbes::screen.need_to_refresh();
+      need_to_refresh();
     }
 
   else
@@ -143,7 +142,7 @@ process(Controller&  ctrl)
     {
       tag_x += 1;
 
-      cbes::screen.need_to_refresh();
+      need_to_refresh();
     }
 
   else
@@ -162,14 +161,14 @@ process(Controller&  ctrl)
 
 void
 TagTable::
-render(cbes::CharacterTable&  dst)
+render(gmbb::Plain&  dst)
 {
-  int  x = point.x;
-  int  y = point.y;
+  gmbb::PrintPoint  x(point.x);
+  gmbb::PrintPoint  y(point.y);
 
     if(get_current_object() == this)
     {
-      dst.printf_tall(x+(8*tag_x),y+(2*tag_y),"○");
+      dst.print_tall("○",gmbb::font_color,x+(8*tag_x),y+(2*tag_y));
     }
 
 
@@ -179,7 +178,7 @@ render(cbes::CharacterTable&  dst)
     {
         if(tag)
         {
-          dst.print_tall(tag->name,x+1,y);
+          dst.print_tall(tag->name,gmbb::font_color,x+1,y);
         }
 
 

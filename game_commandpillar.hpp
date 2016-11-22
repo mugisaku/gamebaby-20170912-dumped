@@ -2,7 +2,7 @@
 #define GAME_COMMANDPILLAR_HPP_INCLUDED
 
 
-#include"cbes_object.hpp"
+#include"gmbb_object.hpp"
 
 
 
@@ -37,12 +37,12 @@ void  change_action_command(int  v);
 
 
 class
-CommandPillar: public cbes::Object
+CommandPillar: public gmbb::Object
 {
 public:
   void  process(Controller&  ctrl) override;
 
-  void  render(cbes::CharacterTable&  dst) override;
+  void  render(gmbb::Plain&  dst) override;
 
 };
 

@@ -1,11 +1,11 @@
-#ifndef CBES_WINDOW_HPP
-#define CBES_WINDOW_HPP
+#ifndef GMBB_WINDOW_HPP
+#define GMBB_WINDOW_HPP
 
 
-#include"cbes_object.hpp"
+#include"gmbb_object.hpp"
 
 
-namespace cbes{
+namespace gmbb{
 
 
 enum class
@@ -35,8 +35,6 @@ protected:
   Object*  content;
 
 public:
-  static constexpr char16_t  space_code = 0xE104;
-
   Window();
   Window(int  w, int  h);
 
@@ -44,16 +42,14 @@ public:
   bool  operator!=(WindowState  st) const;
 
   Object*  get_content() const;
-  void  change_content(Object*  obj, int  x, int  y);
+  void  change_content(Object*  obj, int  x=gmbb::font::base_size,
+                                     int  y=gmbb::font::base_size);
 
   WindowState  get_state() const;
   void  set_state(WindowState  st);
 
-  void  reframe(CharacterTable&  dst);
-  void     fill(CharacterTable&  dst);
-
   void  update() override;
-  void  render(CharacterTable&  dst) override;
+  void  render(Plain&  dst) override;
 
 };
 

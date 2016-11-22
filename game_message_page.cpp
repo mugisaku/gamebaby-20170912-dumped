@@ -119,15 +119,15 @@ is_full() const
 
 void
 MessagePage::
-render(cbes::CharacterTable&  dst, int  x, int  y) const
+render(gmbb::Plain&  dst, int  x, int  y) const
 {
   auto  next = first;
 
     while(next)
     {
-      dst.print_tall(next->string.data(),x,y);
+      dst.print_tall(next->string.data(),gmbb::font_color,x,y);
 
-      y += 2;
+      y += gmbb::font::tall_size;
 
       next = next->next;
     }

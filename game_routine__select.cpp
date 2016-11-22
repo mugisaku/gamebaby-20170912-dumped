@@ -1,5 +1,4 @@
-#include"gmbb.hpp"
-#include"cbes_screen.hpp"
+#include"game.hpp"
 
 
 
@@ -10,7 +9,7 @@ select_main_command()
     switch(get_routine_phase())
     {
   case(0):
-      cbes::screen.need_to_refresh();
+      //need_to_refresh();
 
       change_current_object(&commandpillar);
 
@@ -45,7 +44,7 @@ select_action_command()
     switch(get_routine_phase())
     {
   case(0):
-      cbes::screen.need_to_refresh();
+      //need_to_refresh();
 
       change_current_object(&commandpillar);
 
@@ -102,11 +101,11 @@ select_tag_from_destinations()
 
       else
         {
-          cbes::screen.need_to_refresh();
+          //need_to_refresh();
 
           change_current_object(&tagtable);
 
-          table_window.change_content(&tagtable,1,1);
+          table_window.change_content(&tagtable);
 
           change_direct(Direct::none);
           change_routine_phase(1);
@@ -156,11 +155,11 @@ select_tag_from_items()
     switch(get_routine_phase())
     {
   case(0):
-      cbes::screen.need_to_refresh();
+      //need_to_refresh();
 
       change_current_object(&tagtable);
 
-      table_window.change_content(&tagtable,1,1);
+      table_window.change_content(&tagtable);
 
       tagtable.refresh_by_items();
 
@@ -229,11 +228,11 @@ select_tag_from_belongings()
 
       else
         {
-          cbes::screen.need_to_refresh();
+          //need_to_refresh();
 
           change_current_object(&tagtable);
 
-          table_window.change_content(&tagtable,1,1);
+          table_window.change_content(&tagtable);
 
           change_direct(Direct::none);
           change_routine_phase(1);

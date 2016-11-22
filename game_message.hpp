@@ -6,7 +6,7 @@
 #include<cstdio>
 #include<string>
 #include<queue>
-#include"cbes_object.hpp"
+#include"gmbb_object.hpp"
 
 
 
@@ -36,13 +36,13 @@ public:
 
   bool  is_full() const;
 
-  void  render(cbes::CharacterTable&  dst, int  x, int  y) const;
+  void  render(gmbb::Plain&  dst, int  x, int  y) const;
 
 };
 
 
 class
-Message: public cbes::Object
+Message: public gmbb::Object
 {
   MessagePage  page;
 
@@ -73,7 +73,7 @@ public:
 
   void  update() override;
 
-  void  render(cbes::CharacterTable&  dst) override;
+  void  render(gmbb::Plain&  dst) override;
 
 };
 

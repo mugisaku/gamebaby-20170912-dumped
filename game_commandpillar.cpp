@@ -1,6 +1,5 @@
 #include"game_commandpillar.hpp"
-#include"gmbb.hpp"
-#include"cbes_screen.hpp"
+#include"game.hpp"
 
 
 
@@ -31,7 +30,7 @@ process(Controller&  ctrl)
         {
           action_command -= 1;
 
-          cbes::screen.need_to_refresh();
+          need_to_refresh();
         }
 
       else
@@ -39,7 +38,7 @@ process(Controller&  ctrl)
         {
           action_command += 1;
 
-          cbes::screen.need_to_refresh();
+          need_to_refresh();
         }
 
       else
@@ -61,7 +60,7 @@ process(Controller&  ctrl)
         {
           main_command -= 1;
 
-          cbes::screen.need_to_refresh();
+          need_to_refresh();
         }
 
       else
@@ -69,7 +68,7 @@ process(Controller&  ctrl)
         {
           main_command += 1;
 
-          cbes::screen.need_to_refresh();
+          need_to_refresh();
         }
 
       else
@@ -83,36 +82,36 @@ process(Controller&  ctrl)
 
 void
 CommandPillar::
-render(cbes::CharacterTable&  dst)
+render(gmbb::Plain&  dst)
 {
-  int  x = point.x;
-  int  y = point.y;
+  gmbb::PrintPoint  x(point.x);
+  gmbb::PrintPoint  y(point.y);
 
     if(action_command != invalid_command)
     {
         if(get_current_object() == this)
         {
-          dst.printf_tall(x,y+(2*action_command),"○");
+          dst.print_tall("○",gmbb::font_color,x,y+(2*action_command));
         }
 
 
-        dst.printf_tall(x+1,y,"みる");  y += 2;
-        dst.printf_tall(x+1,y,"とる");  y += 2;
-        dst.printf_tall(x+1,y,"たたく");  y += 2;
-        dst.printf_tall(x+1,y,"あける");
+        dst.print_tall("みる",gmbb::font_color,x+1,y);  y += 2;
+        dst.print_tall("とる",gmbb::font_color,x+1,y);  y += 2;
+        dst.print_tall("たたく",gmbb::font_color,x+1,y);  y += 2;
+        dst.print_tall("あける",gmbb::font_color,x+1,y);
     }
 
   else
     {
         if(get_current_object() == this)
         {
-          dst.printf_tall(x,y+(2*main_command),"○");
+          dst.print_tall("○",gmbb::font_color,x,y+(2*main_command));
         }
 
 
-        dst.printf_tall(x+1,y,"いどう");  y += 2;
-        dst.printf_tall(x+1,y,"こうどう");  y += 2;
-        dst.printf_tall(x+1,y,"もちもの");
+        dst.print_tall("いどう",gmbb::font_color,x+1,y);  y += 2;
+        dst.print_tall("こうどう",gmbb::font_color,x+1,y);  y += 2;
+        dst.print_tall("もちもの",gmbb::font_color,x+1,y);
     }
 }
 

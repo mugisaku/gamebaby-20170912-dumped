@@ -68,8 +68,17 @@ OBJ +=                    \
   game_routine__basic.o   \
   game_routine__select.o  \
   game_environment.o      \
-  game_xx.o               \
+  game.o                  \
+  gmbb_formatted.o        \
+  gmbb_plain.o            \
+  gmbb_plain__print.o     \
+  gmbb_plain__frame.o     \
+  gmbb_object.o           \
+  gmbb_container.o        \
+  gmbb_window.o           \
   gmbb_controller.o       \
+  gmbb_core.o             \
+  gmbb_font.o             \
   gmbb.o                  \
 
 
@@ -77,20 +86,11 @@ all: gmbb$(EXE_EXT)
 
 
 clean:
-	make -C cbes  clean
 	rm -f $(OBJ) gmbb$(EXE_EXT)
 
 
-gmbb$(EXE_EXT): $(OBJ) CBES_OBJ
-	$(CXX) -o $@  $(OBJ) cbes/*.o $(CXXFLAGS) $(LDFLAGS) -lSDL2
-
-
-CBES_OBJ:
-	make -C cbes
-
-
-FORCE:
-.PHONY: FORCE CBES_OBJ
+gmbb$(EXE_EXT): $(OBJ)
+	$(CXX) -o $@  $(OBJ) $(CXXFLAGS) $(LDFLAGS) -lSDL2_image -lSDL2 -lSDL2main
 
 
 

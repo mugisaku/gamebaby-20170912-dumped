@@ -1,7 +1,7 @@
-#include"cbes_container.hpp"
+#include"gmbb_container.hpp"
 
 
-namespace cbes{
+namespace gmbb{
 
 
 
@@ -12,9 +12,9 @@ join(Object*  obj, int  x, int  y)
 {
     if(obj)
     {
-      object_list.emplace_back(obj);
+      children.emplace_back(obj);
 
-      obj->change_parent(this,x,y);
+      obj->change_parent(*this,x,y);
     }
 }
 
@@ -23,7 +23,7 @@ void
 Container::
 update()
 {
-    for(auto  obj: object_list)
+    for(auto  obj: children)
     {
       obj->update();
     }
@@ -34,7 +34,7 @@ void
 Container::
 process(Controller&  ctrl)
 {
-    for(auto  obj: object_list)
+    for(auto  obj: children)
     {
       obj->process(ctrl);
     }
@@ -43,9 +43,9 @@ process(Controller&  ctrl)
 
 void
 Container::
-render(CharacterTable&  dst)
+render(Plain&  dst)
 {
-    for(auto  obj: object_list)
+    for(auto  obj: children)
     {
       obj->render(dst);
     }

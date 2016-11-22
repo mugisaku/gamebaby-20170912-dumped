@@ -1,4 +1,4 @@
-#include"gmbb.hpp"
+#include"game.hpp"
 
 
 
@@ -22,7 +22,7 @@ Place*  current_place;
 Place*     next_place;
 
 
-cbes::Object*
+gmbb::Object*
 current_object;
 
 
@@ -58,8 +58,8 @@ set_next_place(Place*  plc)
 
 
 
-cbes::Object*  get_current_object(){return current_object;}
-void   change_current_object(cbes::Object*  obj){current_object = obj;}
+gmbb::Object*  get_current_object(){return current_object;}
+void   change_current_object(gmbb::Object*  obj){current_object = obj;}
 
 
 void       set_this_place_flags(uint32_t  v){current_place->flags.set(v);}
@@ -131,7 +131,7 @@ step()
 
     if(!message.is_finished())
     {
-      table_window.change_content(&message,1,1);
+      table_window.change_content(&message);
 
       change_current_object(&message);
 
@@ -148,8 +148,8 @@ step()
 RoutineState
 newgame()
 {
-   table_window.set_state(cbes::WindowState::full_opened);
-  pillar_window.set_state(cbes::WindowState::full_opened);
+   table_window.set_state(gmbb::WindowState::full_opened);
+  pillar_window.set_state(gmbb::WindowState::full_opened);
 
   set_next_place(&beginning_room::place);
 

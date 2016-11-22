@@ -2,6 +2,7 @@
 #define GAME_PROCESS_HPP_INCLUDED
 
 
+#include"gmbb_container.hpp"
 #include"game_routine.hpp"
 #include"game_commandpillar.hpp"
 #include"game_message.hpp"
@@ -11,7 +12,10 @@
 
 
 
+void      change_time(uint32_t  t);
 uint32_t  get_time();
+
+extern gmbb::Container  container;
 
 extern std::vector<Tag*>  belongings_list;
 
@@ -22,8 +26,8 @@ extern Message  message;
 extern CommandPillar  commandpillar;
 extern TagTable            tagtable;
 
-extern cbes::Window   pillar_window;
-extern cbes::Window   table_window;
+extern gmbb::Window   pillar_window;
+extern gmbb::Window   table_window;
 
 
 

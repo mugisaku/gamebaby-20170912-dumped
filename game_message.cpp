@@ -1,8 +1,7 @@
 #include"game_message.hpp"
 #include"game_environment.hpp"
-#include"gmbb.hpp"
-#include"cbes_window.hpp"
-#include"cbes_screen.hpp"
+#include"gmbb_window.hpp"
+#include"game.hpp"
 #include<cctype>
 
 
@@ -19,8 +18,8 @@ character_iterator(character_buffer),
 character_end(character_buffer),
 last_update_time(0)
 {
-  change_width( w  );
-  change_height(h*2);
+  change_width( gmbb::font::base_size*w);
+  change_height(gmbb::font::tall_size*h);
 }
 
 
@@ -133,7 +132,7 @@ clear()
   character_iterator = character_buffer;
   character_end      = character_buffer;
 
-  cbes::screen.need_to_refresh();
+  need_to_refresh();
 }
 
 
@@ -282,7 +281,7 @@ update()
         {
           page.push(*character_iterator++);
 
-          cbes::screen.need_to_refresh();
+          need_to_refresh();
         }
 
       else
@@ -303,7 +302,7 @@ update()
 
 void
 Message::
-render(cbes::CharacterTable&  dst)
+render(gmbb::Plain&  dst)
 {
   page.render(dst,point.x,point.y);
 }
