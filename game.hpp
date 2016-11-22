@@ -12,9 +12,6 @@
 
 
 
-void      change_time(uint32_t  t);
-uint32_t  get_time();
-
 extern gmbb::Container  container;
 
 extern std::vector<Tag*>  belongings_list;

@@ -18,6 +18,9 @@ extern Plain  final_plain;
 void  compose_plains_all();
 
 
+void      change_time(uint32_t  t);
+uint32_t  get_time();
+
 
 }
 

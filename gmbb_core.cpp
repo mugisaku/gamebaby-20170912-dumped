@@ -12,6 +12,24 @@ Plain  final_plain;
 
 
 
+uint32_t
+current_time;
+
+
+void
+change_time(uint32_t  t)
+{
+  current_time = t;
+}
+
+
+uint32_t
+get_time()
+{
+  return current_time;
+}
+
+
 void
 compose_plains_all()
 {

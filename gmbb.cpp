@@ -1,9 +1,7 @@
 #include"game.hpp"
 #include"game_routine.hpp"
-#include"gmbb_controller.hpp"
 #include"game_environment.hpp"
-#include"gmbb_core.hpp"
-#include"gmbb_font.hpp"
+#include"gmbb.hpp"
 #include<SDL.h>
 #include<SDL_image.h>
 #include<cstdlib>
@@ -26,8 +24,15 @@ uint32_t
 color_table[16];
 
 
-SDL_Surface*   bg_bmp;
-SDL_Surface*  chr_bmp;
+gmbb::Image   bg_img;
+gmbb::Image  chr_img;
+
+
+gmbb::Sprite  spr;
+
+
+gmbb::Garden
+garden;
 
 
 Controller
@@ -182,7 +187,7 @@ main_loop()
     }
 
 
-  change_time(SDL_GetTicks());
+  gmbb::change_time(SDL_GetTicks());
 
     if(!step())
     {
@@ -205,6 +210,9 @@ main_loop()
   container.render(gmbb::final_plain);
 
 //  gmbb::compose_plains_all();
+
+//  spr.process(ctrl);
+  garden.render(gmbb::final_plain);
 
   transfer();
 
@@ -236,8 +244,21 @@ main(int  argc, char**  argv)
     }
 
 
-  bg_bmp  = IMG_Load("bg.png");
-  chr_bmp = IMG_Load("chr.png");
+  auto  bmp = IMG_Load("bg.png");
+
+  bg_img.load(bmp->w,bmp->h,static_cast<const uint8_t*>(bmp->pixels),bmp->pitch);
+
+  SDL_FreeSurface(bmp)                     ;
+                  bmp = IMG_Load("chr.png");
+
+  chr_img.load(bmp->w,bmp->h,static_cast<const uint8_t*>(bmp->pixels),bmp->pitch);
+
+  SDL_FreeSurface(bmp);
+
+
+  spr.reset(&chr_img,0,0,24,32);
+
+  garden.join(spr);
 
   container.join(&pillar_window,gmbb::font::base_size*19,gmbb::font::base_size* 1);
   container.join(&table_window, gmbb::font::base_size* 1,gmbb::font::base_size*15);

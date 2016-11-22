@@ -1,7 +1,7 @@
 #include"game_message.hpp"
 #include"game_environment.hpp"
 #include"gmbb_window.hpp"
-#include"game.hpp"
+#include"gmbb_core.hpp"
 #include<cctype>
 
 
@@ -150,7 +150,7 @@ push(const char16_t*  src)
 {
     if(finished_flag)
     {
-      message.clear();
+      clear();
 
       finished_flag = 0;
     }
@@ -263,7 +263,7 @@ update()
 
   constexpr uint32_t  interval_time_base = 80;
 
-  auto  now = get_time();
+  auto  now = gmbb::get_time();
 
   auto  interval_time = interval_time_base;
 

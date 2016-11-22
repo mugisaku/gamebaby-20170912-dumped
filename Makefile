@@ -70,6 +70,9 @@ OBJ +=                    \
   game_environment.o      \
   game.o                  \
   gmbb_formatted.o        \
+  gmbb_image.o            \
+  gmbb_garden.o           \
+  gmbb_sprite.o           \
   gmbb_plain.o            \
   gmbb_plain__print.o     \
   gmbb_plain__frame.o     \
