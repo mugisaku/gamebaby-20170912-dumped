@@ -2,13 +2,17 @@
 #define GMBB_HPP_INCLUDED
 
 
-#include"gmbb_plain.hpp"
-#include"gmbb_controller.hpp"
-#include"gmbb_image.hpp"
-#include"gmbb_sprite.hpp"
-#include"gmbb_garden.hpp"
-#include"gmbb_core.hpp"
-#include"gmbb_font.hpp"
+#include"core/gmbb_plain.hpp"
+#include"core/gmbb_controller.hpp"
+#include"core/gmbb_image.hpp"
+#include"core/gmbb_sprite.hpp"
+#include"core/gmbb_garden.hpp"
+#include"core/gmbb_message.hpp"
+#include"core/gmbb_font.hpp"
+#include"core/gmbb_object.hpp"
+#include"core/gmbb_container.hpp"
+#include"core/gmbb_window.hpp"
+#include"core/gmbb_environment.hpp"
 
 
 

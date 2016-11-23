@@ -1,8 +1,8 @@
-#ifndef GAME_WORLD_HPP_INCLUDED
-#define GAME_WORLD_HPP_INCLUDED
+#ifndef TEXTADV_WORLD_HPP_INCLUDED
+#define TEXTADV_WORLD_HPP_INCLUDED
 
 
-#include"game_place.hpp"
+#include"ta_place.hpp"
 
 
 

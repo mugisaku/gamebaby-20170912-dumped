@@ -1,10 +1,10 @@
-#ifndef GAME_ITEM_HPP_INCLUDED
-#define GAME_ITEM_HPP_INCLUDED
+#ifndef TEXTADV_ITEM_HPP_INCLUDED
+#define TEXTADV_ITEM_HPP_INCLUDED
 
 
 #include<cstdint>
 #include<initializer_list>
-#include"game_routine.hpp"
+#include"ta_routine.hpp"
 
 
 

@@ -1,5 +1,5 @@
-#include"game_tagtable.hpp"
-#include"game.hpp"
+#include"ta_tagtable.hpp"
+#include"ta.hpp"
 
 
 
@@ -114,7 +114,7 @@ void
 TagTable::
 process(Controller&  ctrl)
 {
-    if(ctrl.test_pressed(keyflag::up) && tag_y)
+    if(ctrl.test_pressed(up_flag) && tag_y)
     {
       tag_y -= 1;
 
@@ -122,7 +122,7 @@ process(Controller&  ctrl)
     }
 
   else
-    if(ctrl.test_pressed(keyflag::down) && (tag_y < 4))
+    if(ctrl.test_pressed(down_flag) && (tag_y < 4))
     {
       tag_y += 1;
 
@@ -130,7 +130,7 @@ process(Controller&  ctrl)
     }
 
   else
-    if(ctrl.test_pressed(keyflag::left) && tag_x)
+    if(ctrl.test_pressed(left_flag) && tag_x)
     {
       tag_x -= 1;
 
@@ -138,7 +138,7 @@ process(Controller&  ctrl)
     }
 
   else
-    if(ctrl.test_pressed(keyflag::right) && (tag_x < 2))
+    if(ctrl.test_pressed(right_flag) && (tag_x < 2))
     {
       tag_x += 1;
 
@@ -146,13 +146,13 @@ process(Controller&  ctrl)
     }
 
   else
-    if(ctrl.test_pressed(keyflag::p))
+    if(ctrl.test_pressed(p_flag))
     {
       change_direct(Direct::advance);
     }
 
   else
-    if(ctrl.test_pressed(keyflag::n))
+    if(ctrl.test_pressed(n_flag))
     {
       change_direct(Direct::back);
     }
@@ -161,14 +161,14 @@ process(Controller&  ctrl)
 
 void
 TagTable::
-render(gmbb::Plain&  dst)
+render(Plain&  dst)
 {
-  gmbb::PrintPoint  x(point.x);
-  gmbb::PrintPoint  y(point.y);
+  PrintPoint  x(point.x);
+  PrintPoint  y(point.y);
 
     if(get_current_object() == this)
     {
-      dst.print_tall("○",gmbb::font_color,x+(8*tag_x),y+(2*tag_y));
+      dst.print_tall("○",font_color,x+(8*tag_x),y+(2*tag_y));
     }
 
 

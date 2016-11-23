@@ -1,5 +1,5 @@
-#include"game_commandpillar.hpp"
-#include"game.hpp"
+#include"ta_commandpillar.hpp"
+#include"ta.hpp"
 
 
 
@@ -26,7 +26,7 @@ process(Controller&  ctrl)
 {
     if(action_command != invalid_command)
     {
-        if(ctrl.test_pressed(keyflag::up) && action_command)
+        if(ctrl.test_pressed(up_flag) && action_command)
         {
           action_command -= 1;
 
@@ -34,7 +34,7 @@ process(Controller&  ctrl)
         }
 
       else
-        if(ctrl.test_pressed(keyflag::down) && (action_command < ActionCommand::LAST))
+        if(ctrl.test_pressed(down_flag) && (action_command < ActionCommand::LAST))
         {
           action_command += 1;
 
@@ -42,13 +42,13 @@ process(Controller&  ctrl)
         }
 
       else
-        if(ctrl.test_pressed(keyflag::p))
+        if(ctrl.test_pressed(p_flag))
         {
           change_direct(Direct::advance);
         }
 
       else
-        if(ctrl.test_pressed(keyflag::n))
+        if(ctrl.test_pressed(n_flag))
         {
           change_direct(Direct::back);
         }
@@ -56,7 +56,7 @@ process(Controller&  ctrl)
 
   else
     {
-        if(ctrl.test_pressed(keyflag::up) && main_command)
+        if(ctrl.test_pressed(up_flag) && main_command)
         {
           main_command -= 1;
 
@@ -64,7 +64,7 @@ process(Controller&  ctrl)
         }
 
       else
-        if(ctrl.test_pressed(keyflag::down) && (main_command < MainCommand::LAST))
+        if(ctrl.test_pressed(down_flag) && (main_command < MainCommand::LAST))
         {
           main_command += 1;
 
@@ -72,7 +72,7 @@ process(Controller&  ctrl)
         }
 
       else
-        if(ctrl.test_pressed(keyflag::p))
+        if(ctrl.test_pressed(p_flag))
         {
           change_direct(Direct::advance);
         }

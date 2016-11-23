@@ -1,17 +1,38 @@
-#include"game_environment.hpp"
+#include"gmbb_environment.hpp"
 #include<unordered_map>
 
 
 
 
+namespace gmbb{
 namespace env{
 
 
 namespace{
+
+
 std::unordered_map<std::u16string,std::u16string>
 variables;
 
 
+uint32_t
+current_time;
+
+
+}
+
+
+void
+change_time(uint32_t  t)
+{
+  current_time = t;
+}
+
+
+uint32_t
+get_time()
+{
+  return current_time;
 }
 
 
@@ -29,5 +50,8 @@ get(const char16_t*  name)
 }
 
 
-}
+}}
+
+
+
 

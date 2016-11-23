@@ -3,7 +3,7 @@ BASE_DIR = /usr/local
 
 
 
-CXXFLAGS = -std=gnu++11 -I. -Icbes -I/usr/include/SDL2  -Werror -Wno-unused-result
+CXXFLAGS = -std=gnu++11 -I. -Werror -Wno-unused-result
 
 
 ifeq ($(opt),1)
@@ -31,7 +31,7 @@ endif
 
 ifeq ($(emcc),1)
   CXX      = CCACHE_DIR=/tmp/ccachedir ccache emcc
-  CXXFLAGS = -std=gnu++11 -I. -Icbes -Werror -Wno-unused-result -O2 -s USE_SDL=2
+  CXXFLAGS = -std=gnu++11 -I. -Werror -Wno-unused-result -O2 -s USE_SDL=2
   EXE_EXT  = .html
   LDFLAGS  = --shell-file shell.html  --memory-init-file 0
 else ifeq ($(ccache),1)
@@ -56,28 +56,29 @@ ifeq ($(delay),1)
 endif
 
 
-all: ta_sample$(EXE_EXT)
+OBJ +=                    \
+  gmbb_formatted.o        \
+  gmbb_image.o            \
+  gmbb_garden.o           \
+  gmbb_sprite.o           \
+  gmbb_plain.o            \
+  gmbb_plain__print.o     \
+  gmbb_plain__frame.o     \
+  gmbb_object.o           \
+  gmbb_container.o        \
+  gmbb_window.o           \
+  gmbb_controller.o       \
+  gmbb_font.o             \
+  gmbb_environment.o      \
+  gmbb_message.o          \
+  gmbb_message_page.o     \
+
+
+all: $(OBJ)
 
 
 clean:
-	make -C core     clean
-	make -C text_adv clean
-	rm -f ta_sample$(EXE_EXT)
-
-
-ta_sample$(EXE_EXT): core text_adv ta_sample.cpp
-	$(CXX) -o $@  ta_sample.cpp core/*.o text_adv/*.o $(CXXFLAGS) $(LDFLAGS) -lSDL2_image -lSDL2 -lSDL2main
-
-
-
-.PHONY: core text_adv
-
-
-core:
-	make -C core
-
-text_adv:
-	make -C text_adv
+	rm -f $(OBJ)
 
 
 

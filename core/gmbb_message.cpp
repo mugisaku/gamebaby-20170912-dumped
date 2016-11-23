@@ -1,10 +1,12 @@
-#include"game_message.hpp"
-#include"game_environment.hpp"
+#include"gmbb_message.hpp"
+#include"gmbb_environment.hpp"
 #include"gmbb_window.hpp"
-#include"gmbb_core.hpp"
 #include<cctype>
 
 
+
+
+namespace gmbb{
 
 
 Message::
@@ -218,7 +220,7 @@ void
 Message::
 process(Controller&  ctrl)
 {
-    if(ctrl.test_pressed(keyflag::p))
+    if(ctrl.test_pressed(p_flag))
     {
         if((character_iterator == character_end) && !scroll_count)
         {
@@ -229,7 +231,7 @@ process(Controller&  ctrl)
     }
 
 
-    if(ctrl.test_pressing(keyflag::p))
+    if(ctrl.test_pressing(p_flag))
     {
       fast_flag = 1;
 
@@ -263,7 +265,7 @@ update()
 
   constexpr uint32_t  interval_time_base = 80;
 
-  auto  now = gmbb::get_time();
+  auto  now = env::get_time();
 
   auto  interval_time = interval_time_base;
 
@@ -307,6 +309,10 @@ render(gmbb::Plain&  dst)
   page.render(dst,point.x,point.y);
 }
 
+
+
+
+}
 
 
 

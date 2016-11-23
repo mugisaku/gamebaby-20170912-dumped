@@ -1,7 +1,4 @@
-#include"game.hpp"
-#include"game_routine.hpp"
-#include"gmbb_controller.hpp"
-#include"game_environment.hpp"
+#include"ta.hpp"
 
 
 
@@ -37,11 +34,11 @@ Message
 message(22,5);
 
 
-gmbb::Window  pillar_window(gmbb::font::base_size* 8,gmbb::font::base_size*14);
-gmbb::Window  table_window( gmbb::font::base_size*26,gmbb::font::base_size*12);
+Window  pillar_window(font::base_size* 8,font::base_size*14);
+Window  table_window( font::base_size*26,font::base_size*12);
 
 
-gmbb::Container
+Container
 container;
 
 

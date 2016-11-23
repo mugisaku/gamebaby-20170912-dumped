@@ -1,6 +1,6 @@
 #include"gmbb_garden.hpp"
 #include"gmbb_sprite.hpp"
-#include"gmbb_core.hpp"
+#include"gmbb_environment.hpp"
 #include<cstring>
 
 

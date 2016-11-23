@@ -1,5 +1,5 @@
-#ifndef GAME_MESSAGE_HPP_INCLUDED
-#define GAME_MESSAGE_HPP_INCLUDED
+#ifndef GMBB_MESSAGE_HPP_INCLUDED
+#define GMBB_MESSAGE_HPP_INCLUDED
 
 
 #include<cstdint>
@@ -9,6 +9,9 @@
 #include"gmbb_object.hpp"
 
 
+
+
+namespace gmbb{
 
 
 class
@@ -76,6 +79,11 @@ public:
   void  render(gmbb::Plain&  dst) override;
 
 };
+
+
+}
+
+
 
 
 #endif

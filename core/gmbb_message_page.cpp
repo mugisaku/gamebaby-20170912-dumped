@@ -1,6 +1,9 @@
-#include"game_message.hpp"
+#include"gmbb_message.hpp"
 
 
+
+
+namespace gmbb{
 
 
 struct
@@ -131,6 +134,10 @@ render(gmbb::Plain&  dst, int  x, int  y) const
 
       next = next->next;
     }
+}
+
+
+
 }
 
 

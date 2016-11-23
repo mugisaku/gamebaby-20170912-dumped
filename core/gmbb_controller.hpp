@@ -5,16 +5,15 @@
 #include<cstdint>
 
 
-namespace keyflag
-{
-  static constexpr int  up    = 0x01;
-  static constexpr int  left  = 0x02;
-  static constexpr int  right = 0x04;
-  static constexpr int  down  = 0x08;
-  static constexpr int  p     = 0x10;
-  static constexpr int  n     = 0x20;
+namespace gmbb{
 
-}
+
+constexpr int  up_flag    = 0x01;
+constexpr int  left_flag  = 0x02;
+constexpr int  right_flag = 0x04;
+constexpr int  down_flag  = 0x08;
+constexpr int  p_flag     = 0x10;
+constexpr int  n_flag     = 0x20;
 
 
 class
@@ -37,6 +36,7 @@ public:
 };
 
 
+}
 
 
 #endif

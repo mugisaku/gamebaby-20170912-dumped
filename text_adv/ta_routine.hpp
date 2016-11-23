@@ -1,8 +1,8 @@
-#ifndef GAME_routine_HPP_INCLUDED
-#define GAME_routine_HPP_INCLUDED
+#ifndef TEXTADV_routine_HPP_INCLUDED
+#define TEXTADV_routine_HPP_INCLUDED
 
 
-#include"gmbb_object.hpp"
+#include"gmbb.hpp"
 #include<queue>
 
 

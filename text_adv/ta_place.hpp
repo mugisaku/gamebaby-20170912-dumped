@@ -1,9 +1,9 @@
-#ifndef GAME_PLACE_HPP_INCLUDED
-#define GAME_PLACE_HPP_INCLUDED
+#ifndef TEXTADV_PLACE_HPP_INCLUDED
+#define TEXTADV_PLACE_HPP_INCLUDED
 
 
 #include<vector>
-#include"game_item.hpp"
+#include"ta_item.hpp"
 
 
 

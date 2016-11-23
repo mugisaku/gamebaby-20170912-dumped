@@ -1,5 +1,4 @@
 #include"gmbb_sprite.hpp"
-#include"gmbb_core.hpp"
 #include<cstring>
 
 

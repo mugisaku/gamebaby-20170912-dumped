@@ -1,7 +1,5 @@
-#include"game.hpp"
-#include"game_routine.hpp"
-#include"game_environment.hpp"
 #include"gmbb.hpp"
+#include"text_adv/ta.hpp"
 #include<SDL.h>
 #include<SDL_image.h>
 #include<cstdlib>
@@ -24,19 +22,12 @@ uint32_t
 color_table[16];
 
 
-gmbb::Image   bg_img;
-gmbb::Image  chr_img;
-
-
-gmbb::Sprite  spr;
-
-
-gmbb::Garden
-garden;
-
-
 Controller
 ctrl;
+
+
+Plain
+final_plain;
 
 
 template<typename  T>
@@ -63,7 +54,7 @@ transfer()
 {
   auto  base_ptr = static_cast<uint8_t*>(surface->pixels);
 
-  const uint8_t*  src = &gmbb::final_plain.const_pixel(0,0);
+  const uint8_t*  src = &final_plain.const_pixel(0,0);
 
   const int  w     = gmbb::Plain::width;
   const int  h     = gmbb::Plain::height;
@@ -133,19 +124,19 @@ main_loop()
           {
               switch(evt.key.keysym.sym)
               {
-            case(SDLK_UP   ): ctrl.press(keyflag::up   );break;
-            case(SDLK_LEFT ): ctrl.press(keyflag::left );break;
-            case(SDLK_RIGHT): ctrl.press(keyflag::right);break;
-            case(SDLK_DOWN ): ctrl.press(keyflag::down );break;
+            case(SDLK_UP   ): ctrl.press(up_flag   );break;
+            case(SDLK_LEFT ): ctrl.press(left_flag );break;
+            case(SDLK_RIGHT): ctrl.press(right_flag);break;
+            case(SDLK_DOWN ): ctrl.press(down_flag );break;
 
             case(SDLK_RETURN):
-            case(SDLK_z     ):
-                ctrl.press(keyflag::p);
+            case(SDLK_z):
+                ctrl.press(p_flag);
                 break;
             case(SDLK_RCTRL):
             case(SDLK_LCTRL):
             case(SDLK_x    ):
-                ctrl.press(keyflag::n);
+                ctrl.press(n_flag);
                 break;
               }
           }
@@ -155,19 +146,19 @@ main_loop()
           {
               switch(evt.key.keysym.sym)
               {
-            case(SDLK_UP   ): ctrl.unpress(keyflag::up   );break;
-            case(SDLK_LEFT ): ctrl.unpress(keyflag::left );break;
-            case(SDLK_RIGHT): ctrl.unpress(keyflag::right);break;
-            case(SDLK_DOWN ): ctrl.unpress(keyflag::down );break;
+            case(SDLK_UP   ): ctrl.unpress(up_flag   );break;
+            case(SDLK_LEFT ): ctrl.unpress(left_flag );break;
+            case(SDLK_RIGHT): ctrl.unpress(right_flag);break;
+            case(SDLK_DOWN ): ctrl.unpress(down_flag );break;
 
             case(SDLK_RETURN):
             case(SDLK_z     ):
-                ctrl.unpress(keyflag::p);
+                ctrl.unpress(p_flag);
                 break;
             case(SDLK_RCTRL):
             case(SDLK_LCTRL):
             case(SDLK_x    ):
-                ctrl.unpress(keyflag::n);
+                ctrl.unpress(n_flag);
                 break;
               }
           }
@@ -187,7 +178,7 @@ main_loop()
     }
 
 
-  gmbb::change_time(SDL_GetTicks());
+  env::change_time(SDL_GetTicks());
 
     if(!step())
     {
@@ -205,14 +196,9 @@ main_loop()
     }
 
 
-  gmbb::final_plain.fill(0);
+  final_plain.fill(0);
 
-  container.render(gmbb::final_plain);
-
-//  gmbb::compose_plains_all();
-
-//  spr.process(ctrl);
-  garden.render(gmbb::final_plain);
+  container.render(final_plain);
 
   transfer();
 
@@ -243,22 +229,6 @@ main(int  argc, char**  argv)
       color_table[8+i] = SDL_MapRGB(surface->format,l,l,l);
     }
 
-
-  auto  bmp = IMG_Load("bg.png");
-
-  bg_img.load(bmp->w,bmp->h,static_cast<const uint8_t*>(bmp->pixels),bmp->pitch);
-
-  SDL_FreeSurface(bmp)                     ;
-                  bmp = IMG_Load("chr.png");
-
-  chr_img.load(bmp->w,bmp->h,static_cast<const uint8_t*>(bmp->pixels),bmp->pitch);
-
-  SDL_FreeSurface(bmp);
-
-
-  spr.reset(&chr_img,0,0,24,32);
-
-  garden.join(spr);
 
   container.join(&pillar_window,gmbb::font::base_size*19,gmbb::font::base_size* 1);
   container.join(&table_window, gmbb::font::base_size* 1,gmbb::font::base_size*15);

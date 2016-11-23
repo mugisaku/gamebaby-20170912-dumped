@@ -1,5 +1,5 @@
-#ifndef GAME_TAGTABLE_HPP_INCLUDED
-#define GAME_TAGTABLE_HPP_INCLUDED
+#ifndef TEXTADV_TAGTABLE_HPP_INCLUDED
+#define TEXTADV_TAGTABLE_HPP_INCLUDED
 
 
 #include<cstdint>
@@ -7,16 +7,17 @@
 #include<string>
 #include<vector>
 #include<initializer_list>
-#include"gmbb_window.hpp"
+#include"gmbb.hpp"
 
 
+using namespace gmbb;
 
 
 struct Tag;
 
 
 class
-TagTable: public gmbb::Object
+TagTable: public Object
 {
   Tag*  tag_table[5*3];
 
@@ -32,7 +33,7 @@ public:
 
   void  process(Controller&  ctrl) override;
 
-  void  render(gmbb::Plain&  dst) override;
+  void  render(Plain&  dst) override;
 
 };
 

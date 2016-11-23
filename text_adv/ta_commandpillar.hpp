@@ -1,10 +1,11 @@
-#ifndef GAME_COMMANDPILLAR_HPP_INCLUDED
-#define GAME_COMMANDPILLAR_HPP_INCLUDED
+#ifndef TEXTADV_COMMANDPILLAR_HPP_INCLUDED
+#define TEXTADV_COMMANDPILLAR_HPP_INCLUDED
 
 
-#include"gmbb_object.hpp"
+#include"gmbb.hpp"
 
 
+using namespace gmbb;
 
 
 constexpr int  invalid_command = -1;
@@ -37,12 +38,12 @@ void  change_action_command(int  v);
 
 
 class
-CommandPillar: public gmbb::Object
+CommandPillar: public Object
 {
 public:
   void  process(Controller&  ctrl) override;
 
-  void  render(gmbb::Plain&  dst) override;
+  void  render(Plain&  dst) override;
 
 };
 
