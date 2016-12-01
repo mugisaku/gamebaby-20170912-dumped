@@ -3,7 +3,7 @@
 
 
 #include"gmbb_controller.hpp"
-#include"gmbb_plain.hpp"
+#include"gmbb_image.hpp"
 
 
 #ifndef report
@@ -55,7 +55,7 @@ public:
 
   virtual void  process(Controller&  ctrl);
 
-  virtual void  render(Plain&  dst);
+  virtual void  render(Image&  dst);
 
 };
 

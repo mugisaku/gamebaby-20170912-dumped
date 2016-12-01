@@ -42,6 +42,9 @@ bool  Controller::test_pressed(int    flag) const{return(  pressed_key_state&fla
 bool  Controller::test_unpressed(int  flag) const{return(unpressed_key_state&flag);}
 
 
+void   Controller::set_quit_flag()      {quit_flag = true;}
+bool  Controller::test_quit_flag() const{return quit_flag;}
+
 
 }
 

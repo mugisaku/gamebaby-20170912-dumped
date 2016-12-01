@@ -84,7 +84,7 @@ process(Controller&  ctrl)
 
 void
 Object::
-render(Plain&  dst)
+render(Image&  dst)
 {
 }
 

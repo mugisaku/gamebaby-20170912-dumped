@@ -49,7 +49,7 @@ public:
   void  set_state(WindowState  st);
 
   void  update() override;
-  void  render(Plain&  dst) override;
+  void  render(Image&  dst) override;
 
 };
 

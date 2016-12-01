@@ -2,7 +2,6 @@
 #define GMBB_HPP_INCLUDED
 
 
-#include"core/gmbb_plain.hpp"
 #include"core/gmbb_controller.hpp"
 #include"core/gmbb_image.hpp"
 #include"core/gmbb_sprite.hpp"

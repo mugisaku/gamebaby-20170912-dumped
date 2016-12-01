@@ -39,7 +39,7 @@ public:
 
   bool  is_full() const;
 
-  void  render(gmbb::Plain&  dst, int  x, int  y) const;
+  void  render(Image&  dst, int  x, int  y) const;
 
 };
 
@@ -76,7 +76,7 @@ public:
 
   void  update() override;
 
-  void  render(gmbb::Plain&  dst) override;
+  void  render(Image&  dst) override;
 
 };
 

@@ -16,35 +16,25 @@ variables;
 
 
 uint32_t
-current_time;
+time;
 
 
 }
+
+
+void  change_time(uint32_t  v){time = v;}
+uint32_t  get_time(){return time;}
 
 
 void
-change_time(uint32_t  t)
-{
-  current_time = t;
-}
-
-
-uint32_t
-get_time()
-{
-  return current_time;
-}
-
-
-void
-set(const char16_t*  name, const char16_t*  value)
+set_value(const char16_t*  name, const char16_t*  value)
 {
   variables[name] = value;
 }
 
 
 const std::u16string&
-get(const char16_t*  name)
+get_value(const char16_t*  name)
 {
   return variables[name];
 }

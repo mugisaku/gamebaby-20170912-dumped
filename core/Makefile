@@ -59,11 +59,10 @@ endif
 OBJ +=                    \
   gmbb_formatted.o        \
   gmbb_image.o            \
+  gmbb_image__print.o     \
+  gmbb_image__frame.o     \
   gmbb_garden.o           \
   gmbb_sprite.o           \
-  gmbb_plain.o            \
-  gmbb_plain__print.o     \
-  gmbb_plain__frame.o     \
   gmbb_object.o           \
   gmbb_container.o        \
   gmbb_window.o           \

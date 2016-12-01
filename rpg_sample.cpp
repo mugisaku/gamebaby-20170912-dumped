@@ -1,5 +1,6 @@
 #include"gmbb.hpp"
-#include"ta/ta.hpp"
+#include"rpg/rpg_core.hpp"
+#include"rpg/rpg_player.hpp"
 #include<SDL.h>
 #include<SDL_image.h>
 #include<cstdlib>
@@ -12,6 +13,13 @@
 #endif
 
 
+using namespace gmbb;
+
+
+namespace screen{
+constexpr int  width  = 24*12;
+constexpr int  height = 24*12;
+}
 
 
 SDL_Window*    window;
@@ -22,15 +30,8 @@ uint32_t
 color_table[16];
 
 
-gmbb::Image   bg_img;
-gmbb::Image  chr_img;
-
-
-gmbb::Sprite  spr;
-
-
-gmbb::Garden
-garden;
+Image
+final_image(screen::width,screen::height);
 
 
 Controller
@@ -61,21 +62,19 @@ transfer()
 {
   auto  base_ptr = static_cast<uint8_t*>(surface->pixels);
 
-  const uint8_t*  src = &gmbb::final_plain.const_pixel(0,0);
+  const uint8_t*  src = &final_image.const_pixel(0,0);
 
-  const int  w     = gmbb::Plain::width;
-  const int  h     = gmbb::Plain::height;
   const int  pitch = surface->pitch;
   const int  bps   = surface->format->BytesPerPixel;
 
   SDL_LockSurface(surface);
 
-    for(int  y = 0;  y < h;  y += 1)
+    for(int  y = 0;  y < screen::height;  y += 1)
     {
       auto  ptr = base_ptr           ;
                   base_ptr += pitch*2;
 
-        for(int  x = 0;  x < w;  x += 1)
+        for(int  x = 0;  x < screen::width;  x += 1)
         {
           auto  pixel = color_table[(*src++)&15];
 
@@ -131,19 +130,19 @@ main_loop()
           {
               switch(evt.key.keysym.sym)
               {
-            case(SDLK_UP   ): ctrl.press(keyflag::up   );break;
-            case(SDLK_LEFT ): ctrl.press(keyflag::left );break;
-            case(SDLK_RIGHT): ctrl.press(keyflag::right);break;
-            case(SDLK_DOWN ): ctrl.press(keyflag::down );break;
+            case(SDLK_UP   ): ctrl.press(up_flag   );break;
+            case(SDLK_LEFT ): ctrl.press(left_flag );break;
+            case(SDLK_RIGHT): ctrl.press(right_flag);break;
+            case(SDLK_DOWN ): ctrl.press(down_flag );break;
 
             case(SDLK_RETURN):
-            case(SDLK_z     ):
-                ctrl.press(keyflag::p);
+            case(SDLK_z):
+                ctrl.press(p_flag);
                 break;
             case(SDLK_RCTRL):
             case(SDLK_LCTRL):
             case(SDLK_x    ):
-                ctrl.press(keyflag::n);
+                ctrl.press(n_flag);
                 break;
               }
           }
@@ -153,19 +152,19 @@ main_loop()
           {
               switch(evt.key.keysym.sym)
               {
-            case(SDLK_UP   ): ctrl.unpress(keyflag::up   );break;
-            case(SDLK_LEFT ): ctrl.unpress(keyflag::left );break;
-            case(SDLK_RIGHT): ctrl.unpress(keyflag::right);break;
-            case(SDLK_DOWN ): ctrl.unpress(keyflag::down );break;
+            case(SDLK_UP   ): ctrl.unpress(up_flag   );break;
+            case(SDLK_LEFT ): ctrl.unpress(left_flag );break;
+            case(SDLK_RIGHT): ctrl.unpress(right_flag);break;
+            case(SDLK_DOWN ): ctrl.unpress(down_flag );break;
 
             case(SDLK_RETURN):
             case(SDLK_z     ):
-                ctrl.unpress(keyflag::p);
+                ctrl.unpress(p_flag);
                 break;
             case(SDLK_RCTRL):
             case(SDLK_LCTRL):
             case(SDLK_x    ):
-                ctrl.unpress(keyflag::n);
+                ctrl.unpress(n_flag);
                 break;
               }
           }
@@ -174,7 +173,7 @@ main_loop()
              switch(evt.window.event)
              {
            case(SDL_WINDOWEVENT_EXPOSED):
-//               cbes::core::need_to_refresh();
+//               need_to_refresh();
                break;
              }
            break;
@@ -185,34 +184,25 @@ main_loop()
     }
 
 
-  gmbb::change_time(SDL_GetTicks());
+  env::change_time(SDL_GetTicks());
 
-    if(!step())
+  rpg::core::step(ctrl);
+
+  static uint32_t  next_time;
+
+  auto  now = SDL_GetTicks();
+
+    if(now >= next_time)
     {
-      quit();
+      constexpr uint32_t  interval_time = 40;
+
+      rpg::core::render(final_image);
+
+      transfer();
+
+      next_time = now+interval_time;
     }
 
-
-  container.update();
-
-  auto  curobj = get_current_object();
-
-    if(curobj)
-    {
-      curobj->process(ctrl);
-    }
-
-
-  gmbb::final_plain.fill(0);
-
-  container.render(gmbb::final_plain);
-
-//  gmbb::compose_plains_all();
-
-//  spr.process(ctrl);
-  garden.render(gmbb::final_plain);
-
-  transfer();
 
   ctrl.clean();
 }
@@ -228,8 +218,8 @@ main(int  argc, char**  argv)
 
   window = SDL_CreateWindow("GAME BABY - " __DATE__,SDL_WINDOWPOS_CENTERED,
                                                     SDL_WINDOWPOS_CENTERED,
-                                                    gmbb::Plain::width*2,
-                                                    gmbb::Plain::height*2,0);
+                                                    screen::width*2,
+                                                    screen::height*2,0);
 
   surface = SDL_GetWindowSurface(window);
 
@@ -242,28 +232,9 @@ main(int  argc, char**  argv)
     }
 
 
-  auto  bmp = IMG_Load("bg.png");
+  rpg::core::load_bg_image("bg.png");
+  rpg::core::load_bg_map("living.qbf");
 
-  bg_img.load(bmp->w,bmp->h,static_cast<const uint8_t*>(bmp->pixels),bmp->pitch);
-
-  SDL_FreeSurface(bmp)                     ;
-                  bmp = IMG_Load("chr.png");
-
-  chr_img.load(bmp->w,bmp->h,static_cast<const uint8_t*>(bmp->pixels),bmp->pitch);
-
-  SDL_FreeSurface(bmp);
-
-
-  spr.reset(&chr_img,0,0,24,32);
-
-  garden.join(spr);
-
-  container.join(&pillar_window,gmbb::font::base_size*19,gmbb::font::base_size* 1);
-  container.join(&table_window, gmbb::font::base_size* 1,gmbb::font::base_size*15);
-
-  pillar_window.change_content(&commandpillar);
-
-  push_routine(newgame);
 
 
 #ifdef EMSCRIPTEN

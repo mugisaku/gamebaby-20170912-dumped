@@ -1,4 +1,4 @@
-#include"gmbb_plain.hpp"
+#include"gmbb_image.hpp"
 #include<cstring>
 
 
@@ -22,7 +22,7 @@ piece[8][8] =
 
 
 void
-Plain::
+Image::
 frame_top(int  x, int  y, int  w)
 {
     for(int  yy = 0;  yy < 8;  yy += 1){
@@ -52,7 +52,7 @@ frame_top(int  x, int  y, int  w)
 
 
 void
-Plain::
+Image::
 frame_body(int  x, int  y, int  w, int  h)
 {
   vline(4|8,x+0,y,h);
@@ -72,7 +72,7 @@ frame_body(int  x, int  y, int  w, int  h)
 
 
 void
-Plain::
+Image::
 frame_bottom(int  x, int  y, int  w)
 {
     for(int  yy = 0;  yy < 8;  yy += 1){
@@ -102,7 +102,7 @@ frame_bottom(int  x, int  y, int  w)
 
 
 void
-Plain::
+Image::
 frame(int  x, int  y, int  w, int  h)
 {
   frame_top(   x,y    ,w     );

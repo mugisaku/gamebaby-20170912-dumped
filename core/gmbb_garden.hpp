@@ -28,7 +28,9 @@ public:
 
   int  get_number() const;
 
-  void  render(Plain&  dst);
+  void  update();
+
+  void  render(Image&  dst);
 
 };
 

@@ -42,7 +42,7 @@ public:
   Sprite*  get_previous() const;
   Sprite*      get_next() const;
 
-  void  render(Plain&  dst);
+  void  render(Image&  dst);
 
 };
 

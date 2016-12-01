@@ -76,7 +76,7 @@ Sprite*      Sprite::get_next() const{return next;}
 
 void
 Sprite::
-render(Plain&  dst)
+render(Image&  dst)
 {
     if(source)
     {

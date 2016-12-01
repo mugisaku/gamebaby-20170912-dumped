@@ -82,7 +82,7 @@ process(Controller&  ctrl)
 
 void
 CommandPillar::
-render(gmbb::Plain&  dst)
+render(Image&  dst)
 {
   gmbb::PrintPoint  x(point.x);
   gmbb::PrintPoint  y(point.y);

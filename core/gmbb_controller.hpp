@@ -23,6 +23,8 @@ Controller
   uint8_t    pressed_key_state=0;
   uint8_t  unpressed_key_state=0;
 
+  uint8_t  quit_flag=0;
+
 public:
   void    press(int  flag);
   void  unpress(int  flag);
@@ -32,6 +34,9 @@ public:
   bool  test_pressing(int  flag) const;
   bool  test_pressed(int  flag) const;
   bool  test_unpressed(int  flag) const;
+
+  void   set_quit_flag()      ;
+  bool  test_quit_flag() const;
 
 };
 

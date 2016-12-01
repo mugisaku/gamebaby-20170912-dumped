@@ -122,7 +122,7 @@ is_full() const
 
 void
 MessagePage::
-render(gmbb::Plain&  dst, int  x, int  y) const
+render(Image&  dst, int  x, int  y) const
 {
   auto  next = first;
 
@@ -130,7 +130,7 @@ render(gmbb::Plain&  dst, int  x, int  y) const
     {
       dst.print_tall(next->string.data(),gmbb::font_color,x,y);
 
-      y += gmbb::font::tall_size;
+      y += font::tall_size;
 
       next = next->next;
     }

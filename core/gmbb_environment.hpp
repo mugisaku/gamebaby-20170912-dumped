@@ -11,12 +11,11 @@ namespace gmbb{
 namespace env{
 
 
-void      change_time(uint32_t  t);
+void  change_time(uint32_t  v);
 uint32_t  get_time();
 
-
-void                   set(const char16_t*  name, const char16_t*  value);
-const std::u16string&  get(const char16_t*  name                        );
+void                   set_value(const char16_t*  name, const char16_t*  value);
+const std::u16string&  get_value(const char16_t*  name                        );
 
 
 }}

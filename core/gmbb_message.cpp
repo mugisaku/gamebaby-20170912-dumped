@@ -178,7 +178,7 @@ push(const char16_t*  src)
 
           src += n;
 
-          character_end = copy(env::get(tmpbuf).data(),character_end,std::end(character_buffer));
+          character_end = copy(env::get_value(tmpbuf).data(),character_end,std::end(character_buffer));
         }
 
       else
@@ -304,7 +304,7 @@ update()
 
 void
 Message::
-render(gmbb::Plain&  dst)
+render(Image&  dst)
 {
   page.render(dst,point.x,point.y);
 }

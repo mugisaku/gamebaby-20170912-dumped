@@ -10,8 +10,17 @@ namespace gmbb{
 
 
 Image::
-Image()
+Image():
+width(0),
+height(0)
 {
+}
+
+
+Image::
+Image(int  w, int  h)
+{
+  resize(w,h);
 }
 
 
@@ -19,7 +28,72 @@ Image()
 
 void
 Image::
-load(int  w, int  h, const uint8_t*  src, int  pitch)
+resize(int  w, int  h)
+{
+  width  = w;
+  height = h;
+
+  pixels.resize(w*h);
+}
+
+
+void
+Image::
+dot(uint8_t  v, int  x, int  y)
+{
+  pixels[(width*y)+x] = v;
+}
+
+
+void
+Image::
+vline(uint8_t  v, int  x, int  y, int  l)
+{
+    while(l--)
+    {
+      dot(v,x,y++);
+    }
+}
+
+
+void
+Image::
+hline(uint8_t  v, int  x, int  y, int  l)
+{
+    while(l--)
+    {
+      dot(v,x++,y);
+    }
+}
+
+
+void
+Image::
+compose(const Image&  rhs)
+{
+  auto  dst =           &pixel(0,0);
+  auto  src = &rhs.const_pixel(0,0);
+
+  int  n = width*height;
+
+    while(n--)
+    {
+      auto  v = *src++;
+
+        if(v&8)
+        {
+          *dst = v;
+        }
+
+
+      ++dst;
+    }
+}
+
+
+void
+Image::
+load(const uint8_t*  src, int  w, int  h, int  pitch)
 {
   width  = w;
   height = h;
@@ -53,8 +127,17 @@ void  Image::fill(uint8_t  v){std::memset(pixels.data(),v,width*height);}
 
 void
 Image::
-transfer(int  src_x, int  src_y, int  src_w, int  src_h, Plain&  dst, int  x, int  y) const
+transfer(int  src_x, int  src_y, int  src_w, int  src_h, Image&  dst, int  x, int  y) const
 {
+  const int  dst_w = dst.get_width();
+  const int  dst_h = dst.get_height();
+
+    if(!src_w){src_w =  width;}
+    if(!src_h){src_h = height;}
+
+    if(src_w > dst_w){src_w = dst_w;}
+    if(src_h > dst_h){src_h = dst_h;}
+
     for(int  yy = 0;  yy < src_h;  yy += 1){
     for(int  xx = 0;  xx < src_w;  xx += 1){
       auto  v = const_pixel(src_x+xx,src_y+yy);

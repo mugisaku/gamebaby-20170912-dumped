@@ -1,4 +1,4 @@
-#include"gmbb_plain.hpp"
+#include"gmbb_image.hpp"
 #include"gmbb_font.hpp"
 
 
@@ -44,7 +44,7 @@ to_char16(const char*  s, size_t  byte_number)
 
 
 void
-Plain::
+Image::
 print(char16_t  c, uint8_t  color, int  x, int  y)
 {
   auto  g = font::get_glyph(c);
@@ -77,8 +77,8 @@ print(char16_t  c, uint8_t  color, int  x, int  y)
 
 
 void
-Plain::
-Plain::
+Image::
+Image::
 print(const char*  s, uint8_t  color, int  x, int  y)
 {
     while(*s)
@@ -99,7 +99,7 @@ print(const char*  s, uint8_t  color, int  x, int  y)
 
 
 void
-Plain::
+Image::
 print(const char16_t*  s, uint8_t  color, int  x, int  y)
 {
     while(*s)
@@ -114,7 +114,7 @@ print(const char16_t*  s, uint8_t  color, int  x, int  y)
 
 
 void
-Plain::
+Image::
 print_tall(char16_t  c, uint8_t  color, int  x, int  y)
 {
   auto  g = font::get_combined(c);
@@ -130,7 +130,7 @@ print_tall(char16_t  c, uint8_t  color, int  x, int  y)
 
 
 void
-Plain::
+Image::
 print_tall(const char*  s, uint8_t  color, int  x, int  y)
 {
     while(*s)
@@ -151,7 +151,7 @@ print_tall(const char*  s, uint8_t  color, int  x, int  y)
 
 
 void
-Plain::
+Image::
 print_tall(const char16_t*  s, uint8_t  color, int  x, int  y)
 {
     while(*s)

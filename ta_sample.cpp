@@ -14,6 +14,12 @@
 
 
 
+namespace screen{
+constexpr int   width = 400;
+constexpr int  height = 320;
+}
+
+
 SDL_Window*    window;
 SDL_Surface*  surface;
 
@@ -26,8 +32,8 @@ Controller
 ctrl;
 
 
-Plain
-final_plain;
+Image
+final_image(screen::width,screen::height);
 
 
 template<typename  T>
@@ -54,10 +60,10 @@ transfer()
 {
   auto  base_ptr = static_cast<uint8_t*>(surface->pixels);
 
-  const uint8_t*  src = &final_plain.const_pixel(0,0);
+  const uint8_t*  src = &final_image.const_pixel(0,0);
 
-  const int  w     = gmbb::Plain::width;
-  const int  h     = gmbb::Plain::height;
+  const int  w     = screen::width;
+  const int  h     = screen::height;
   const int  pitch = surface->pitch;
   const int  bps   = surface->format->BytesPerPixel;
 
@@ -196,9 +202,9 @@ main_loop()
     }
 
 
-  final_plain.fill(0);
+  final_image.fill(0);
 
-  container.render(final_plain);
+  container.render(final_image);
 
   transfer();
 
@@ -216,8 +222,8 @@ main(int  argc, char**  argv)
 
   window = SDL_CreateWindow("GAME BABY - " __DATE__,SDL_WINDOWPOS_CENTERED,
                                                     SDL_WINDOWPOS_CENTERED,
-                                                    gmbb::Plain::width*2,
-                                                    gmbb::Plain::height*2,0);
+                                                    screen::width*2,
+                                                    screen::height*2,0);
 
   surface = SDL_GetWindowSurface(window);
 

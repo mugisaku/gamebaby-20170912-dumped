@@ -108,7 +108,7 @@ get_number() const
 
 void
 Garden::
-render(Plain&  dst)
+render(Image&  dst)
 {
   auto  next = first;
 

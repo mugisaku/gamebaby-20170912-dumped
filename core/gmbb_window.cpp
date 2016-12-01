@@ -161,7 +161,7 @@ update()
 
 void
 Window::
-render(Plain&  dst)
+render(Image&  dst)
 {
     if(state != WindowState::hidden)
     {

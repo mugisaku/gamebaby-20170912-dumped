@@ -3,7 +3,7 @@ BASE_DIR = /usr/local
 
 
 
-CXXFLAGS = -std=gnu++11 -I. -Icbes -I/usr/include/SDL2  -Werror -Wno-unused-result
+CXXFLAGS = -std=gnu++11 -I. -I.. -I/usr/include/SDL2 -Werror -Wno-unused-result
 
 
 ifeq ($(opt),1)
@@ -31,7 +31,7 @@ endif
 
 ifeq ($(emcc),1)
   CXX      = CCACHE_DIR=/tmp/ccachedir ccache emcc
-  CXXFLAGS = -std=gnu++11 -I. -Icbes -Werror -Wno-unused-result -O2 -s USE_SDL=2
+  CXXFLAGS = -std=gnu++11 -I. -I.. -Werror -Wno-unused-result -O2 -s USE_SDL=2
   EXE_EXT  = .html
   LDFLAGS  = --shell-file shell.html  --memory-init-file 0
 else ifeq ($(ccache),1)
@@ -56,35 +56,17 @@ ifeq ($(delay),1)
 endif
 
 
-all: ta_sample$(EXE_EXT) rpg_sample$(EXE_EXT)
+OBJ +=                    \
+  rpg_player.o           \
+  rpg_routine.o           \
+  rpg_core.o            \
+
+
+all: $(OBJ)
 
 
 clean:
-	make -C core     clean
-	make -C text_adv clean
-	make -C rpg clean
-	rm -f ta_sample$(EXE_EXT) rpg_sample$(EXE_EXT)
-
-
-ta_sample$(EXE_EXT): core text_adv ta_sample.cpp
-	$(CXX) -o $@  ta_sample.cpp core/*.o text_adv/*.o $(CXXFLAGS) $(LDFLAGS) -lSDL2_image -lSDL2 -lSDL2main
-
-rpg_sample$(EXE_EXT): core rpg rpg_sample.cpp
-	$(CXX) -o $@  rpg_sample.cpp core/*.o rpg/*.o $(CXXFLAGS) $(LDFLAGS) -lSDL2_image -lSDL2 -lSDL2main
-
-
-
-.PHONY: core text_adv rpg
-
-
-core:
-	make -C core
-
-text_adv:
-	make -C text_adv
-
-rpg:
-	make -C rpg
+	rm -f $(OBJ)
 
 
 

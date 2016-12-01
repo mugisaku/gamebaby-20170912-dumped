@@ -161,7 +161,7 @@ process(Controller&  ctrl)
 
 void
 TagTable::
-render(Plain&  dst)
+render(Image&  dst)
 {
   PrintPoint  x(point.x);
   PrintPoint  y(point.y);

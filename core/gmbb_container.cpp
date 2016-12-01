@@ -43,7 +43,7 @@ process(Controller&  ctrl)
 
 void
 Container::
-render(Plain&  dst)
+render(Image&  dst)
 {
     for(auto  obj: children)
     {

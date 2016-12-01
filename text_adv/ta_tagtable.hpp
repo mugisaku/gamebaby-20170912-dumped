@@ -33,7 +33,7 @@ public:
 
   void  process(Controller&  ctrl) override;
 
-  void  render(Plain&  dst) override;
+  void  render(Image&  dst) override;
 
 };
 
