@@ -2,7 +2,6 @@
 #define RPG_ROUTINE_HPP_INCLUDED
 
 
-#include"rpg_point.hpp"
 #include"rpg_player.hpp"
 #include"core/gmbb_image.hpp"
 #include<vector>

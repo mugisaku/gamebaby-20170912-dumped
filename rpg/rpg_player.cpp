@@ -71,6 +71,21 @@ step()
 }
 
 
+const Point&
+Player::
+get_sprite_point() const
+{
+  return sprite_point;
+}
+
+
+const Point&
+Player::
+get_square_point() const
+{
+  return square_point;
+}
+
 
 }}
 

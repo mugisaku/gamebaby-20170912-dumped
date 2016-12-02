@@ -2,7 +2,6 @@
 #define RPG_CORE_HPP_INCLUDED
 
 
-#include"rpg_point.hpp"
 #include"rpg_squaremap.hpp"
 #include"gmbb.hpp"
 #include<vector>

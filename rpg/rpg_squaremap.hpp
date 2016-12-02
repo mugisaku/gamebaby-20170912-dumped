@@ -2,7 +2,6 @@
 #define RPG_SQUAREMAP_HPP_INCLUDED
 
 
-#include"rpg_point.hpp"
 #include"gmbb.hpp"
 #include<vector>
 

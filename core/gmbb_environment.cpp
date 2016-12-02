@@ -22,6 +22,9 @@ time;
 }
 
 
+uint8_t  fn_keystate;
+
+
 void  change_time(uint32_t  v){time = v;}
 uint32_t  get_time(){return time;}
 

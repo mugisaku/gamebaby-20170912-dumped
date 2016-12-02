@@ -12,7 +12,7 @@ namespace rpg{
 void
 move_up(Player&  pl)
 {
-  pl.point.y -= 2;
+  pl.sprite_point.y -= 2;
 
     if(++pl.action_phase >= 6)
     {
@@ -24,7 +24,7 @@ move_up(Player&  pl)
 void
 move_left(Player&  pl)
 {
-  pl.point.x -= 2;
+  pl.sprite_point.x -= 2;
 
     if(++pl.action_phase >= 6)
     {
@@ -36,7 +36,7 @@ move_left(Player&  pl)
 void
 move_right(Player&  pl)
 {
-  pl.point.x += 2;
+  pl.sprite_point.x += 2;
 
     if(++pl.action_phase >= 6)
     {
@@ -48,7 +48,7 @@ move_right(Player&  pl)
 void
 move_down(Player&  pl)
 {
-  pl.point.y += 2;
+  pl.sprite_point.y += 2;
 
     if(++pl.action_phase >= 6)
     {
@@ -66,8 +66,8 @@ shapeshift(const Player&  ply, Sprite&  spr)
   spr.source_point.y = (40*ply.face)+4;
   spr.width  = 16;
   spr.height = 32;
-  spr.point.x = ply.point.x+4;
-  spr.point.y = ply.point.y+4+20;
+  spr.point.x = ply.get_sprite_point().x+4;
+  spr.point.y = ply.get_sprite_point().y-12;
 }
 
 

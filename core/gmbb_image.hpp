@@ -45,6 +45,8 @@ public:
   void  vline(uint8_t  v, int  x, int  y, int  l);
   void  hline(uint8_t  v, int  x, int  y, int  l);
 
+  void  rectangle(uint8_t  v, int  x, int  y, int  w, int  h);
+
   void  frame_top(   int  x, int  y, int  w);
   void  frame_body(  int  x, int  y, int  w, int  h);
   void  frame_bottom(int  x, int  y, int  w);

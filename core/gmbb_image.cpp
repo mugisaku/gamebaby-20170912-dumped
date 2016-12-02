@@ -69,6 +69,18 @@ hline(uint8_t  v, int  x, int  y, int  l)
 
 void
 Image::
+rectangle(uint8_t  v, int  x, int  y, int  w, int  h)
+{
+  hline(v,x,y    ,w);
+  hline(v,x,y+h-1,w);
+
+  vline(v,x    ,y+1,h-2);
+  vline(v,x+w-1,y+1,h-2);
+}
+
+
+void
+Image::
 compose(const Image&  rhs)
 {
   const int  w = std::min(width,rhs.get_width());

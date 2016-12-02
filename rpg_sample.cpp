@@ -138,6 +138,15 @@ main_loop()
             case(SDLK_x    ):
                 ctrl.press(n_flag);
                 break;
+            case(SDLK_F1): env::fn_keystate |= env::fn1_flag;break;
+            case(SDLK_F2): env::fn_keystate |= env::fn2_flag;break;
+            case(SDLK_F3): env::fn_keystate |= env::fn3_flag;break;
+            case(SDLK_F4): env::fn_keystate |= env::fn4_flag;break;
+            case(SDLK_F5): env::fn_keystate |= env::fn5_flag;break;
+            case(SDLK_F6): env::fn_keystate |= env::fn6_flag;break;
+            case(SDLK_F7): env::fn_keystate |= env::fn7_flag;break;
+            case(SDLK_F8): env::fn_keystate |= env::fn8_flag;break;
+                break;
               }
           }
           break;
@@ -159,6 +168,15 @@ main_loop()
             case(SDLK_LCTRL):
             case(SDLK_x    ):
                 ctrl.unpress(n_flag);
+                break;
+            case(SDLK_F1): env::fn_keystate &= ~env::fn1_flag;break;
+            case(SDLK_F2): env::fn_keystate &= ~env::fn2_flag;break;
+            case(SDLK_F3): env::fn_keystate &= ~env::fn3_flag;break;
+            case(SDLK_F4): env::fn_keystate &= ~env::fn4_flag;break;
+            case(SDLK_F5): env::fn_keystate &= ~env::fn5_flag;break;
+            case(SDLK_F6): env::fn_keystate &= ~env::fn6_flag;break;
+            case(SDLK_F7): env::fn_keystate &= ~env::fn7_flag;break;
+            case(SDLK_F8): env::fn_keystate &= ~env::fn8_flag;break;
                 break;
               }
           }

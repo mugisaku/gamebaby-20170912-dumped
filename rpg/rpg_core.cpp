@@ -49,8 +49,6 @@ reset()
 
   map.change_source(bg_image);
 
-  player.point.x = 24*10;
-
   player.sprite.reset(&character_image,0,0,24,32);
 
   player.shapeshift = shapeshift;
@@ -61,9 +59,17 @@ reset()
 }
 
 
+uint8_t   active_keystate = 0b11111000;
+uint8_t  pressed_keystate;
+
+
 void
 step(Controller&  ctrl)
 {
+  active_keystate ^= pressed_keystate&~env::fn_keystate;
+
+  pressed_keystate = env::fn_keystate;
+
   player.step();
 
     if(player.action_q.empty())
@@ -71,6 +77,8 @@ step(Controller&  ctrl)
         if(ctrl.test_pressing(up_flag))
         {
           player.face = Face::back;
+
+          player.square_point.y -= 1;
 
           player.push(move_up);
         }
@@ -80,6 +88,8 @@ step(Controller&  ctrl)
         {
           player.face = Face::left;
 
+          player.square_point.x -= 1;
+
           player.push(move_left);
         }
 
@@ -88,6 +98,8 @@ step(Controller&  ctrl)
         {
           player.face = Face::right;
 
+          player.square_point.x += 1;
+
           player.push(move_right);
         }
 
@@ -95,6 +107,8 @@ step(Controller&  ctrl)
         if(ctrl.test_pressing(down_flag))
         {
           player.face = Face::front;
+
+          player.square_point.y += 1;
 
           player.push(move_down);
         }
@@ -107,15 +121,46 @@ render(Image&  dst)
 {
   dst.fill(1);
 
-  gard0.render(dst);
+    if(active_keystate&env::fn1_flag)
+    {
+      gard0.render(dst);
+    }
 
-  map.render_lower(dst);
 
-  gard1.render(dst);
+    if(active_keystate&env::fn2_flag)
+    {
+      map.render_lower(dst);
+    }
 
-  map.render_upper(dst);
 
-  gard2.render(dst);
+    if(active_keystate&env::fn3_flag)
+    {
+      gard1.render(dst);
+    }
+
+
+    if(active_keystate&env::fn4_flag)
+    {
+      map.render_upper(dst);
+    }
+
+
+    if(active_keystate&env::fn5_flag)
+    {
+      gard2.render(dst);
+    }
+
+
+    if(active_keystate&env::fn6_flag)
+    {
+      auto  pt = player.get_square_point();
+
+        if((pt.x >= 0) && (pt.y >= 0))
+        {
+          dst.rectangle(4|8,24*(pt.x>>1),
+                            24*(pt.y>>1),24,24);
+        }
+    }
 }
 
 

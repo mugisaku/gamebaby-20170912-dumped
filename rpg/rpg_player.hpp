@@ -2,7 +2,6 @@
 #define RPG_PLAYER_HPP
 
 
-#include"rpg_point.hpp"
 #include"gmbb.hpp"
 #include<queue>
 
@@ -61,7 +60,8 @@ Player
   int  action_phase;
   Counter  action_counter;
 
-  Point  point;
+  Point  sprite_point;
+  Point  square_point;
 
   uint32_t  interval_time;
   uint32_t      next_time;
@@ -80,6 +80,9 @@ Player
   void  push(Action  action);
 
   void  step();
+
+  const Point&  get_sprite_point() const;
+  const Point&  get_square_point() const;
 
 };
 
