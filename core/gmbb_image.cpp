@@ -71,23 +71,18 @@ void
 Image::
 compose(const Image&  rhs)
 {
-  auto  dst =           &pixel(0,0);
-  auto  src = &rhs.const_pixel(0,0);
+  const int  w = std::min(width,rhs.get_width());
+  const int  h = std::min(height,rhs.get_height());
 
-  int  n = width*height;
-
-    while(n--)
-    {
-      auto  v = *src++;
+    for(int  y = 0;  y < h;  y += 1){
+    for(int  x = 0;  x < w;  x += 1){
+      auto  v = rhs.const_pixel(x,y);
 
         if(v&8)
         {
-          *dst = v;
+          pixel(x,y) = v;
         }
-
-
-      ++dst;
-    }
+    }}
 }
 
 
@@ -127,7 +122,7 @@ void  Image::fill(uint8_t  v){std::memset(pixels.data(),v,width*height);}
 
 void
 Image::
-transfer(int  src_x, int  src_y, int  src_w, int  src_h, Image&  dst, int  x, int  y) const
+transfer(int  src_x, int  src_y, int  src_w, int  src_h, Image&  dst, int  dst_x, int  dst_y) const
 {
   const int  dst_w = dst.get_width();
   const int  dst_h = dst.get_height();
@@ -138,13 +133,82 @@ transfer(int  src_x, int  src_y, int  src_w, int  src_h, Image&  dst, int  x, in
     if(src_w > dst_w){src_w = dst_w;}
     if(src_h > dst_h){src_h = dst_h;}
 
+    if(dst_x < 0)
+    {
+      const int  diff = -dst_x    ;
+                         dst_x = 0;
+
+        if(diff < src_w)
+        {
+          src_x += diff;
+          src_w -= diff;
+        }
+
+      else
+        {
+          return;
+        }
+    }
+
+
+
+    if(dst_y < 0)
+    {
+      const int  diff = -dst_y    ;
+                         dst_y = 0;
+
+        if(diff < src_h)
+        {
+          src_y += diff;
+          src_h -= diff;
+        }
+
+      else
+        {
+          return;
+        }
+    }
+
+
+    if((dst_x+src_w) >= dst_w)
+    {
+      const int  diff = (dst_x+src_w)-dst_w;
+
+        if(diff < src_w)
+        {
+          src_w -= diff;
+        }
+
+      else
+        {
+          return;
+        }
+    }
+
+
+    if((dst_y+src_h) >= dst_h)
+    {
+      const int  diff = (dst_y+src_h)-dst_h;
+
+        if(diff < src_h)
+        {
+          src_h -= diff;
+        }
+
+      else
+        {
+          return;
+        }
+    }
+
+
     for(int  yy = 0;  yy < src_h;  yy += 1){
     for(int  xx = 0;  xx < src_w;  xx += 1){
       auto  v = const_pixel(src_x+xx,src_y+yy);
 
         if(v&8)
         {
-          dst.dot(v,x+xx,y+yy);
+          dst.dot(v,dst_x+xx,dst_y+yy);
         }
     }}
 }

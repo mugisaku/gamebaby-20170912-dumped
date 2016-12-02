@@ -3,6 +3,7 @@
 
 
 #include"rpg_point.hpp"
+#include"rpg_player.hpp"
 #include"core/gmbb_image.hpp"
 #include<vector>
 
@@ -12,6 +13,14 @@
 namespace gmbb{
 namespace rpg{
 
+
+void     move_up(Player&  pl);
+void   move_left(Player&  pl);
+void  move_right(Player&  pl);
+void   move_down(Player&  pl);
+
+
+void  shapeshift(const Player&  ply, Sprite&  spr);
 
 
 }}

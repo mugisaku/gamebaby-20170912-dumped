@@ -28,8 +28,6 @@ public:
 
   int  get_number() const;
 
-  void  update();
-
   void  render(Image&  dst);
 
 };

@@ -1,4 +1,5 @@
 #include"rpg_core.hpp"
+#include"rpg_routine.hpp"
 #include<SDL_image.h>
 
 
@@ -14,38 +15,12 @@ namespace core{
 namespace{
 
 
-Image  source_image;
+Image         bg_image;
+Image  character_image;
 
 
 SquareMap
 map;
-
-
-bool
-test_qbf(SDL_RWops*  rw)
-{
-  constexpr uint8_t
-  signature[4] =
-  {
-    'Q','B','F',0
-  };
-
-
-  auto  offset = SDL_RWtell(rw);
-
-    for(int  i = 0;  i < 4;  i += 1)
-    {
-      auto  c = SDL_ReadU8(rw);
-
-        if(c != signature[i])
-        {
-          return false;
-        }
-    }
-
-
-  return true;
-}
 
 
 }
@@ -56,13 +31,74 @@ test_qbf(SDL_RWops*  rw)
 const SquareMap&  get_squaremap(){return map;}
 
 
-Image  bg0;
-Image  bg1;
+Player  player;
+
+
+Garden  gard0;
+Garden  gard1;
+Garden  gard2;
+
+
+void
+reset()
+{
+  load_character_image("chr.png");
+  load_bg_image("bg.png");
+
+  map.load("living.qbf");
+
+  map.change_source(bg_image);
+
+  player.point.x = 24*10;
+
+  player.sprite.reset(&character_image,0,0,24,32);
+
+  player.shapeshift = shapeshift;
+
+  player.interval_time = 40;
+
+  gard1.join(player.sprite);
+}
 
 
 void
 step(Controller&  ctrl)
 {
+  player.step();
+
+    if(player.action_q.empty())
+    {
+        if(ctrl.test_pressing(up_flag))
+        {
+          player.face = Face::back;
+
+          player.push(move_up);
+        }
+
+      else
+        if(ctrl.test_pressing(left_flag))
+        {
+          player.face = Face::left;
+
+          player.push(move_left);
+        }
+
+      else
+        if(ctrl.test_pressing(right_flag))
+        {
+          player.face = Face::right;
+
+          player.push(move_right);
+        }
+
+      else
+        if(ctrl.test_pressing(down_flag))
+        {
+          player.face = Face::front;
+
+          player.push(move_down);
+        }
+    }
 }
 
 
@@ -71,11 +107,34 @@ render(Image&  dst)
 {
   dst.fill(1);
 
-  dst.compose(bg0);
-  dst.compose(bg1);
+  gard0.render(dst);
+
+  map.render_lower(dst);
+
+  gard1.render(dst);
+
+  map.render_upper(dst);
+
+  gard2.render(dst);
 }
 
 
+
+
+void
+load_character_image(const char*  path)
+{
+  auto  bmp = IMG_Load(path);
+
+    if(bmp)
+    {
+      auto  p = static_cast<uint8_t*>(bmp->pixels);
+
+      character_image.load(p,bmp->w,bmp->h,bmp->pitch);
+
+      SDL_FreeSurface(bmp);
+    }
+}
 
 
 void
@@ -87,43 +146,9 @@ load_bg_image(const char*  path)
     {
       auto  p = static_cast<uint8_t*>(bmp->pixels);
 
-      source_image.load(p,bmp->w,bmp->h,bmp->pitch);
+      bg_image.load(p,bmp->w,bmp->h,bmp->pitch);
 
       SDL_FreeSurface(bmp);
-    }
-}
-
-
-void
-load_bg_map(const char*  path)
-{
-  auto  rw = SDL_RWFromFile(path,"rb");
-
-    if(rw)
-    {
-        if(test_qbf(rw))
-        {
-          int  w = SDL_ReadU8(rw);
-          int  h = SDL_ReadU8(rw);
-          int  d = SDL_ReadU8(rw);
-
-          map.table.resize(w*h);
-
-            for(int  y = 0;  y < h;  y += 1){
-            for(int  x = 0;  x < w;  x += 1){
-              auto&  sq = map.get(x,y);
-
-              sq.attribute = SDL_ReadU8(rw);
-
-              sq.lower.x = SDL_ReadU8(rw);
-              sq.lower.y = SDL_ReadU8(rw);
-              sq.upper.x = SDL_ReadU8(rw);
-              sq.upper.y = SDL_ReadU8(rw);
-            }}
-        }
-
-
-      SDL_FreeRW(rw);
     }
 }
 

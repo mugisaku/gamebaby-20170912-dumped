@@ -60,7 +60,7 @@ public:
 
   void  compose(const Image&  rhs);
 
-  void  transfer(int  src_x, int  src_y, int  src_w, int  src_h, Image&  dst, int  x, int  y) const;
+  void  transfer(int  src_x, int  src_y, int  src_w, int  src_h, Image&  dst, int  dst_x, int  dst_y) const;
 
 };
 

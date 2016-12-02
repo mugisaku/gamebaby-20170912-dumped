@@ -56,10 +56,11 @@ ifeq ($(delay),1)
 endif
 
 
-OBJ +=                    \
+OBJ +=                   \
   rpg_player.o           \
-  rpg_routine.o           \
-  rpg_core.o            \
+  rpg_squaremap.o        \
+  rpg_routine.o          \
+  rpg_core.o             \
 
 
 all: $(OBJ)

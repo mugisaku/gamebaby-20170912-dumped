@@ -16,12 +16,6 @@
 using namespace gmbb;
 
 
-namespace screen{
-constexpr int  width  = 24*12;
-constexpr int  height = 24*12;
-}
-
-
 SDL_Window*    window;
 SDL_Surface*  surface;
 
@@ -31,7 +25,7 @@ color_table[16];
 
 
 Image
-final_image(screen::width,screen::height);
+final_image(rpg::screen::width,rpg::screen::height);
 
 
 Controller
@@ -69,12 +63,12 @@ transfer()
 
   SDL_LockSurface(surface);
 
-    for(int  y = 0;  y < screen::height;  y += 1)
+    for(int  y = 0;  y < rpg::screen::height;  y += 1)
     {
       auto  ptr = base_ptr           ;
                   base_ptr += pitch*2;
 
-        for(int  x = 0;  x < screen::width;  x += 1)
+        for(int  x = 0;  x < rpg::screen::width;  x += 1)
         {
           auto  pixel = color_table[(*src++)&15];
 
@@ -218,8 +212,8 @@ main(int  argc, char**  argv)
 
   window = SDL_CreateWindow("GAME BABY - " __DATE__,SDL_WINDOWPOS_CENTERED,
                                                     SDL_WINDOWPOS_CENTERED,
-                                                    screen::width*2,
-                                                    screen::height*2,0);
+                                                    rpg::screen::width*2,
+                                                    rpg::screen::height*2,0);
 
   surface = SDL_GetWindowSurface(window);
 
@@ -232,10 +226,7 @@ main(int  argc, char**  argv)
     }
 
 
-  rpg::core::load_bg_image("bg.png");
-  rpg::core::load_bg_map("living.qbf");
-
-
+  rpg::core::reset();
 
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop(main_loop,-1,false);

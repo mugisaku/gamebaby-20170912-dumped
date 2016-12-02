@@ -9,13 +9,8 @@ namespace rpg{
 
 
 
-/*
-Garden  garden;
-Player  player;
-
-
 void
-move_up(rpg::Player&  pl)
+move_up(Player&  pl)
 {
   pl.point.y -= 2;
 
@@ -27,7 +22,7 @@ move_up(rpg::Player&  pl)
 
 
 void
-move_left(rpg::Player&  pl)
+move_left(Player&  pl)
 {
   pl.point.x -= 2;
 
@@ -39,7 +34,7 @@ move_left(rpg::Player&  pl)
 
 
 void
-move_right(rpg::Player&  pl)
+move_right(Player&  pl)
 {
   pl.point.x += 2;
 
@@ -51,7 +46,7 @@ move_right(rpg::Player&  pl)
 
 
 void
-move_down(rpg::Player&  pl)
+move_down(Player&  pl)
 {
   pl.point.y += 2;
 
@@ -63,49 +58,7 @@ move_down(rpg::Player&  pl)
 
 
 void
-operate_player()
-{
-    if(player.action_q.size())
-    {
-      return;
-    }
-
-
-    if(ctrl.test_pressing(up_flag))
-    {
-      player.face = rpg::Face::back;
-
-      player.push(move_up);
-    }
-
-  else
-    if(ctrl.test_pressing(left_flag))
-    {
-      player.face = rpg::Face::left;
-
-      player.push(move_left);
-    }
-
-  else
-    if(ctrl.test_pressing(right_flag))
-    {
-      player.face = rpg::Face::right;
-
-      player.push(move_right);
-    }
-
-  else
-    if(ctrl.test_pressing(down_flag))
-    {
-      player.face = rpg::Face::front;
-
-      player.push(move_down);
-    }
-}
-
-
-void
-shapeshift(const rpg::Player&  ply, Sprite&  spr)
+shapeshift(const Player&  ply, Sprite&  spr)
 {
   constexpr int  bases[] = {0,1,0,2};
 
@@ -118,16 +71,6 @@ shapeshift(const rpg::Player&  ply, Sprite&  spr)
 }
 
 
-
-
-  player.sprite.reset(&chr_img,0,0,24,32);
-
-  player.shapeshift = shapeshift;
-
-  player.interval_time = 40;
-
-  garden.join(player.sprite);
-*/
 
 
 }}
