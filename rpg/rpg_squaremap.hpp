@@ -12,6 +12,12 @@ namespace gmbb{
 namespace rpg{
 
 
+struct Player;
+
+
+constexpr int  noentry_flag = 0x80;
+
+
 struct
 Square
 {
@@ -19,6 +25,10 @@ Square
 
   Point  lower;
   Point  upper;
+
+  Player*  player=nullptr;
+
+  bool  is_enterable() const{return!(attribute&noentry_flag);}
 
 };
 
@@ -39,6 +49,8 @@ public:
 
   void  render_lower(Image&  dst) const;
   void  render_upper(Image&  dst) const;
+
+  void  clear_player();
 
   void  change_source(Image&  img);
 

@@ -8,6 +8,7 @@
 #include"core/gmbb_garden.hpp"
 #include"core/gmbb_message.hpp"
 #include"core/gmbb_font.hpp"
+#include"core/gmbb_formatted.hpp"
 #include"core/gmbb_object.hpp"
 #include"core/gmbb_container.hpp"
 #include"core/gmbb_window.hpp"

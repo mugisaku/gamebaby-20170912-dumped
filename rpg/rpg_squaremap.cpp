@@ -14,6 +14,17 @@ const Square&  SquareMap::get(int  x, int  y) const{return table[(width*y)+x];}
 
 void
 SquareMap::
+clear_player()
+{
+    for(auto&  sq: table)
+    {
+      sq.player = nullptr;
+    }
+}
+
+
+void
+SquareMap::
 render_lower(Image&  dst) const
 {
   auto&  src = *source_image;

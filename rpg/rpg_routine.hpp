@@ -18,6 +18,8 @@ void   move_left(Player&  pl);
 void  move_right(Player&  pl);
 void   move_down(Player&  pl);
 
+void  walk(Player&  pl, const Controller&  ctrl);
+
 
 void  shapeshift(const Player&  ply, Sprite&  spr);
 

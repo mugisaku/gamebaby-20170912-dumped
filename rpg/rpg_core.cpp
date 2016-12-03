@@ -63,6 +63,13 @@ uint8_t   active_keystate = 0b11111000;
 uint8_t  pressed_keystate;
 
 
+bool
+debugging()
+{
+  return active_keystate&env::fn7_flag;
+}
+
+
 void
 step(Controller&  ctrl)
 {
@@ -72,47 +79,7 @@ step(Controller&  ctrl)
 
   player.step();
 
-    if(player.action_q.empty())
-    {
-        if(ctrl.test_pressing(up_flag))
-        {
-          player.face = Face::back;
-
-          player.square_point.y -= 1;
-
-          player.push(move_up);
-        }
-
-      else
-        if(ctrl.test_pressing(left_flag))
-        {
-          player.face = Face::left;
-
-          player.square_point.x -= 1;
-
-          player.push(move_left);
-        }
-
-      else
-        if(ctrl.test_pressing(right_flag))
-        {
-          player.face = Face::right;
-
-          player.square_point.x += 1;
-
-          player.push(move_right);
-        }
-
-      else
-        if(ctrl.test_pressing(down_flag))
-        {
-          player.face = Face::front;
-
-          player.square_point.y += 1;
-
-          player.push(move_down);
-        }
-    }
+  walk(player,ctrl);
 }
 
 
@@ -157,9 +124,25 @@ render(Image&  dst)
 
         if((pt.x >= 0) && (pt.y >= 0))
         {
-          dst.rectangle(4|8,24*(pt.x>>1),
-                            24*(pt.y>>1),24,24);
+          int  x = 24*pt.x;
+          int  y = 24*pt.y;
+
+          dst.rectangle(4|8,x  ,y  ,24,24);
+          dst.rectangle(0|8,x+1,y+1,22,22);
+
+
+          Formatted  fmt;
+
+          dst.print(fmt("attrib"),0|8,0,8);
+          dst.print(fmt("X:%2d",pt.x),0|8,0,16);
+          dst.print(fmt("Y:%2d",pt.y),0|8,0,24);
         }
+    }
+
+
+    if(active_keystate&env::fn7_flag)
+    {
+      dst.print(u"DEBUG",0|8,0,0);
     }
 }
 

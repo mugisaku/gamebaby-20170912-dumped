@@ -1,5 +1,4 @@
 #include"rpg_player.hpp"
-#include"core/gmbb_environment.hpp"
 #include<cstring>
 
 
@@ -15,6 +14,7 @@ Player::
 Player():
 face(0),
 action_phase(0),
+shape_phase(0),
 interval_time(0),
 next_time(0),
 shapeshift(nullptr)
@@ -26,9 +26,20 @@ shapeshift(nullptr)
 
 void
 Player::
-push(Action  action)
+push_action(Action  action)
 {
   action_q.push(action);
+}
+
+
+void
+Player::
+pop_action()
+{
+    if(action_q.size())
+    {
+      action_q.pop();
+    }
 }
 
 
@@ -49,13 +60,6 @@ step()
             if(action_q.size())
             {
               action_q.front()(*this);
-
-              action_counter.value += 1;
-
-                if(!action_phase)
-                {
-                  action_q.pop();
-                }
             }
 
 

@@ -58,7 +58,10 @@ Player
   int  face;
 
   int  action_phase;
+  int   shape_phase;
+
   Counter  action_counter;
+  Counter   shape_counter;
 
   Point  sprite_point;
   Point  square_point;
@@ -77,7 +80,8 @@ Player
 
   Player();
 
-  void  push(Action  action);
+  void  push_action(Action  action);
+  void  pop_action();
 
   void  step();
 
