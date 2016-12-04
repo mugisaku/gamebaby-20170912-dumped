@@ -121,6 +121,7 @@ test_qbf(FILE*  f)
 }
 }
 
+
 void
 SquareMap::
 load(const char*  path)

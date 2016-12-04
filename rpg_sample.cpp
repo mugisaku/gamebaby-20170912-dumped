@@ -111,6 +111,16 @@ quit()
 
 
 void
+load(char*  s)
+{
+  rpg::core::load_bg_image(s);
+  rpg::core::load_bg_map(s);
+
+  SDL_free(s);
+}
+
+
+void
 main_loop()
 {
   static SDL_Event  evt;
@@ -188,6 +198,9 @@ main_loop()
 //               need_to_refresh();
                break;
              }
+           break;
+      case(SDL_DROPFILE):
+           load(evt.drop.file);
            break;
       case(SDL_QUIT):
            quit();

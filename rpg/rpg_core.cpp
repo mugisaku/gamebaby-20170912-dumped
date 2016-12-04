@@ -181,6 +181,13 @@ load_bg_image(const char*  path)
 }
 
 
+void
+load_bg_map(const char*  path)
+{
+  map.load(path);
+}
+
+
 }}}
 
 

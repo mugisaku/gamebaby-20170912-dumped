@@ -136,6 +136,16 @@ void
 Image::
 transfer(int  src_x, int  src_y, int  src_w, int  src_h, Image&  dst, int  dst_x, int  dst_y) const
 {
+  bool  reverse_flag = false;
+
+    if(src_w < 0)
+    {
+      reverse_flag = true;
+
+      src_w = -src_w;
+    }
+
+
   const int  dst_w = dst.get_width();
   const int  dst_h = dst.get_height();
 
@@ -214,15 +224,36 @@ transfer(int  src_x, int  src_y, int  src_w, int  src_h, Image&  dst, int  dst_x
     }
 
 
-    for(int  yy = 0;  yy < src_h;  yy += 1){
-    for(int  xx = 0;  xx < src_w;  xx += 1){
-      auto  v = const_pixel(src_x+xx,src_y+yy);
-
-        if(v&8)
+    for(int  yy = 0;  yy < src_h;  yy += 1)
+    {
+        if(reverse_flag)
         {
-          dst.dot(v,dst_x+xx,dst_y+yy);
+          int  x = src_x+src_w-1;
+
+            for(int  xx = 0;  xx < src_w;  xx += 1)
+            {
+              auto  v = const_pixel(x--,src_y+yy);
+
+                if(v&8)
+                {
+                  dst.dot(v,dst_x+xx,dst_y+yy);
+                }
+            }
         }
-    }}
+
+      else
+        {
+            for(int  xx = 0;  xx < src_w;  xx += 1)
+            {
+              auto  v = const_pixel(src_x+xx,src_y+yy);
+
+                if(v&8)
+                {
+                  dst.dot(v,dst_x+xx,dst_y+yy);
+                }
+            }
+        }
+    }
 }
 
 

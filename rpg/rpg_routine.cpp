@@ -177,12 +177,12 @@ shapeshift(const Player&  ply, Sprite&  spr)
 {
   constexpr int  bases[] = {0,1,0,2};
 
-  spr.source_point.x = (24*bases[ply.shape_phase])+4;
-  spr.source_point.y = (40*ply.face)+4;
-  spr.width  = 16;
-  spr.height = 32;
-  spr.point.x = ply.get_sprite_point().x+4;
-  spr.point.y = ply.get_sprite_point().y-12;
+  spr.source_point.x = (24*bases[ply.shape_phase]);
+  spr.source_point.y = (40*ply.face);
+  spr.width  = -24;
+  spr.height =  40;
+  spr.point.x = ply.get_sprite_point().x;
+  spr.point.y = ply.get_sprite_point().y-24;
 }
 
 
