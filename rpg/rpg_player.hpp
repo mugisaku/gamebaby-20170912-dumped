@@ -16,10 +16,22 @@ constexpr int  front = 0;
 constexpr int   left = 1;
 constexpr int  right = 2;
 constexpr int   back = 3;
+constexpr int  unknown = -1;
+}
+
+
+namespace Direction{
+constexpr int     up = 0;
+constexpr int   left = 1;
+constexpr int  right = 2;
+constexpr int   down = 3;
+constexpr int  unknown = -1;
 }
 
 
 struct Player;
+struct Square;
+struct SquareMap;
 
 
 struct
@@ -55,7 +67,14 @@ Counter
 struct
 Player
 {
+  SquareMap*  map;
+
+  Square*  previous_square;
+  Square*   current_square;
+  Square*      next_square;
+
   int  face;
+  int  direction;
 
   int  action_phase;
   int   shape_phase;
@@ -80,10 +99,21 @@ Player
 
   Player();
 
+  void  change_direction(int  d);
+  void  change_face(int  f);
+
+  void  standby(SquareMap&  map_, int  dir, int  fac, int  x, int  y);
+
   void  push_action(Action  action);
   void  pop_action();
 
   void  step();
+
+  void  advance();
+
+  const Square*  get_previous_square() const;
+  const Square*   get_current_square() const;
+  const Square*      get_next_square() const;
 
   const Point&  get_sprite_point() const;
   const Point&  get_square_point() const;

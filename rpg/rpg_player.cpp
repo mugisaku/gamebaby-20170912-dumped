@@ -1,4 +1,5 @@
 #include"rpg_player.hpp"
+#include"rpg_core.hpp"
 #include<cstring>
 
 
@@ -22,6 +23,56 @@ shapeshift(nullptr)
 }
 
 
+
+
+void
+Player::
+change_direction(int  d)
+{
+  direction = d;
+
+  auto&  x = square_point.x;
+  auto&  y = square_point.y;
+
+    switch(d)
+    {
+  case(Direction::up   ): if(y                        ){next_square = &map->get(x  ,y-1);}break;
+  case(Direction::left ): if(x                        ){next_square = &map->get(x-1,y  );}break;
+  case(Direction::right): if(x < (map->get_width() -1)){next_square = &map->get(x+1,y  );}break;
+  case(Direction::down ): if(y < (map->get_height()-1)){next_square = &map->get(x  ,y+1);}break;
+
+  default:
+      next_square = nullptr;
+    }
+}
+
+
+void
+Player::
+change_face(int  f)
+{
+  face = f;
+}
+
+
+void
+Player::
+standby(SquareMap&  map_, int  dir, int  fac, int  x, int  y)
+{
+  map = &map_;
+
+  change_direction(dir);
+  change_face(fac);
+
+  square_point.x = x;
+  square_point.y = y;
+
+  sprite_point.x = 24*x;
+  sprite_point.y = 24*y;
+
+  previous_square = nullptr;
+  current_square = &map->get(x,y);
+}
 
 
 void
@@ -72,6 +123,53 @@ step()
           shapeshift(*this,sprite);
         }
     }
+}
+
+
+void
+Player::
+advance()
+{
+  previous_square = current_square              ;
+                    current_square = next_square;
+
+  auto&  x = square_point.x;
+  auto&  y = square_point.y;
+
+    switch(direction)
+    {
+  case(Direction::up   ): if(y                        ){next_square = &map->get(x  ,y-1);}break;
+  case(Direction::left ): if(x                        ){next_square = &map->get(x-1,y  );}break;
+  case(Direction::right): if(x < (map->get_width() -1)){next_square = &map->get(x+1,y  );}break;
+  case(Direction::down ): if(y < (map->get_height()-1)){next_square = &map->get(x  ,y+1);}break;
+
+  default:
+      next_square = nullptr;
+    }
+}
+
+
+const Square*
+Player::
+get_previous_square() const
+{
+  return previous_square;
+}
+
+
+const Square*
+Player::
+get_current_square() const
+{
+  return current_square;
+}
+
+
+const Square*
+Player::
+get_next_square() const
+{
+  return next_square;
 }
 
 

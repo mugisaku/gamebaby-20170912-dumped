@@ -22,6 +22,13 @@ move(Player&  pl)
       pl.shape_phase          = 0;
 
       pl.pop_action();
+
+
+      auto  prev = pl.get_previous_square();
+      auto  curr = pl.get_current_square();
+
+        if(prev){prev->get_event()(Trigger::end_to_leave);}
+        if(curr){curr->get_event()(Trigger::end_to_enter);}
     }
 
   else
@@ -78,17 +85,30 @@ walk(Player&  pl, const Controller&  ctrl)
 {
     if(pl.action_q.empty())
     {
+        if(ctrl.test_pressing(p_flag))
+        {
+          auto  next = pl.get_next_square();
+
+            if(next)
+            {
+              next->get_event()(Trigger::press);
+            }
+
+
+         return;
+       }
+
+      else
         if(ctrl.test_pressing(up_flag))
         {
-          pl.face = Face::back;
+          pl.change_direction(Direction::up);
+          pl.change_face(Face::back);
 
             if(!core::debugging())
             {
-              auto&  sqpt = pl.square_point;
+              auto  next = pl.get_next_square();
 
-              auto&  sq = core::get_squaremap().get(sqpt.x,sqpt.y-1);
-
-                if(!sq.is_enterable())
+                if(!next || !next->is_enterable())
                 {
                   return;
                 }
@@ -103,15 +123,14 @@ walk(Player&  pl, const Controller&  ctrl)
       else
         if(ctrl.test_pressing(left_flag))
         {
-          pl.face = Face::left;
+          pl.change_direction(Direction::left);
+          pl.change_face(Face::left);
 
             if(!core::debugging())
             {
-              auto&  sqpt = pl.square_point;
+              auto  next = pl.get_next_square();
 
-              auto&  sq = core::get_squaremap().get(sqpt.x-1,sqpt.y);
-
-                if(!sq.is_enterable())
+                if(!next || !next->is_enterable())
                 {
                   return;
                 }
@@ -126,15 +145,14 @@ walk(Player&  pl, const Controller&  ctrl)
       else
         if(ctrl.test_pressing(right_flag))
         {
-          pl.face = Face::right;
+          pl.change_direction(Direction::right);
+          pl.change_face(Face::right);
 
             if(!core::debugging())
             {
-              auto&  sqpt = pl.square_point;
+              auto  next = pl.get_next_square();
 
-              auto&  sq = core::get_squaremap().get(sqpt.x+1,sqpt.y);
-
-                if(!sq.is_enterable())
+                if(!next || !next->is_enterable())
                 {
                   return;
                 }
@@ -149,15 +167,14 @@ walk(Player&  pl, const Controller&  ctrl)
       else
         if(ctrl.test_pressing(down_flag))
         {
-          pl.face = Face::front;
+          pl.change_direction(Direction::down);
+          pl.change_face(Face::front);
 
             if(!core::debugging())
             {
-              auto&  sqpt = pl.square_point;
+              auto  next = pl.get_next_square();
 
-              auto&  sq = core::get_squaremap().get(sqpt.x,sqpt.y+1);
-
-                if(!sq.is_enterable())
+                if(!next || !next->is_enterable())
                 {
                   return;
                 }
@@ -168,6 +185,20 @@ walk(Player&  pl, const Controller&  ctrl)
 
           pl.push_action(move_down);
         }
+
+      else
+        {
+          return;
+        }
+
+
+      pl.advance();
+
+      auto  prev = pl.get_previous_square();
+      auto  curr = pl.get_current_square();
+
+        if(prev){prev->get_event()(Trigger::begin_to_leave);}
+        if(curr){curr->get_event()(Trigger::begin_to_enter);}
     }
 }
 
@@ -175,14 +206,20 @@ walk(Player&  pl, const Controller&  ctrl)
 void
 shapeshift(const Player&  ply, Sprite&  spr)
 {
-  constexpr int  bases[] = {0,1,0,2};
+  constexpr int  x_bases[] = {0,1,0,2};
+  constexpr int  y_bases[] = {0,1,1,2};
 
-  spr.source_point.x = (24*bases[ply.shape_phase]);
-  spr.source_point.y = (40*ply.face);
-  spr.width  = -24;
+  spr.source_point.x = (24*x_bases[ply.shape_phase]);
+  spr.source_point.y = (40*y_bases[ply.face]);
+  spr.width  =  24;
   spr.height =  40;
   spr.point.x = ply.get_sprite_point().x;
   spr.point.y = ply.get_sprite_point().y-24;
+
+    if(ply.face == Face::right)
+    {
+      spr.width *= -1;
+    }
 }
 
 

@@ -114,7 +114,6 @@ void
 load(char*  s)
 {
   rpg::core::load_bg_image(s);
-  rpg::core::load_bg_map(s);
 
   SDL_free(s);
 }
@@ -262,6 +261,8 @@ main(int  argc, char**  argv)
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop(main_loop,-1,false);
 #else
+  SDL_Delay(40);
+
     for(;;)
     {
       main_loop();

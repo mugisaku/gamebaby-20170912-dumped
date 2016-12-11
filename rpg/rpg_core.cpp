@@ -23,12 +23,41 @@ SquareMap
 map;
 
 
+Event
+event_table[] =
+{
+  Event("nop",[](Trigger  trig){
+    
+  }),
+
+  Event("change scene to main room",[](Trigger  trig){
+      switch(trig)
+      {
+    case(Trigger::begin_to_enter):
+        break;
+    case(Trigger::end_to_enter):
+    report;
+        break;
+    case(Trigger::begin_to_leave):
+        break;
+    case(Trigger::end_to_leave):
+        break;
+    case(Trigger::press):
+        printf("pressed\n");
+        break;
+      }
+  }),
+
+};
+
+
 }
 
 
 
 
 const SquareMap&  get_squaremap(){return map;}
+const Event&  get_event(int  i){return event_table[i];}
 
 
 Player  player;
@@ -52,6 +81,8 @@ reset()
   player.sprite.reset(&character_image,0,0,24,32);
 
   player.shapeshift = shapeshift;
+
+  player.standby(map,Direction::down,Face::front,7,7);
 
   player.interval_time = 40;
 
@@ -133,7 +164,9 @@ render(Image&  dst)
 
           Formatted  fmt;
 
-          dst.print(fmt("attrib"),0|8,0,8);
+          auto  attr = map.get(pt.x,pt.y).attribute;
+
+          dst.print(fmt("attrib: %sent %2d",attr&noentry_flag? "no":"",attr&0x7F),0|8,0,8);
           dst.print(fmt("X:%2d",pt.x),0|8,0,16);
           dst.print(fmt("Y:%2d",pt.y),0|8,0,24);
         }
@@ -178,13 +211,6 @@ load_bg_image(const char*  path)
 
       SDL_FreeSurface(bmp);
     }
-}
-
-
-void
-load_bg_map(const char*  path)
-{
-  map.load(path);
 }
 
 

@@ -23,10 +23,10 @@ namespace core{
 
 
 const SquareMap&  get_squaremap();
+const Event&  get_event(int  i);
 
 void  load_character_image(const char*  path);
 void   load_bg_image(const char*  path);
-void   load_bg_map(const char*  path);
 
 bool  debugging();
 

@@ -1,4 +1,5 @@
 #include"rpg_squaremap.hpp"
+#include"rpg_core.hpp"
 #include<cstdio>
 
 
@@ -7,6 +8,25 @@
 namespace gmbb{
 namespace rpg{
 
+
+bool
+Square::
+is_enterable() const
+{
+  return!(attribute&noentry_flag);
+}
+
+
+const Event&
+Square::
+get_event() const
+{
+  return core::get_event(attribute&0x7F);
+}
+
+
+int  SquareMap::get_width() const{return width;}
+int  SquareMap::get_height() const{return height;}
 
       Square&  SquareMap::get(int  x, int  y){return table[(width*y)+x];}
 const Square&  SquareMap::get(int  x, int  y) const{return table[(width*y)+x];}
