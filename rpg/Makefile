@@ -61,6 +61,10 @@ OBJ +=                   \
   rpg_squaremap.o        \
   rpg_routine.o          \
   rpg_core.o             \
+  rpg_core__private.o             \
+  rpg_core__event_living.o      \
+  rpg_core__event_main.o      \
+  rpg_core__event_bathtoilet.o      \
 
 
 all: $(OBJ)

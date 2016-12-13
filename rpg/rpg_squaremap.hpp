@@ -13,6 +13,7 @@ namespace rpg{
 
 
 struct Player;
+struct Square;
 
 
 
@@ -35,7 +36,7 @@ Event
 {
   const char*  name;
 
-  using Process = void  (*)(Trigger  trig);
+  using Process = void  (*)(Square&  sq, Trigger  trig);
 
   Process  process;
 
@@ -43,7 +44,7 @@ Event
   name(name_),
   process(proc){}
 
-  void  operator()(Trigger  trig) const{if(process){process(trig);}}
+  void  operator()(Square&  sq, Trigger  trig) const{if(process){process(sq,trig);}}
 
 };
 

@@ -35,36 +35,45 @@ struct SquareMap;
 
 
 struct
-Action
-{
-  using Function = void  (*)(Player&  pl);
-
-  Function  function;
-
-  constexpr Action(Function  fn=nullptr):
-  function(fn){}
-
-
-  void  operator()(Player&  pl) const
-  {
-      if(function)
-      {
-        function(pl);
-      }
-  }
-
-};
-
-
-struct
 Counter
 {
-  uint32_t  value=0;
+  uint32_t  value;
+
+  constexpr Counter(uint32_t  v=0): value(v){}
+
+  constexpr operator uint32_t() const{return value;}
 
 };
 
 
 struct
+Context
+{
+  Player&   player;
+  Counter  counter;
+
+  Context(Player&  pl, uint32_t  v=0):
+  player(pl), counter(v){}
+
+  Player*  operator->() const{return &player;}
+
+};
+
+
+using Action = Counter  (*)(Context&  ctx);
+
+
+using flag32_t = uint32_t;
+
+constexpr flag32_t  quiet_flag = 1;
+constexpr flag32_t  facefixed_flag = 2;
+
+
+using Play       = void  (*)(Player&  pl, const Controller&  ctrl);
+using ShapeShift = void  (*)(const Player&  player, Sprite&  spr);
+
+
+class
 Player
 {
   SquareMap*  map;
@@ -72,6 +81,8 @@ Player
   Square*  previous_square;
   Square*   current_square;
   Square*      next_square;
+
+  int  flags;
 
   int  face;
   int  direction;
@@ -95,25 +106,58 @@ Player
   Action   preaction;
   Action  postaction;
 
-  void  (*shapeshift)(const Player&  player, Sprite&  spr);
+  Play        play;
+  ShapeShift  shapeshift;
 
+public:
   Player();
+
+  void  operator()(const Controller&  ctrl);
+
+  void    set_flag(int  v);
+  void  unset_flag(int  v);
+  bool   test_flag(int  v) const;
 
   void  change_direction(int  d);
   void  change_face(int  f);
+  void  turn_direction(int  f);
+
+  void   change_shape_phase(int  v);
+  int  advance_shape_phase(int  v);
+  int      get_shape_phase() const;
+
+  void              reset_shape_counter();
+  const Counter&  advance_shape_counter(int  v);
+  const Counter&      get_shape_counter() const;
+
+  void  move_square_point(int  x, int  y);
+  void  move_sprite_point(int  x, int  y);
+
+  bool  test_whether_busy() const;
+
+  int  get_face() const;
+  int  get_direction() const;
+
+  void  change_interval_time(uint32_t  v);
+  uint32_t  get_interval_time() const;
+
+  void  change_play(Play  cb);
+  void  change_shapeshift(ShapeShift  cb);
 
   void  standby(SquareMap&  map_, int  dir, int  fac, int  x, int  y);
 
-  void  push_action(Action  action);
+  void  push_action(std::initializer_list<Action>  ls);
   void  pop_action();
 
   void  step();
 
   void  advance();
 
-  const Square*  get_previous_square() const;
-  const Square*   get_current_square() const;
-  const Square*      get_next_square() const;
+  Sprite&  get_sprite();
+
+  Square*  get_previous_square() const;
+  Square*   get_current_square() const;
+  Square*      get_next_square() const;
 
   const Point&  get_sprite_point() const;
   const Point&  get_square_point() const;

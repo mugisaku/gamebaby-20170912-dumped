@@ -10,88 +10,123 @@ namespace rpg{
 
 
 
-void
-move(Player&  pl)
+Counter
+move(Context&  ctx)
 {
-  pl.action_counter.value += 1;
+  ctx.counter.value += 1;
 
-    if(pl.action_counter.value >= 12)
+    if(ctx.counter.value >= 12)
     {
-      pl.action_counter.value = 0;
-      pl.shape_counter.value  = 0;
-      pl.shape_phase          = 0;
+      ctx->reset_shape_counter();
+      ctx->change_shape_phase(0);
 
-      pl.pop_action();
+        if(!core::debugging())
+        {
+          auto  prev = ctx->get_previous_square();
+          auto  curr = ctx->get_current_square();
+
+            if(prev){prev->get_event()(*prev,Trigger::end_to_leave);}
+            if(curr){curr->get_event()(*curr,Trigger::end_to_enter);}
+        }
 
 
-      auto  prev = pl.get_previous_square();
-      auto  curr = pl.get_current_square();
-
-        if(prev){prev->get_event()(Trigger::end_to_leave);}
-        if(curr){curr->get_event()(Trigger::end_to_enter);}
+      return 0;
     }
 
   else
     {
-      pl.shape_counter.value += 1;
-
-        if(pl.shape_counter.value >= 3)
+        if(ctx->advance_shape_counter(1) >= 3)
         {
-          pl.shape_counter.value  = 0;
-          pl.shape_phase         += 1;
+          ctx->reset_shape_counter();
+          ctx->advance_shape_phase(1);
         }
     }
+
+
+  return ctx.counter;
 }
 
 
-void
-move_up(Player&  pl)
+Counter
+move_up(Context&  ctx)
 {
-  pl.sprite_point.y -= 2;
+  ctx->move_sprite_point(0,-2);
 
-  move(pl);
+  return move(ctx);
 }
 
 
-void
-move_left(Player&  pl)
+Counter
+move_left(Context&  ctx)
 {
-  pl.sprite_point.x -= 2;
+  ctx->move_sprite_point(-2,0);
 
-  move(pl);
+  return move(ctx);
 }
 
 
-void
-move_right(Player&  pl)
+Counter
+move_right(Context&  ctx)
 {
-  pl.sprite_point.x += 2;
+  ctx->move_sprite_point(2,0);
 
-  move(pl);
+  return move(ctx);
 }
 
 
-void
-move_down(Player&  pl)
+Counter
+move_down(Context&  ctx)
 {
-  pl.sprite_point.y += 2;
+  ctx->move_sprite_point(0,2);
 
-  move(pl);
+  return move(ctx);
 }
 
 
-void
-walk(Player&  pl, const Controller&  ctrl)
+
+
+Counter  turn_to_front(Context&  ctx){  ctx->turn_direction(Face::front);  return 0;}
+Counter   turn_to_left(Context&  ctx){  ctx->turn_direction(Face::left);  return 0;}
+Counter  turn_to_right(Context&  ctx){  ctx->turn_direction(Face::right);  return 0;}
+Counter   turn_to_back(Context&  ctx){  ctx->turn_direction(Face::back);  return 0;}
+
+
+Counter    set_quiet(Context&  ctx){  ctx->set_flag(quiet_flag);  return 0;}
+Counter  unset_quiet(Context&  ctx){  ctx->unset_flag(quiet_flag);  return 0;}
+
+Counter    set_facefixed(Context&  ctx){  ctx->set_flag(facefixed_flag);  return 0;}
+Counter  unset_facefixed(Context&  ctx){  ctx->unset_flag(facefixed_flag);  return 0;}
+
+
+
+
+Counter
+rest(Context&  ctx)
 {
-    if(pl.action_q.empty())
+  ctx.counter.value += 1;
+
+    if(ctx.counter.value >= 8)
     {
-        if(ctrl.test_pressing(p_flag))
+      ctx.counter.value = 0;
+    }
+
+
+  return ctx.counter.value;
+}
+
+
+void
+basic_play(Player&  pl, const Controller&  ctrl)
+{
+    if(!pl.test_whether_busy())
+    {
+        if(ctrl.test_pressed(p_flag))
         {
           auto  next = pl.get_next_square();
 
             if(next)
             {
-              next->get_event()(Trigger::press);
+              next->get_event()(*next,Trigger::press);
             }
 
 
@@ -102,7 +137,12 @@ walk(Player&  pl, const Controller&  ctrl)
         if(ctrl.test_pressing(up_flag))
         {
           pl.change_direction(Direction::up);
-          pl.change_face(Face::back);
+
+            if(!pl.test_flag(facefixed_flag))
+            {
+              pl.change_face(Face::back);
+            }
+
 
             if(!core::debugging())
             {
@@ -115,16 +155,21 @@ walk(Player&  pl, const Controller&  ctrl)
             }
 
 
-          pl.square_point.y -= 1;
+          pl.move_square_point(0,-1);
 
-          pl.push_action(move_up);
+          pl.push_action({move_up});
         }
 
       else
         if(ctrl.test_pressing(left_flag))
         {
           pl.change_direction(Direction::left);
-          pl.change_face(Face::left);
+
+            if(!pl.test_flag(facefixed_flag))
+            {
+              pl.change_face(Face::left);
+            }
+
 
             if(!core::debugging())
             {
@@ -137,16 +182,21 @@ walk(Player&  pl, const Controller&  ctrl)
             }
 
 
-          pl.square_point.x -= 1;
+          pl.move_square_point(-1,0);
 
-          pl.push_action(move_left);
+          pl.push_action({move_left});
         }
 
       else
         if(ctrl.test_pressing(right_flag))
         {
           pl.change_direction(Direction::right);
-          pl.change_face(Face::right);
+
+            if(!pl.test_flag(facefixed_flag))
+            {
+              pl.change_face(Face::right);
+            }
+
 
             if(!core::debugging())
             {
@@ -159,16 +209,21 @@ walk(Player&  pl, const Controller&  ctrl)
             }
 
 
-          pl.square_point.x += 1;
+          pl.move_square_point(1,0);
 
-          pl.push_action(move_right);
+          pl.push_action({move_right});
         }
 
       else
         if(ctrl.test_pressing(down_flag))
         {
           pl.change_direction(Direction::down);
-          pl.change_face(Face::front);
+
+            if(!pl.test_flag(facefixed_flag))
+            {
+              pl.change_face(Face::front);
+            }
+
 
             if(!core::debugging())
             {
@@ -181,9 +236,9 @@ walk(Player&  pl, const Controller&  ctrl)
             }
 
 
-          pl.square_point.y += 1;
+          pl.move_square_point(0,1);
 
-          pl.push_action(move_down);
+          pl.push_action({move_down});
         }
 
       else
@@ -194,11 +249,14 @@ walk(Player&  pl, const Controller&  ctrl)
 
       pl.advance();
 
-      auto  prev = pl.get_previous_square();
-      auto  curr = pl.get_current_square();
+        if(!core::debugging())
+        {
+          auto  prev = pl.get_previous_square();
+          auto  curr = pl.get_current_square();
 
-        if(prev){prev->get_event()(Trigger::begin_to_leave);}
-        if(curr){curr->get_event()(Trigger::begin_to_enter);}
+            if(prev){prev->get_event()(*prev,Trigger::begin_to_leave);}
+            if(curr){curr->get_event()(*curr,Trigger::begin_to_enter);}
+        }
     }
 }
 
@@ -209,14 +267,16 @@ shapeshift(const Player&  ply, Sprite&  spr)
   constexpr int  x_bases[] = {0,1,0,2};
   constexpr int  y_bases[] = {0,1,1,2};
 
-  spr.source_point.x = (24*x_bases[ply.shape_phase]);
-  spr.source_point.y = (40*y_bases[ply.face]);
+  int  x_base = ply.test_flag(quiet_flag)? 0:x_bases[ply.get_shape_phase()];
+
+  spr.source_point.x = (24*x_base);
+  spr.source_point.y = (40*y_bases[ply.get_face()]);
   spr.width  =  24;
   spr.height =  40;
   spr.point.x = ply.get_sprite_point().x;
   spr.point.y = ply.get_sprite_point().y-24;
 
-    if(ply.face == Face::right)
+    if(ply.get_face() == Face::right)
     {
       spr.width *= -1;
     }

@@ -13,12 +13,26 @@ namespace gmbb{
 namespace rpg{
 
 
-void     move_up(Player&  pl);
-void   move_left(Player&  pl);
-void  move_right(Player&  pl);
-void   move_down(Player&  pl);
+Counter     move_up(Context&  ctx);
+Counter   move_left(Context&  ctx);
+Counter  move_right(Context&  ctx);
+Counter   move_down(Context&  ctx);
 
-void  walk(Player&  pl, const Controller&  ctrl);
+Counter  turn_to_front(Context&  ctx);
+Counter   turn_to_left(Context&  ctx);
+Counter  turn_to_right(Context&  ctx);
+Counter   turn_to_back(Context&  ctx);
+
+
+Counter    set_quiet(Context&  ctx);
+Counter  unset_quiet(Context&  ctx);
+
+Counter    set_facefixed(Context&  ctx);
+Counter  unset_facefixed(Context&  ctx);
+
+Counter   rest(Context&  ctx);
+
+void  basic_play(Player&  pl, const Controller&  ctrl);
 
 
 void  shapeshift(const Player&  ply, Sprite&  spr);

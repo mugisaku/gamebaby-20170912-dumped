@@ -1,5 +1,4 @@
-#include"rpg_core.hpp"
-#include"rpg_routine.hpp"
+#include"rpg_core__private.hpp"
 #include<SDL_image.h>
 
 
@@ -15,40 +14,10 @@ namespace core{
 namespace{
 
 
-Image         bg_image;
-Image  character_image;
+const Event*  current_event_table;
 
 
-SquareMap
-map;
-
-
-Event
-event_table[] =
-{
-  Event("nop",[](Trigger  trig){
-    
-  }),
-
-  Event("change scene to main room",[](Trigger  trig){
-      switch(trig)
-      {
-    case(Trigger::begin_to_enter):
-        break;
-    case(Trigger::end_to_enter):
-    report;
-        break;
-    case(Trigger::begin_to_leave):
-        break;
-    case(Trigger::end_to_leave):
-        break;
-    case(Trigger::press):
-        printf("pressed\n");
-        break;
-      }
-  }),
-
-};
+uint32_t  flags;
 
 
 }
@@ -56,16 +25,36 @@ event_table[] =
 
 
 
+bool
+set_flag(Section  section, uint32_t  v)
+{
+    if(!test_flag(section,v))
+    {
+      flags |=  v;
+
+      return true;
+    }
+
+
+  return false;
+}
+
+
+void  unset_flag(Section  section, uint32_t  v){flags &= ~v;}
+bool   test_flag(Section  section, uint32_t  v){return flags&v;}
+
+
 const SquareMap&  get_squaremap(){return map;}
-const Event&  get_event(int  i){return event_table[i];}
+const Event&  get_event(int  i){return current_event_table[i];}
 
 
-Player  player;
+void
+change_current_event(const Event*  evt)
+{
+  current_event_table = evt;
 
-
-Garden  gard0;
-Garden  gard1;
-Garden  gard2;
+  flags = 0;
+}
 
 
 void
@@ -78,15 +67,18 @@ reset()
 
   map.change_source(bg_image);
 
-  player.sprite.reset(&character_image,0,0,24,32);
+  player.get_sprite().reset(&character_image,0,0,24,32);
 
-  player.shapeshift = shapeshift;
+  player.change_play(basic_play);
+  player.change_shapeshift(shapeshift);
 
   player.standby(map,Direction::down,Face::front,7,7);
 
-  player.interval_time = 40;
+  current_event_table = living_event_table;
 
-  gard1.join(player.sprite);
+  player.change_interval_time(40);
+
+  gard1.join(player.get_sprite());
 }
 
 
@@ -108,9 +100,7 @@ step(Controller&  ctrl)
 
   pressed_keystate = env::fn_keystate;
 
-  player.step();
-
-  walk(player,ctrl);
+  player(ctrl);
 }
 
 

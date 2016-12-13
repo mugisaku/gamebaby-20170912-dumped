@@ -25,6 +25,19 @@ namespace core{
 const SquareMap&  get_squaremap();
 const Event&  get_event(int  i);
 
+enum class
+Section
+{
+  temporary = 0,
+};
+
+
+bool    set_flag(Section  section, uint32_t  v);
+void  unset_flag(Section  section, uint32_t  v);
+bool   test_flag(Section  section, uint32_t  v);
+
+void  change_current_event(const Event*  evt);
+
 void  load_character_image(const char*  path);
 void   load_bg_image(const char*  path);
 
