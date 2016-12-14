@@ -35,7 +35,8 @@ Counter   rest(Context&  ctx);
 void  basic_play(Player&  pl, const Controller&  ctrl);
 
 
-void  shapeshift(const Player&  ply, Sprite&  spr);
+void  basic_shapeshift(const Player&  ply, Sprite&  spr);
+void  bathtime_shapeshift(const Player&  ply, Sprite&  spr);
 
 
 }}

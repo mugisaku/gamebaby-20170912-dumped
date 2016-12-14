@@ -262,7 +262,7 @@ basic_play(Player&  pl, const Controller&  ctrl)
 
 
 void
-shapeshift(const Player&  ply, Sprite&  spr)
+basic_shapeshift(const Player&  ply, Sprite&  spr)
 {
   constexpr int  x_bases[] = {0,1,0,2};
   constexpr int  y_bases[] = {0,1,1,2};
@@ -280,6 +280,14 @@ shapeshift(const Player&  ply, Sprite&  spr)
     {
       spr.width *= -1;
     }
+}
+
+
+void
+bathtime_shapeshift(const Player&  ply, Sprite&  spr)
+{
+  spr.point.x = ply.get_sprite_point().x;
+  spr.point.y = ply.get_sprite_point().y-24;
 }
 
 

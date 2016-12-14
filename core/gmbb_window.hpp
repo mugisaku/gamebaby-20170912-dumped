@@ -48,6 +48,8 @@ public:
   WindowState  get_state() const;
   void  set_state(WindowState  st);
 
+  void  process(Controller&  ctrl)  override;
+
   void  update() override;
   void  render(Image&  dst) override;
 

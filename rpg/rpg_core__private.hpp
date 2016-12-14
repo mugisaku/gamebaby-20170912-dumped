@@ -30,9 +30,12 @@ extern Garden  gard1;
 extern Garden  gard2;
 
 
-extern const Event      living_event_table[];
-extern const Event        main_event_table[];
-extern const Event  bathtoilet_event_table[];
+extern const Scene      living_scene;
+extern const Scene        main_scene;
+extern const Scene  bathtoilet_scene;
+
+
+extern Message  message;
 
 
 }}}

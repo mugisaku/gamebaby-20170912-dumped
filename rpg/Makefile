@@ -62,9 +62,9 @@ OBJ +=                   \
   rpg_routine.o          \
   rpg_core.o             \
   rpg_core__private.o             \
-  rpg_core__event_living.o      \
-  rpg_core__event_main.o      \
-  rpg_core__event_bathtoilet.o      \
+  rpg_core__living_scene.o      \
+  rpg_core__main_scene.o      \
+  rpg_core__bathtoilet_scene.o      \
 
 
 all: $(OBJ)

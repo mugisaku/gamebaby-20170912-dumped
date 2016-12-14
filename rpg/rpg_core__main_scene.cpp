@@ -10,8 +10,11 @@ namespace rpg{
 namespace core{
 
 
+namespace{
+
+
 const Event
-main_event_table[] =
+event_table[] =
 {
   Event("nop",[](Square&  sq, Trigger  trig){
     
@@ -25,7 +28,7 @@ main_event_table[] =
     case(Trigger::end_to_enter):
         map.load("living.qbf");
         player.standby(map,Direction::right,Face::right,4,7);
-        change_current_event(living_event_table);
+        change_scene(living_scene);
         break;
     case(Trigger::begin_to_leave):
         break;
@@ -44,7 +47,7 @@ main_event_table[] =
     case(Trigger::end_to_enter):
         map.load("bathtoilet.qbf");
         player.standby(map,Direction::up,Face::back,3,8);
-        change_current_event(bathtoilet_event_table);
+        change_scene(bathtoilet_scene);
         break;
     case(Trigger::begin_to_leave):
         break;
@@ -61,6 +64,74 @@ main_event_table[] =
       }
   }),
 
+
+  Event("cooktop",[](Square&  sq, Trigger  trig){
+      switch(trig)
+      {
+    case(Trigger::press):
+        message.push({
+          u"ガスコンロだ",
+        });
+
+        player.push_action({display_message});
+        break;
+      }
+  }),
+
+
+  Event("water supply",[](Square&  sq, Trigger  trig){
+      switch(trig)
+      {
+    case(Trigger::press):
+        message.push({
+          u"すいどうだ",
+        });
+
+        player.push_action({display_message});
+        break;
+      }
+  }),
+
+
+  Event("washing machine",[](Square&  sq, Trigger  trig){
+      switch(trig)
+      {
+    case(Trigger::press):
+        message.push({
+          u"せんたくきだ",
+        });
+
+        player.push_action({display_message});
+        break;
+      }
+  }),
+
+
+  Event("cardboard box",[](Square&  sq, Trigger  trig){
+      switch(trig)
+      {
+    case(Trigger::press):
+        message.push({
+          u"だんボールばこだ",
+        });
+
+        player.push_action({display_message});
+        break;
+      }
+  }),
+
+};
+
+
+}
+
+
+const Scene
+main_scene
+{
+  "",
+
+  event_table,
 };
 
 

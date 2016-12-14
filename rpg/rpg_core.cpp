@@ -14,10 +14,14 @@ namespace core{
 namespace{
 
 
-const Event*  current_event_table;
+const Scene*  current_scene;
 
 
 uint32_t  flags;
+
+bool  message_display_flag;
+
+Window  message_window(8*30,16*6);
 
 
 }
@@ -45,13 +49,22 @@ bool   test_flag(Section  section, uint32_t  v){return flags&v;}
 
 
 const SquareMap&  get_squaremap(){return map;}
-const Event&  get_event(int  i){return current_event_table[i];}
+const Event&  get_event(int  i){return current_scene->event_table[i];}
+
+
+Counter
+display_message(Context&  ctx)
+{
+  message_display_flag = 1;
+
+  return 0;
+}
 
 
 void
-change_current_event(const Event*  evt)
+change_scene(const Scene&  scn)
 {
-  current_event_table = evt;
+  current_scene = &scn;
 
   flags = 0;
 }
@@ -60,6 +73,11 @@ change_current_event(const Event*  evt)
 void
 reset()
 {
+  message_window.change_point(8*3,8*2);
+
+  message_window.change_content(&message);
+
+
   load_character_image("chr.png");
   load_bg_image("bg.png");
 
@@ -70,11 +88,11 @@ reset()
   player.get_sprite().reset(&character_image,0,0,24,32);
 
   player.change_play(basic_play);
-  player.change_shapeshift(shapeshift);
+  player.change_shapeshift(basic_shapeshift);
 
   player.standby(map,Direction::down,Face::front,7,7);
 
-  current_event_table = living_event_table;
+  current_scene = &living_scene;
 
   player.change_interval_time(40);
 
@@ -100,7 +118,22 @@ step(Controller&  ctrl)
 
   pressed_keystate = env::fn_keystate;
 
-  player(ctrl);
+    if(message_display_flag)
+    {
+      message_window.process(ctrl);
+      message_window.update();
+
+        if(message.is_finished())
+        {
+          message_display_flag = 0;
+        }
+    }
+
+  else
+    {
+      player(ctrl);
+    }
+
 }
 
 
@@ -166,6 +199,12 @@ render(Image&  dst)
     if(active_keystate&env::fn7_flag)
     {
       dst.print(u"DEBUG",0|8,0,0);
+    }
+
+
+    if(message_display_flag)
+    {
+      message_window.render(dst);
     }
 }
 

@@ -26,6 +26,9 @@ Garden  gard1;
 Garden  gard2;
 
 
+Message  message(30,6);
+
+
 }}}
 
 

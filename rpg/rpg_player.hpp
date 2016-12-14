@@ -133,6 +133,9 @@ public:
   void  move_square_point(int  x, int  y);
   void  move_sprite_point(int  x, int  y);
 
+  void  reset_square_point(int  x, int  y);
+  void  reset_sprite_point(int  x, int  y);
+
   bool  test_whether_busy() const;
 
   int  get_face() const;

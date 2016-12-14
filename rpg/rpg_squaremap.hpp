@@ -3,6 +3,7 @@
 
 
 #include"gmbb.hpp"
+#include"rpg_event.hpp"
 #include<vector>
 
 
@@ -16,37 +17,6 @@ struct Player;
 struct Square;
 
 
-
-
-enum class
-Trigger
-{
-  begin_to_enter,
-    end_to_enter,
-  begin_to_leave,
-    end_to_leave,
-
-  press,
-
-};
-
-
-struct
-Event
-{
-  const char*  name;
-
-  using Process = void  (*)(Square&  sq, Trigger  trig);
-
-  Process  process;
-
-  Event(const char*  name_, Process  proc):
-  name(name_),
-  process(proc){}
-
-  void  operator()(Square&  sq, Trigger  trig) const{if(process){process(sq,trig);}}
-
-};
 
 
 constexpr int  noentry_flag = 0x80;

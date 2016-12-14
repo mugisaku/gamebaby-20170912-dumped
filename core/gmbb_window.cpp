@@ -92,6 +92,22 @@ set_state(WindowState  st)
 
 void
 Window::
+process(Controller&  ctrl)
+{
+    switch(state)
+    {
+  case(WindowState::full_opened):
+        if(content)
+        {
+          content->process(ctrl);
+        }
+  default:;
+    }
+}
+
+
+void
+Window::
 update()
 {
     switch(state)

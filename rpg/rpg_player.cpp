@@ -119,6 +119,10 @@ move_sprite_point(int  x, int  y)
 }
 
 
+void  Player::reset_square_point(int  x, int  y){square_point.reset(x,y);}
+void  Player::reset_sprite_point(int  x, int  y){sprite_point.reset(x,y);}
+
+
 bool
 Player::
 test_whether_busy() const
