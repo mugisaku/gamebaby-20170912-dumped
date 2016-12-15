@@ -90,7 +90,7 @@ reset()
   player.change_play(basic_play);
   player.change_shapeshift(basic_shapeshift);
 
-  player.standby(map,Direction::down,Face::front,7,7);
+  player.standby(map,Direction::front,Direction::front,7,7);
 
   current_scene = &living_scene;
 

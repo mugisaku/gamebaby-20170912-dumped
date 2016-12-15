@@ -14,7 +14,8 @@ namespace rpg{
 Player::
 Player():
 flags(0),
-face(0),
+move_direction(0),
+face_direction(0),
 action_phase(0),
 shape_phase(0),
 interval_time(0),
@@ -49,19 +50,19 @@ bool   Player::test_flag(int  v) const{return flags&v;}
 
 void
 Player::
-change_direction(int  d)
+change_move_direction(int  d)
 {
-  direction = d;
+  move_direction = d;
 
   auto&  x = square_point.x;
   auto&  y = square_point.y;
 
     switch(d)
     {
-  case(Direction::up   ): if(y                        ){next_square = &map->get(x  ,y-1);}break;
+  case(Direction::back ): if(y                        ){next_square = &map->get(x  ,y-1);}break;
   case(Direction::left ): if(x                        ){next_square = &map->get(x-1,y  );}break;
   case(Direction::right): if(x < (map->get_width() -1)){next_square = &map->get(x+1,y  );}break;
-  case(Direction::down ): if(y < (map->get_height()-1)){next_square = &map->get(x  ,y+1);}break;
+  case(Direction::front): if(y < (map->get_height()-1)){next_square = &map->get(x  ,y+1);}break;
 
   default:
       next_square = nullptr;
@@ -71,34 +72,27 @@ change_direction(int  d)
 
 void
 Player::
-change_face(int  f)
+change_face_direction(int  d)
 {
-  face = f;
+  face_direction = d;
 }
 
 
 void
 Player::
-turn_direction(int  f)
+turn_direction(int  d)
 {
-  int  d = Direction::unknown;
+  change_move_direction(d);
 
-    switch(f)
+    if(!test_flag(facefixed_flag))
     {
-  case(Face::front): d = Direction::down;break;
-  case(Face::left ): d = Direction::left;break;
-  case(Face::right): d = Direction::right;break;
-  case(Face::back ): d = Direction::up;break;
+      change_face_direction(d);
     }
-
-
-  change_face(f);
-  change_direction(d);
 }
 
 
-int  Player::get_face() const{return face;}
-int  Player::get_direction() const{return direction;}
+int  Player::get_face_direction() const{return face_direction;}
+int  Player::get_move_direction() const{return move_direction;}
 
 
 void
@@ -151,12 +145,12 @@ void  Player::change_shapeshift(ShapeShift  cb){shapeshift = cb;}
 
 void
 Player::
-standby(SquareMap&  map_, int  dir, int  fac, int  x, int  y)
+standby(SquareMap&  map_, int  mov_dir, int  fac_dir, int  x, int  y)
 {
   map = &map_;
 
-  change_direction(dir);
-  change_face(fac);
+  change_move_direction(mov_dir);
+  change_face_direction(fac_dir);
 
   square_point.x = x;
   square_point.y = y;
@@ -247,12 +241,12 @@ advance()
   auto&  x = square_point.x;
   auto&  y = square_point.y;
 
-    switch(direction)
+    switch(move_direction)
     {
-  case(Direction::up   ): if(y                        ){next_square = &map->get(x  ,y-1);}break;
+  case(Direction::back ): if(y                        ){next_square = &map->get(x  ,y-1);}break;
   case(Direction::left ): if(x                        ){next_square = &map->get(x-1,y  );}break;
   case(Direction::right): if(x < (map->get_width() -1)){next_square = &map->get(x+1,y  );}break;
-  case(Direction::down ): if(y < (map->get_height()-1)){next_square = &map->get(x  ,y+1);}break;
+  case(Direction::front): if(y < (map->get_height()-1)){next_square = &map->get(x  ,y+1);}break;
 
   default:
       next_square = nullptr;

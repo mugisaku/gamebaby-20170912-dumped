@@ -13,10 +13,15 @@ namespace gmbb{
 namespace rpg{
 
 
-Counter     move_up(Context&  ctx);
-Counter   move_left(Context&  ctx);
-Counter  move_right(Context&  ctx);
-Counter   move_down(Context&  ctx);
+Counter  move_to_front(Context&  ctx);
+Counter   move_to_left(Context&  ctx);
+Counter  move_to_right(Context&  ctx);
+Counter   move_to_back(Context&  ctx);
+
+Counter  walk_to_front(Context&  ctx);
+Counter   walk_to_left(Context&  ctx);
+Counter  walk_to_right(Context&  ctx);
+Counter   walk_to_back(Context&  ctx);
 
 Counter  turn_to_front(Context&  ctx);
 Counter   turn_to_left(Context&  ctx);

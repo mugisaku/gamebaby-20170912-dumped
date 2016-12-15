@@ -11,20 +11,13 @@ namespace rpg{
 
 
 
-namespace Face{
+namespace Direction{
 constexpr int  front = 0;
 constexpr int   left = 1;
 constexpr int  right = 2;
 constexpr int   back = 3;
-constexpr int  unknown = -1;
-}
-
-
-namespace Direction{
-constexpr int     up = 0;
-constexpr int   left = 1;
-constexpr int  right = 2;
-constexpr int   down = 3;
+constexpr int     up = 4;
+constexpr int   down = 5;
 constexpr int  unknown = -1;
 }
 
@@ -84,8 +77,8 @@ Player
 
   int  flags;
 
-  int  face;
-  int  direction;
+  int  face_direction;
+  int  move_direction;
 
   int  action_phase;
   int   shape_phase;
@@ -118,9 +111,9 @@ public:
   void  unset_flag(int  v);
   bool   test_flag(int  v) const;
 
-  void  change_direction(int  d);
-  void  change_face(int  f);
-  void  turn_direction(int  f);
+  void  change_face_direction(int  d);
+  void  change_move_direction(int  d);
+  void  turn_direction(int  d);
 
   void   change_shape_phase(int  v);
   int  advance_shape_phase(int  v);
@@ -138,8 +131,8 @@ public:
 
   bool  test_whether_busy() const;
 
-  int  get_face() const;
-  int  get_direction() const;
+  int  get_face_direction() const;
+  int  get_move_direction() const;
 
   void  change_interval_time(uint32_t  v);
   uint32_t  get_interval_time() const;
@@ -147,7 +140,7 @@ public:
   void  change_play(Play  cb);
   void  change_shapeshift(ShapeShift  cb);
 
-  void  standby(SquareMap&  map_, int  dir, int  fac, int  x, int  y);
+  void  standby(SquareMap&  map_, int  mov_dir, int  fac_dir, int  x, int  y);
 
   void  push_action(std::initializer_list<Action>  ls);
   void  pop_action();

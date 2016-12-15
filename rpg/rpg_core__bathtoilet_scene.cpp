@@ -27,7 +27,7 @@ getin_to_bath(Context&  ctx)
 
   ctx->change_shapeshift(bathtime_shapeshift);
 
-  ctx->get_sprite().height -= 8;
+  ctx->get_sprite().height -= 12;
 
   ctx->change_interval_time(120);
  
@@ -40,14 +40,14 @@ submerge(Context&  ctx)
 {
   ctx.counter.value += 1;
 
-    if(ctx.counter < 16)
+    if(ctx.counter < 12)
     {
       ctx->move_sprite_point(0,1);
       ctx->get_sprite().height  -= 1;
     }
 
 
-    if(ctx.counter >= 32)
+    if(ctx.counter >= 24)
     {
       ctx.counter.value = 0;
     }
@@ -93,7 +93,7 @@ event_table[] =
         break;
     case(Trigger::end_to_enter):
         map.load("main.qbf");
-        player.standby(map,Direction::down,Face::front,8,7);
+        player.standby(map,Direction::front,Direction::front,8,7);
         change_scene(main_scene);
         break;
     case(Trigger::begin_to_leave):
@@ -113,9 +113,28 @@ event_table[] =
           turn_to_front,
           set_quiet,
           set_facefixed,
-          move_up,
+          move_to_back,
+          move_to_back,
+          move_to_back,
+          move_to_back,
+          move_to_back,
+          move_to_back,
+          move_to_back,
+          move_to_back,
+          move_to_back,
+          move_to_back,
+          rest,
           display_message,
-          move_down,
+          move_to_front,
+          move_to_front,
+          move_to_front,
+          move_to_front,
+          move_to_front,
+          move_to_front,
+          move_to_front,
+          move_to_front,
+          move_to_front,
+          move_to_front,
           unset_quiet,
           unset_facefixed,
         });
@@ -128,6 +147,7 @@ event_table[] =
 
       switch(trig)
       {
+    case(Trigger::press):
         player.push_action({
           turn_to_front,
           getin_to_bath,
