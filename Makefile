@@ -3,8 +3,8 @@ BASE_DIR = /usr/local
 
 
 
-CXXFLAGS = -std=gnu++11 -I. -Icbes -I/usr/include/SDL2  -Werror -Wno-unused-result
-
+CXXFLAGS = -std=gnu++11 -I. -I/usr/include/SDL2  -Werror -Wno-unused-result
+LDFLAGS  = -lz -lpng -lSDL2_image -lSDL2 -lSDL2main
 
 ifeq ($(opt),1)
   CXXFLAGS += -Os -march=i686 -fomit-frame-pointer
@@ -21,9 +21,9 @@ ifeq ($(mingw),1)
   EXE_EXT = .exe
   DIR_PREFIX = i686-w64-mingw32
   CMD_PREFIX = $(DIR_PREFIX)-
-  LDFLAGS = $(COMMON_LDFLAGS) -lmingw32 -static
+  LDFLAGS += $(COMMON_LDFLAGS) -lmingw32 -static
 else
-  LDFLAGS = $(COMMON_LDFLAGS)
+  LDFLAGS += $(COMMON_LDFLAGS)
 endif
 
 
@@ -31,9 +31,9 @@ endif
 
 ifeq ($(emcc),1)
   CXX      = CCACHE_DIR=/tmp/ccachedir ccache emcc
-  CXXFLAGS = -std=gnu++11 -I. -Icbes -Werror -Wno-unused-result -O2 -s USE_SDL=2
+  CXXFLAGS = -std=gnu++11 -I. -I/usr/include/SDL2 -Werror -Wno-unused-result -O2 -s USE_SDL=2 -s USE_ZLIB=1 -s USE_LIBPNG=1
   EXE_EXT  = .html
-  LDFLAGS  = --shell-file shell.html  --memory-init-file 0
+  LDFLAGS  = --embed-file data.bin
 else ifeq ($(ccache),1)
   CXX = CCACHE_DIR=/tmp/ccachedir ccache $(CMD_PREFIX)g++
 else
@@ -63,14 +63,14 @@ clean:
 	make -C core     clean
 	make -C text_adv clean
 	make -C rpg clean
-	rm -f ta_sample$(EXE_EXT) rpg_sample$(EXE_EXT)
+	rm -f ta_sample$(EXE_EXT) rpg_sample$(EXE_EXT) *.js *.html *.mem
 
 
 ta_sample$(EXE_EXT): core text_adv ta_sample.cpp
-	$(CXX) -o $@  ta_sample.cpp core/*.o text_adv/*.o $(CXXFLAGS) $(LDFLAGS) -lSDL2_image -lSDL2 -lSDL2main
+	$(CXX) -o $@  ta_sample.cpp core/*.o text_adv/*.o $(CXXFLAGS) $(LDFLAGS)
 
 rpg_sample$(EXE_EXT): core rpg rpg_sample.cpp
-	$(CXX) -o $@  rpg_sample.cpp core/*.o rpg/*.o $(CXXFLAGS) $(LDFLAGS) -lSDL2_image -lSDL2 -lSDL2main
+	$(CXX) -o $@  rpg_sample.cpp core/*.o rpg/*.o $(CXXFLAGS) $(LDFLAGS)
 
 
 

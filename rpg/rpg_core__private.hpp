@@ -18,6 +18,8 @@ namespace core{
 extern Image         bg_image;
 extern Image  character_image;
 
+extern Media media;
+
 
 extern SquareMap  map;
 
@@ -36,6 +38,9 @@ extern const Scene  bathtoilet_scene;
 
 
 extern Message  message;
+
+
+File*  load_file(const char*  path);
 
 
 }}}

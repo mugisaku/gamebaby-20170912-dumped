@@ -65,7 +65,7 @@ public:
 
   void  change_source(Image&  img);
 
-  void  load(const char*  path);
+  void  load(const File*  f);
 
 };
 

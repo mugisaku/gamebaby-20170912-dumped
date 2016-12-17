@@ -92,7 +92,7 @@ event_table[] =
     case(Trigger::begin_to_enter):
         break;
     case(Trigger::end_to_enter):
-        map.load("main.qbf");
+        map.load(load_file("data/main.qbf"));
         player.standby(map,Direction::front,Direction::front,8,7);
         change_scene(main_scene);
         break;
@@ -100,6 +100,7 @@ event_table[] =
         break;
     case(Trigger::end_to_leave):
         break;
+    default:;
       }
   }),
 
@@ -139,6 +140,7 @@ event_table[] =
           unset_facefixed,
         });
         break;
+    default:;
       }
   }),
 
@@ -157,6 +159,7 @@ event_table[] =
           getout_from_bath,
         });
         break;
+    default:;
       }
   }),
 

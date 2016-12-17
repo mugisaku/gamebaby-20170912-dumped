@@ -3,6 +3,7 @@
 
 
 #include"core/gmbb_controller.hpp"
+#include"core/gmbb_media.hpp"
 #include"core/gmbb_image.hpp"
 #include"core/gmbb_sprite.hpp"
 #include"core/gmbb_garden.hpp"

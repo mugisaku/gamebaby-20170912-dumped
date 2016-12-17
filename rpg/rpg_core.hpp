@@ -42,8 +42,8 @@ void  change_scene(const Scene&  scn);
 
 Counter  display_message(Context&  ctx);
 
-void  load_character_image(const char*  path);
-void   load_bg_image(const char*  path);
+void  load_character_image(const File*  f);
+void   load_bg_image(const File*  f);
 
 bool  debugging();
 

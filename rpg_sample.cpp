@@ -2,7 +2,6 @@
 #include"rpg/rpg_core.hpp"
 #include"rpg/rpg_player.hpp"
 #include<SDL.h>
-#include<SDL_image.h>
 #include<cstdlib>
 
 
@@ -103,7 +102,6 @@ quit()
 {
   SDL_DestroyWindow(window);
 
-  IMG_Quit();
   SDL_Quit();
 
   std::exit(0);
@@ -113,8 +111,6 @@ quit()
 void
 load(char*  s)
 {
-  rpg::core::load_bg_image(s);
-
   SDL_free(s);
 }
 
@@ -238,7 +234,6 @@ int
 main(int  argc, char**  argv)
 {
   SDL_Init(SDL_INIT_VIDEO);
-  IMG_Init(IMG_INIT_PNG);
 
   window = SDL_CreateWindow("GAME BABY - " __DATE__,SDL_WINDOWPOS_CENTERED,
                                                     SDL_WINDOWPOS_CENTERED,

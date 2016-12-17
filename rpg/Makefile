@@ -31,9 +31,9 @@ endif
 
 ifeq ($(emcc),1)
   CXX      = CCACHE_DIR=/tmp/ccachedir ccache emcc
-  CXXFLAGS = -std=gnu++11 -I. -I.. -Werror -Wno-unused-result -O2 -s USE_SDL=2
+  CXXFLAGS = -std=gnu++11 -I. -I.. -I/usr/include/SDL2 -Werror -Wno-unused-result -O2 -s USE_SDL=2
   EXE_EXT  = .html
-  LDFLAGS  = --shell-file shell.html  --memory-init-file 0
+  LDFLAGS  =
 else ifeq ($(ccache),1)
   CXX = CCACHE_DIR=/tmp/ccachedir ccache $(CMD_PREFIX)g++
 else

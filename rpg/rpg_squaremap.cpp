@@ -117,7 +117,7 @@ change_source(Image&  img)
 
 namespace{
 bool
-test_qbf(FILE*  f)
+test_qbf(FileReader&  r)
 {
   constexpr uint8_t
   signature[4] =
@@ -128,7 +128,7 @@ test_qbf(FILE*  f)
 
     for(int  i = 0;  i < 4;  i += 1)
     {
-      auto  c = fgetc(f);
+      auto  c = r.get();
 
         if(c != signature[i])
         {
@@ -144,17 +144,17 @@ test_qbf(FILE*  f)
 
 void
 SquareMap::
-load(const char*  path)
+load(const File*  f)
 {
-  auto  f = fopen(path,"rb");
-
     if(f)
     {
-        if(test_qbf(f))
+      auto  r = f->reader();
+
+        if(test_qbf(r))
         {
-          int  w = fgetc(f);
-          int  h = fgetc(f);
-          int  d = fgetc(f);
+          int  w = r.get();
+          int  h = r.get();
+          int  d = r.get();
 
           width  = w;
           height = h;
@@ -165,17 +165,14 @@ load(const char*  path)
             for(int  x = 0;  x < w;  x += 1){
               auto&  sq = get(x,y);
 
-              sq.attribute = fgetc(f);
+              sq.attribute = r.get();
 
-              sq.lower.x = fgetc(f);
-              sq.lower.y = fgetc(f);
-              sq.upper.x = fgetc(f);
-              sq.upper.y = fgetc(f);
+              sq.lower.x = r.get();
+              sq.lower.y = r.get();
+              sq.upper.x = r.get();
+              sq.upper.y = r.get();
             }}
         }
-
-
-      fclose(f);
     }
 }
 

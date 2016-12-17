@@ -26,7 +26,7 @@ event_table[] =
     case(Trigger::begin_to_enter):
         break;
     case(Trigger::end_to_enter):
-        map.load("main.qbf");
+        map.load(load_file("data/main.qbf"));
         player.standby(map,Direction::left,Direction::left,8,7);
         change_scene(main_scene);
         break;
@@ -53,6 +53,7 @@ event_table[] =
 
         player.push_action({display_message});
         break;
+    default:;
       }
   }),
 
@@ -70,6 +71,7 @@ event_table[] =
 
         player.push_action({display_message});
         break;
+    default:;
       }
   }),
 
@@ -89,6 +91,7 @@ event_table[] =
 
         player.push_action({display_message});
         break;
+    default:;
       }
   }),
 

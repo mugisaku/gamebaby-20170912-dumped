@@ -3,7 +3,7 @@ BASE_DIR = /usr/local
 
 
 
-CXXFLAGS = -std=gnu++11 -I. -Werror -Wno-unused-result
+CXXFLAGS = -std=gnu++11 -I. -I/usr/include -Werror -Wno-unused-result
 
 
 ifeq ($(opt),1)
@@ -31,9 +31,9 @@ endif
 
 ifeq ($(emcc),1)
   CXX      = CCACHE_DIR=/tmp/ccachedir ccache emcc
-  CXXFLAGS = -std=gnu++11 -I. -Werror -Wno-unused-result -O2 -s USE_SDL=2
+  CXXFLAGS = -std=gnu++11 -I. -Werror -Wno-unused-result -O2 -s USE_SDL=2 -s USE_ZLIB=1 -s USE_LIBPNG=1
   EXE_EXT  = .html
-  LDFLAGS  = --shell-file shell.html  --memory-init-file 0
+  LDFLAGS  =
 else ifeq ($(ccache),1)
   CXX = CCACHE_DIR=/tmp/ccachedir ccache $(CMD_PREFIX)g++
 else
@@ -57,6 +57,10 @@ endif
 
 
 OBJ +=                    \
+  gmbb_filereader.o       \
+  gmbb_file.o             \
+  gmbb_filewriter.o       \
+  gmbb_media.o            \
   gmbb_formatted.o        \
   gmbb_image.o            \
   gmbb_image__print.o     \

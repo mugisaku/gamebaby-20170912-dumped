@@ -1,5 +1,4 @@
 #include"rpg_core__private.hpp"
-#include<SDL_image.h>
 
 
 
@@ -78,10 +77,10 @@ reset()
   message_window.change_content(&message);
 
 
-  load_character_image("chr.png");
-  load_bg_image("bg.png");
+  load_character_image(load_file("data/chr.png"));
+  load_bg_image(load_file("data/bg.png"));
 
-  map.load("living.qbf");
+  map.load(load_file("data/living.qbf"));
 
   map.change_source(bg_image);
 
@@ -212,33 +211,25 @@ render(Image&  dst)
 
 
 void
-load_character_image(const char*  path)
+load_character_image(const File*  f)
 {
-  auto  bmp = IMG_Load(path);
-
-    if(bmp)
+    if(f)
     {
-      auto  p = static_cast<uint8_t*>(bmp->pixels);
-
-      character_image.load(p,bmp->w,bmp->h,bmp->pitch);
-
-      SDL_FreeSurface(bmp);
+      auto  r = f->reader();
+ 
+      character_image.load(r);
     }
 }
 
 
 void
-load_bg_image(const char*  path)
+load_bg_image(const File*  f)
 {
-  auto  bmp = IMG_Load(path);
-
-    if(bmp)
+    if(f)
     {
-      auto  p = static_cast<uint8_t*>(bmp->pixels);
+      auto  r = f->reader();
 
-      bg_image.load(p,bmp->w,bmp->h,bmp->pitch);
-
-      SDL_FreeSurface(bmp);
+      bg_image.load(r);
     }
 }
 

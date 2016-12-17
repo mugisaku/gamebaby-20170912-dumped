@@ -26,7 +26,7 @@ event_table[] =
     case(Trigger::begin_to_enter):
         break;
     case(Trigger::end_to_enter):
-        map.load("living.qbf");
+        map.load(load_file("data/living.qbf"));
         player.standby(map,Direction::right,Direction::right,4,7);
         change_scene(living_scene);
         break;
@@ -45,7 +45,7 @@ event_table[] =
     case(Trigger::begin_to_enter):
         break;
     case(Trigger::end_to_enter):
-        map.load("bathtoilet.qbf");
+        map.load(load_file("data/bathtoilet.qbf"));
         player.standby(map,Direction::back,Direction::back,3,8);
         change_scene(bathtoilet_scene);
         break;
@@ -61,6 +61,7 @@ event_table[] =
             ((&sq)-map.get_width())->lower.x += 4;
           }
         break;
+    default:;
       }
   }),
 
@@ -76,6 +77,7 @@ event_table[] =
 
         player.push_action({display_message});
         break;
+    default:;
       }
   }),
 
@@ -92,6 +94,7 @@ event_table[] =
 
         player.push_action({display_message});
         break;
+    default:;
       }
   }),
 
@@ -108,6 +111,7 @@ event_table[] =
 
         player.push_action({display_message});
         break;
+    default:;
       }
   }),
 
@@ -123,6 +127,7 @@ event_table[] =
 
         player.push_action({display_message});
         break;
+    default:;
       }
   }),
 

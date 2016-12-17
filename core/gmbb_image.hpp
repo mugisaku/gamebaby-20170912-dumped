@@ -6,6 +6,7 @@
 #include<vector>
 #include<string>
 #include"gmbb_font.hpp"
+#include"gmbb_media.hpp"
 #include"gmbb_printpoint.hpp"
 
 
@@ -36,6 +37,9 @@ public:
   void  resize(int  w, int  h);
 
   void  load(const uint8_t*  src, int  w, int  h, int  pitch);
+  void  load(FileReader&  r);
+
+  File  to_file() const;
 
   int  get_width() const;
   int  get_height() const;
