@@ -40,7 +40,7 @@ extern const Scene  bathtoilet_scene;
 extern Message  message;
 
 
-File*  load_file(const char*  path);
+const File*  load_file(const char*  path);
 
 
 }}}

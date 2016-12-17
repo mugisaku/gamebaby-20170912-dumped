@@ -1,4 +1,5 @@
 #include"gmbb.hpp"
+#include<cstring>
 
 
 
@@ -18,9 +19,52 @@ main(int  argc, char**  argv)
     {
       auto  path = *argv++;
 
-      media.append(FilePath(path));
+      File  f(path,File::get_content_from(path));
 
-      printf("append %s\n",path);
+      auto  p = std::strchr(path,'.');
+
+        if(p && (std::strncmp(p+1,"png",3) == 0))
+        {
+          char  buf[256];
+
+          char*  dst = buf;
+
+          const char*   src_it = path;
+          const char*  src_end = p+1;
+
+            while(src_it < src_end)
+            {
+              *dst++ = *src_it++;
+            }
+
+
+          *dst++ = 'm';
+          *dst++ = 'g';
+          *dst++ = 'f';
+          *dst   = '\0';
+
+
+          Image  img;
+
+          auto  r = f.reader();
+
+          img.load_png(r);
+
+          FileWriter  w;
+
+          img.save_mgf(w);
+
+          w.change_name(buf);
+
+          f = static_cast<File&&>(w);
+        }
+
+
+      media.append(std::move(f));
+
+      auto  bk = media->back();
+
+      printf("append %s %d bytes\n",bk.get_name().data(),bk->size());
     }
 
 

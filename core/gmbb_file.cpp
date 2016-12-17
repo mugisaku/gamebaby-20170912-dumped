@@ -1,5 +1,6 @@
 #include"gmbb_file.hpp"
 #include<cstdio>
+#include<zlib.h>
 
 
 
@@ -83,29 +84,56 @@ reader() const
 
 std::string
 File::
-get_content_from(const char*  path)
+get_content_from(const char*  path, bool  use_zlib)
 {
   std::string  s;
 
-  auto  f = fopen(path,"rb");
-
-    if(f)
+    if(use_zlib)
     {
-        for(;;)
-        {
-          auto  c = fgetc(f);
+      auto  gz = gzopen(path,"rb");
 
-            if(feof(f))
+        if(gz)
+        {
+            for(;;)
             {
-              break;
+              auto  c = gzgetc(gz);
+
+                if(gzeof(gz))
+                {
+                  break;
+                }
+
+
+              s.push_back(c);
             }
 
 
-          s.push_back(c);
+          gzclose(gz);
         }
+    }
+
+  else
+    {
+      auto  f = fopen(path,"rb");
+
+        if(f)
+        {
+            for(;;)
+            {
+              auto  c = fgetc(f);
+
+                if(feof(f))
+                {
+                  break;
+                }
 
 
-      fclose(f);
+              s.push_back(c);
+            }
+
+
+          fclose(f);
+        }
     }
 
 
@@ -115,19 +143,38 @@ get_content_from(const char*  path)
 
 void
 File::
-put_content_to(const char*  path, const std::string&  content)
+put_content_to(const char*  path, const std::string&  content, bool  use_zlib)
 {
-  auto  f = fopen(path,"wb");
-
-    if(f)
+    if(use_zlib)
     {
-        for(auto  c: content)
+      auto  gz = gzopen(path,"wb");
+
+        if(gz)
         {
-          fputc(c,f);
+            for(auto  c: content)
+            {
+              gzputc(gz,c);
+            }
+
+
+          gzclose(gz);
         }
+    }
+
+  else
+    {
+      auto  f = fopen(path,"wb");
+
+        if(f)
+        {
+            for(auto  c: content)
+            {
+              fputc(c,f);
+            }
 
 
-      fclose(f);
+          fclose(f);
+        }
     }
 }
 

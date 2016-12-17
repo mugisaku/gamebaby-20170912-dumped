@@ -77,8 +77,8 @@ reset()
   message_window.change_content(&message);
 
 
-  load_character_image(load_file("data/chr.png"));
-  load_bg_image(load_file("data/bg.png"));
+  load_character_image(load_file("data/chr.mgf"));
+  load_bg_image(load_file("data/bg.mgf"));
 
   map.load(load_file("data/living.qbf"));
 
@@ -217,7 +217,7 @@ load_character_image(const File*  f)
     {
       auto  r = f->reader();
  
-      character_image.load(r);
+      character_image.load_mgf(r);
     }
 }
 
@@ -229,7 +229,7 @@ load_bg_image(const File*  f)
     {
       auto  r = f->reader();
 
-      bg_image.load(r);
+      bg_image.load_mgf(r);
     }
 }
 

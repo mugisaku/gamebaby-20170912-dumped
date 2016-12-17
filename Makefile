@@ -31,7 +31,7 @@ endif
 
 ifeq ($(emcc),1)
   CXX      = CCACHE_DIR=/tmp/ccachedir ccache emcc
-  CXXFLAGS = -std=gnu++11 -I. -I/usr/include/SDL2 -Werror -Wno-unused-result -O2 -s USE_SDL=2 -s USE_ZLIB=1 -s USE_LIBPNG=1
+  CXXFLAGS = -std=gnu++11 -I. -I/usr/include/SDL2 -Werror -Wno-unused-result -O2 -s USE_SDL=2 -s USE_ZLIB=1
   EXE_EXT  = .html
   LDFLAGS  = --embed-file data.bin
 else ifeq ($(ccache),1)
@@ -56,14 +56,27 @@ ifeq ($(delay),1)
 endif
 
 
-all: ta_sample$(EXE_EXT) rpg_sample$(EXE_EXT)
+all: data.bin ta_sample$(EXE_EXT) rpg_sample$(EXE_EXT)
 
 
 clean:
 	make -C core     clean
 	make -C text_adv clean
 	make -C rpg clean
-	rm -f ta_sample$(EXE_EXT) rpg_sample$(EXE_EXT) *.js *.html *.mem
+	rm -f ta_sample$(EXE_EXT) rpg_sample$(EXE_EXT) *.js *.html *.mem makedata.o makedata data.bin
+
+
+.PHONY: core text_adv rpg data.bin
+
+
+ifeq ($(emcc),1)
+else
+makedata: core makedata.cpp
+	$(CXX) -o $@  makedata.cpp core/*.o $(CXXFLAGS) $(LDFLAGS)
+
+data.bin: makedata
+	./makedata data/*
+endif
 
 
 ta_sample$(EXE_EXT): core text_adv ta_sample.cpp
@@ -72,9 +85,6 @@ ta_sample$(EXE_EXT): core text_adv ta_sample.cpp
 rpg_sample$(EXE_EXT): core rpg rpg_sample.cpp
 	$(CXX) -o $@  rpg_sample.cpp core/*.o rpg/*.o $(CXXFLAGS) $(LDFLAGS)
 
-
-
-.PHONY: core text_adv rpg
 
 
 core:

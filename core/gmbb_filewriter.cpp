@@ -23,8 +23,16 @@ put(int  c)
 {
     if(offset < content.size())
     {
-      content[offset++] = c;
+      content[offset] = c;
     }
+
+  else
+    {
+      content.push_back(c);
+    }
+
+
+  offset += 1;
 }
 
 

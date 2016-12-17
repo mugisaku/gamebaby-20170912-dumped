@@ -32,8 +32,8 @@ public:
 
   FileReader  reader() const;
 
-  static std::string  get_content_from(const char*  path);
-  static void  put_content_to(const char*  path, const std::string&  content);
+  static std::string  get_content_from(const char*  path, bool  use_zlib=false);
+  static void  put_content_to(const char*  path, const std::string&  content, bool  use_zlib=false);
 
 };
 

@@ -24,6 +24,14 @@ Media(const char*  path)
 
 
 
+const std::vector<File>*
+Media::
+operator->() const
+{
+  return &file_table;
+}
+
+
 void
 Media::
 append(File&&  f)
@@ -57,7 +65,7 @@ load(const char*  path)
 {
   file_table.clear();
 
-  File  container(std::string(),File::get_content_from(path));
+  File  container(std::string(),File::get_content_from(path,true));
 
     if(container->size())
     {
@@ -68,10 +76,6 @@ load(const char*  path)
         while(n--)
         {
           file_table.emplace_back(r);
-
-          auto&  bk = file_table.back();
-
-          printf("\"%s\" %d bytes\n",bk.get_name().data(),bk->size());
         }
     }
 }
@@ -91,7 +95,7 @@ save(const char*  path) const
     }
 
 
-  File::put_content_to(path,w.get_content());
+  File::put_content_to(path,w.get_content(),true);
 }
 
 

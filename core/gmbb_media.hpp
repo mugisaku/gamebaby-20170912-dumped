@@ -19,6 +19,9 @@ public:
   Media();
   Media(const char*  path);
 
+
+  const std::vector<File>*  operator->() const;
+
   void  append(File&&  f);
 
   const File*  find(const char*  filename) const;

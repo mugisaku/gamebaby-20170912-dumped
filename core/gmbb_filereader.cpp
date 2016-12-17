@@ -40,7 +40,9 @@ int
 FileReader::
 get()
 {
-  return *current++;
+  unsigned char  v = *current++;
+
+  return v;
 }
 
 
