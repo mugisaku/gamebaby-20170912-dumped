@@ -80,6 +80,17 @@ rectangle(uint8_t  v, int  x, int  y, int  w, int  h)
 
 void
 Image::
+fill_rectangle(uint8_t  v, int  x, int  y, int  w, int  h)
+{
+    while(h--)
+    {
+      hline(v,x,y++,w);
+    }
+}
+
+
+void
+Image::
 compose(const Image&  rhs)
 {
   const int  w = std::min(width,rhs.get_width());

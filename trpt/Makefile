@@ -56,28 +56,9 @@ ifeq ($(delay),1)
 endif
 
 
-OBJ +=                    \
-  gmbb_filereader.o       \
-  gmbb_file.o             \
-  gmbb_filewriter.o       \
-  gmbb_media.o            \
-  gmbb_formatted.o        \
-  gmbb_image.o            \
-  gmbb_image__png.o       \
-  gmbb_image__mgf.o       \
-  gmbb_image__print.o     \
-  gmbb_image__frame.o     \
-  gmbb_garden.o           \
-  gmbb_sprite.o           \
-  gmbb_object.o           \
-  gmbb_container.o        \
-  gmbb_window.o           \
-  gmbb_controller.o       \
-  gmbb_font.o             \
-  gmbb_font__large.o      \
-  gmbb_environment.o      \
-  gmbb_message.o          \
-  gmbb_message_page.o     \
+OBJ +=                   \
+  trpt_movecontext.o     \
+  trpt_player.o     \
 
 
 all: $(OBJ)

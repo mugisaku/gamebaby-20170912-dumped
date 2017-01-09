@@ -5,6 +5,7 @@
 #include<cstdint>
 #include<cstdio>
 #include<string>
+#include"gmbb_filereader.hpp"
 
 
 namespace gmbb{
@@ -48,6 +49,21 @@ void  print_combineds_all(FILE*  f=stdout);
 
 
 void  encode(char16_t  c, char*  buf);
+
+
+struct
+LargeGlyph
+{
+  char16_t  unicode;
+
+  uint16_t  data[14];
+
+};
+
+
+const LargeGlyph*  get_large_glyph(char16_t  c);
+
+void  load_large_font(FileReader&  r);
 
 
 }}

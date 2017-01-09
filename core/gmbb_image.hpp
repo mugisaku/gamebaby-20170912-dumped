@@ -56,7 +56,8 @@ public:
   void  vline(uint8_t  v, int  x, int  y, int  l);
   void  hline(uint8_t  v, int  x, int  y, int  l);
 
-  void  rectangle(uint8_t  v, int  x, int  y, int  w, int  h);
+  void       rectangle(uint8_t  v, int  x, int  y, int  w, int  h);
+  void  fill_rectangle(uint8_t  v, int  x, int  y, int  w, int  h);
 
   void  frame_top(   int  x, int  y, int  w);
   void  frame_body(  int  x, int  y, int  w, int  h);
@@ -70,6 +71,10 @@ public:
   void  print_tall(      char16_t   c, uint8_t  color, int  x, int  y);
   void  print_tall(const char*      s, uint8_t  color, int  x, int  y);
   void  print_tall(const char16_t*  s, uint8_t  color, int  x, int  y);
+
+  void  print_large(      char16_t   c, uint8_t  color, int  x, int  y);
+  void  print_large(const char*      s, uint8_t  color, int  x, int  y);
+  void  print_large(const char16_t*  s, uint8_t  color, int  x, int  y);
 
   void  compose(const Image&  rhs);
 

@@ -56,17 +56,21 @@ ifeq ($(delay),1)
 endif
 
 
-all: data.bin ta_sample$(EXE_EXT) rpg_sample$(EXE_EXT)
+all: data.bin ta_sample$(EXE_EXT) rpg_sample$(EXE_EXT) jsonman$(EXE_EXT) trpt_main$(EXE_EXT)
 
 
 clean:
 	make -C core     clean
 	make -C text_adv clean
 	make -C rpg clean
-	rm -f ta_sample$(EXE_EXT) rpg_sample$(EXE_EXT) *.js *.html *.mem makedata.o makedata data.bin
+	make -C trpt clean
+	make -C libjson clean
+	rm -f ta_sample$(EXE_EXT) rpg_sample$(EXE_EXT) jsonman$(EXE_EXT) map.o map mkmap mkmap.o trpt_main
+	rm -f *.js *.html *.mem
+	rm -f makedata.o makedata data.bin 
 
 
-.PHONY: core text_adv rpg data.bin
+.PHONY: core text_adv rpg trpt libjson data.bin
 
 
 ifeq ($(emcc),1)
@@ -79,22 +83,37 @@ data.bin: makedata
 endif
 
 
+map$(EXE_EXT): core map.cpp
+	$(CXX) -o $@  map.cpp core/*.o $(CXXFLAGS) $(LDFLAGS)
+
+trpt_main$(EXE_EXT): core trpt
+	$(CXX) -o $@  trpt_main.cpp core/*.o trpt/*.o $(CXXFLAGS) $(LDFLAGS)
+
 ta_sample$(EXE_EXT): core text_adv ta_sample.cpp
 	$(CXX) -o $@  ta_sample.cpp core/*.o text_adv/*.o $(CXXFLAGS) $(LDFLAGS)
 
 rpg_sample$(EXE_EXT): core rpg rpg_sample.cpp
 	$(CXX) -o $@  rpg_sample.cpp core/*.o rpg/*.o $(CXXFLAGS) $(LDFLAGS)
 
+jsonman$(EXE_EXT): core libjson jsonman.cpp
+	$(CXX) -o $@  jsonman.cpp core/*.o libjson/*.o $(CXXFLAGS) $(LDFLAGS)
+
 
 
 core:
 	make -C core
+
+libjson:
+	make -C libjson
 
 text_adv:
 	make -C text_adv
 
 rpg:
 	make -C rpg
+
+trpt:
+	make -C trpt
 
 
 

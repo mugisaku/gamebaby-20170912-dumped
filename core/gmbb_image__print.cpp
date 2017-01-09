@@ -62,7 +62,7 @@ print(char16_t  c, uint8_t  color, int  x, int  y)
             {
                 if(code&0x80)
                 {
-                  *dst = 15;
+                  *dst = color;
                 }
 
 
@@ -163,6 +163,84 @@ print_tall(const char16_t*  s, uint8_t  color, int  x, int  y)
 }
 
 
+
+
+void
+Image::
+print_large(char16_t  c, uint8_t  color, int  x, int  y)
+{
+  auto  g = font::get_large_glyph(c);
+
+    if(g)
+    {
+      auto  src = g->data;
+
+      x += 2;
+      y += 2;
+
+        for(int  yy = 0;  yy < 14;  yy += 1)
+        {
+          auto   dst = &pixel(x,y++);
+          auto  code = *src++;
+
+            for(int  xx = 0;  xx < 14;  xx += 1)
+            {
+                if(code&0x8000)
+                {
+                  *dst = color;
+                }
+
+
+               dst  += 1;
+              code <<= 1;
+            }
+        }
+    }
+}
+
+
+void
+Image::
+print_large(const char*  s, uint8_t  color, int  x, int  y)
+{
+    while(*s)
+    {
+        if((x+16) >= width)
+        {
+          break;
+        }
+
+
+      auto  byte_number = get_utf8_byte_number(s);
+
+      auto  c = to_char16(s,byte_number);
+
+      s += byte_number;
+
+      print_large(c,color,x,y);
+
+      x += 16;
+    }
+}
+
+
+void
+Image::
+print_large(const char16_t*  s, uint8_t  color, int  x, int  y)
+{
+    while(*s)
+    {
+        if((x+16) >= width)
+        {
+          break;
+        }
+
+
+      print_large(*s++,color,x,y);
+
+      x += 16;
+    }
+}
 
 
 }

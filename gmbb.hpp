@@ -14,6 +14,9 @@
 #include"core/gmbb_container.hpp"
 #include"core/gmbb_window.hpp"
 #include"core/gmbb_environment.hpp"
+#include"core/gmbb_file.hpp"
+#include"core/gmbb_filereader.hpp"
+#include"core/gmbb_filewriter.hpp"
 
 
 
