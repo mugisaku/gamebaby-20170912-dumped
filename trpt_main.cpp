@@ -13,11 +13,12 @@
 
 
 using namespace gmbb;
+using namespace trpt;
 
 
 namespace screen{
-constexpr int   width = 400;
-constexpr int  height = 320;
+constexpr int   width = 320;
+constexpr int  height = 280;
 }
 
 
@@ -33,26 +34,11 @@ Controller
 ctrl;
 
 
-Player
-player;
+Board
+board;
 
 
-Image  player_image;
-
-
-struct
-Cursor
-{
-  point_t  x_point=0;
-  point_t  y_point=0;
-
-  bool  show;
-
-} first_cursor, second_cursor;
-
-
-      Cursor*   current_cursor = &first_cursor;
-const Cursor*  pointing_object = &first_cursor;
+Window  square_window(font::base_size*6,font::tall_size*4);
 
 
 Image
@@ -139,6 +125,56 @@ quit()
 }
 
 
+class
+SquareMonitor: public Object
+{
+void render(Image&  dst) override
+{
+  auto  pt = point;
+
+  int  x = (board.current_cursor->x+12)/24;
+  int  y = (board.current_cursor->y+12)/24;
+
+  auto&  sq = board.get(x,y);
+
+  const char16_t*  s = (sq.feature? sq.feature->name:get_name(sq.kind));
+
+  dst.print_tall(s,font_color,pt.x,pt.y);
+}
+
+}  square_monitor;
+
+
+void
+move_window_position()
+{
+  auto  cx = board.current_cursor->x;
+  auto  cy = board.current_cursor->y;
+
+  auto  wx = square_window.get_point().x;
+  auto  wy = square_window.get_point().y;
+
+  constexpr int  x_center = screen::width/2;
+  constexpr int  y_center = screen::height/2;
+
+    if(cx < x_center)
+    {
+        if(wx < x_center)
+        {
+          square_window.change_point(x_center,wy);
+        }
+    }
+
+  else
+    {
+        if(wx >= x_center)
+        {
+          square_window.change_point(0,wy);
+        }
+    }
+}
+
+
 void
 main_loop()
 {
@@ -206,54 +242,9 @@ main_loop()
     }
 
 
-    if(ctrl.test_pressing(   up_flag)){--current_cursor->y_point;}
-    if(ctrl.test_pressing( left_flag)){--current_cursor->x_point;}
-    if(ctrl.test_pressing(right_flag)){++current_cursor->x_point;}
-    if(ctrl.test_pressing( down_flag)){++current_cursor->y_point;}
-
-    if(ctrl.test_pressed(p_flag))
-    {
-      auto&  curcur = *current_cursor;
-
-      auto  x = player.movctx.get_x();
-      auto  y = player.movctx.get_y();
-
-        if(current_cursor == &first_cursor)
-        {
-            if((x >= (curcur.x_point-12)) &&
-               (x <  (curcur.x_point+12)) &&
-               (y >= (curcur.y_point-12)) &&
-               (y <  (curcur.y_point+12)))
-            {
-              current_cursor = &second_cursor;
-              pointing_object = &second_cursor;
-
-              player.pausing = true;
-
-              second_cursor.show = true;
-
-              first_cursor.x_point = x;
-              first_cursor.y_point = y;
-              second_cursor.x_point = first_cursor.x_point;
-              second_cursor.y_point = first_cursor.y_point;
-            }
-        }
-
-      else
-        {
-          current_cursor = &first_cursor;
-          pointing_object = &first_cursor;
-
-          player.movctx.set_destination(second_cursor.x_point,second_cursor.y_point);
-
-          player.pausing = false;
-
-          second_cursor.show = false;
-        }
-    }
-
-
   env::change_time(SDL_GetTicks());
+
+  board.process(ctrl);
 
   static uint32_t  next_time;
 
@@ -263,31 +254,14 @@ main_loop()
     {
       constexpr uint32_t  interval_time = 40;
 
-        if(!player.pausing)
-        {
-          player.movctx.step();
-        }
+      board.player.step();
 
+      board.render(final_image);
 
-      final_image.fill();
+      move_window_position();
 
-      player_image.transfer(   0,0,24,32,final_image,player.movctx.get_x(),player.movctx.get_y());
-      player_image.transfer(24*3,0,24,32,final_image, first_cursor.x_point, first_cursor.y_point);
- 
-        if(second_cursor.show)
-        {
-          player_image.transfer(24*4,0,24,32,final_image,second_cursor.x_point,second_cursor.y_point);
-        }
-
-
-        if(pointing_object)
-        {
-          auto  x = pointing_object->x_point+16;
-          auto  y = pointing_object->y_point-8;
-
-          player_image.transfer(24*5,0,24,32,final_image,x,y);
-        }
-
+      square_window.set_state(WindowState::full_opened);
+      square_window.render(final_image);
 
       transfer();
 
@@ -325,14 +299,24 @@ main(int  argc, char**  argv)
 
   auto  bmp = IMG_Load("data/man.png");
 
-  player_image.load(static_cast<uint8_t*>(bmp->pixels),bmp->w,bmp->h,bmp->pitch);
+  Board::sprite_image.load(static_cast<uint8_t*>(bmp->pixels),bmp->w,bmp->h,bmp->pitch);
 
   SDL_FreeSurface(bmp);
 
-  player.movctx.set_start(0,0);
 
-   first_cursor.show =  true;
-  second_cursor.show = false;
+  bmp = IMG_Load("data/map.png");
+
+  Board::bg_image.load(static_cast<uint8_t*>(bmp->pixels),bmp->w,bmp->h,bmp->pitch);
+
+  SDL_FreeSurface(bmp);
+
+
+
+  square_window.change_content(&square_monitor);
+
+  File  f("",File::get_content_from("data/map.qbf"));
+
+  board.load(&f);
 
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop(main_loop,-1,false);

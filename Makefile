@@ -3,7 +3,7 @@ BASE_DIR = /usr/local
 
 
 
-CXXFLAGS = -std=gnu++11 -I. -I/usr/include/SDL2  -Werror -Wno-unused-result
+CXXFLAGS = -std=gnu++11 -I. -I.. -I/usr/include/SDL2  -Werror -Wno-unused-result
 LDFLAGS  = -lz -lpng -lSDL2_image -lSDL2 -lSDL2main
 
 ifeq ($(opt),1)

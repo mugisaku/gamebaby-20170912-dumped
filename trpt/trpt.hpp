@@ -2,19 +2,9 @@
 #define TRPT_HPP
 
 
-#include"trpt_movecontext.hpp"
 #include"trpt_player.hpp"
-
-
-struct Square;
-
-
-struct
-Square
-{
-  int  number;
-
-};
+#include"trpt_square.hpp"
+#include"trpt_board.hpp"
 
 
 #endif

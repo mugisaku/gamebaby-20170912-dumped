@@ -3,7 +3,7 @@ BASE_DIR = /usr/local
 
 
 
-CXXFLAGS = -std=gnu++11 -I. -I/usr/include -Werror -Wno-unused-result
+CXXFLAGS = -std=gnu++11 -I. -I.. -I/usr/include -Werror -Wno-unused-result
 
 
 ifeq ($(opt),1)
@@ -57,8 +57,9 @@ endif
 
 
 OBJ +=                   \
-  trpt_movecontext.o     \
   trpt_player.o     \
+  trpt_square.o     \
+  trpt_board.o     \
 
 
 all: $(OBJ)

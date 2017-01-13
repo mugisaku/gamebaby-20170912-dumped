@@ -58,6 +58,30 @@ change_point(int  x, int  y)
   relative_point.x = x;
   relative_point.y = y;
 
+  update_point();
+}
+
+
+const Point&
+Object::
+get_point() const
+{
+  return relative_point;
+}
+
+
+const Point&
+Object::
+get_absolute_point() const
+{
+  return point;
+}
+
+
+void
+Object::
+update_point()
+{
   point = relative_point;
 
     if(parent)

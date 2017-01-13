@@ -55,7 +55,13 @@ public:
   void  change_width(int  v);
   void  change_height(int  v);
 
+  const Point&  get_point() const;
+
+  const Point&  get_absolute_point() const;
+
   void  need_to_refresh(){}
+
+  void  update_point();
 
   virtual void  update();
 

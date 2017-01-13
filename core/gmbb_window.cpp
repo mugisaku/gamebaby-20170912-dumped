@@ -51,6 +51,19 @@ change_content(Object*  obj, int  x, int  y)
 }
 
 
+void
+Window::
+change_point(int  x, int  y)
+{
+  Object::change_point(x,y);
+
+    if(content)
+    {
+      content->update_point();
+    }
+}
+
+
 WindowState
 Window::
 get_state() const

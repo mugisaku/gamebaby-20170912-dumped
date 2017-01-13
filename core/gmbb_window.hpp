@@ -45,6 +45,8 @@ public:
   void  change_content(Object*  obj, int  x=gmbb::font::base_size,
                                      int  y=gmbb::font::base_size);
 
+  void  change_point(int  x, int  y);
+
   WindowState  get_state() const;
   void  set_state(WindowState  st);
 
