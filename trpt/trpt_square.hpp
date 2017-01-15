@@ -31,6 +31,7 @@ SquareKind
 
 
 const char16_t*  get_name(SquareKind  k);
+int  get_resistance(SquareKind  k);
 
 
 struct

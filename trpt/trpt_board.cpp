@@ -18,6 +18,8 @@ width(w),
 height(h),
 current_cursor(&first_cursor)
 {
+  player.board = this;
+
   player.set_current_point(0,0);
 
    first_cursor.show =  true;
@@ -197,9 +199,6 @@ render(Image&  dst) const
 
   player.render(sprite_image,dst);
 
-  auto  pt = player.get_current_point();
-
-  sprite_image.transfer(   0,0,24,32,dst,pt.x,pt.y);
   sprite_image.transfer(24*3,0,24,32,dst,first_cursor.x,first_cursor.y);
 
     if(second_cursor.show)

@@ -43,6 +43,25 @@ process(Controller&  ctrl)
 
 void
 Container::
+process(Controller&  ctrl, int  x, int  y)
+{
+    for(auto  obj: children)
+    {
+      auto  pt = obj->get_relative_point();
+
+         if((x >= pt.x) &&
+            (y >= pt.y) &&
+            (x <  (pt.x+obj->get_width( ))) &&
+            (y <  (pt.y+obj->get_height())))
+         {
+           obj->process(ctrl,x-pt.x,y-pt.y);
+         }
+    }
+}
+
+
+void
+Container::
 render(Image&  dst)
 {
     for(auto  obj: children)

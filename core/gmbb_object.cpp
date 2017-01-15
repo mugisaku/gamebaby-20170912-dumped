@@ -57,39 +57,36 @@ change_point(int  x, int  y)
 {
   relative_point.x = x;
   relative_point.y = y;
-
-  update_point();
 }
 
 
 const Point&
 Object::
-get_point() const
+get_relative_point() const
 {
   return relative_point;
 }
 
 
-const Point&
+Point
 Object::
 get_absolute_point() const
 {
-  return point;
-}
-
-
-void
-Object::
-update_point()
-{
-  point = relative_point;
-
     if(parent)
     {
-      point.x += parent->point.x;
-      point.y += parent->point.y;
+      auto  pt = parent->get_absolute_point();
+
+      return Point(pt.x+relative_point.x,
+                   pt.y+relative_point.y);
     }
+
+
+  return relative_point;
 }
+
+
+int  Object::get_width( ) const{return  width;}
+int  Object::get_height() const{return height;}
 
 
 void
@@ -102,6 +99,13 @@ update()
 void
 Object::
 process(Controller&  ctrl)
+{
+}
+
+
+void
+Object::
+process(Controller&  ctrl, int  x, int  y)
 {
 }
 

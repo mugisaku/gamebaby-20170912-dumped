@@ -3,6 +3,7 @@
 
 
 #include"trpt_square.hpp"
+#include"gmbb.hpp"
 
 
 namespace gmbb{
@@ -23,6 +24,8 @@ Cursor
 struct
 Board
 {
+  static Container  windowset;
+
   static Image  sprite_image;
   static Image      bg_image;
 

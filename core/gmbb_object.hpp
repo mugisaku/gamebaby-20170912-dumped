@@ -37,7 +37,6 @@ Object
 protected:
   Object*  parent;
 
-  Point           point;
   Point  relative_point;
 
   int   width;
@@ -55,17 +54,16 @@ public:
   void  change_width(int  v);
   void  change_height(int  v);
 
-  const Point&  get_point() const;
+  const Point&  get_relative_point() const;
+        Point   get_absolute_point() const;
 
-  const Point&  get_absolute_point() const;
-
-  void  need_to_refresh(){}
-
-  void  update_point();
+  int  get_width( ) const;
+  int  get_height() const;
 
   virtual void  update();
 
-  virtual void  process(Controller&  ctrl);
+  virtual void  process(Controller&  ctrl                );
+  virtual void  process(Controller&  ctrl, int  x, int  y);
 
   virtual void  render(Image&  dst);
 

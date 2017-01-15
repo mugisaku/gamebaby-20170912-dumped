@@ -130,7 +130,7 @@ SquareMonitor: public Object
 {
 void render(Image&  dst) override
 {
-  auto  pt = point;
+  auto  pt = get_absolute_point();
 
   int  x = (board.current_cursor->x+12)/24;
   int  y = (board.current_cursor->y+12)/24;
@@ -151,25 +151,24 @@ move_window_position()
   auto  cx = board.current_cursor->x;
   auto  cy = board.current_cursor->y;
 
-  auto  wx = square_window.get_point().x;
-  auto  wy = square_window.get_point().y;
+  auto  wpt = square_window.get_absolute_point();
 
   constexpr int  x_center = screen::width/2;
   constexpr int  y_center = screen::height/2;
 
     if(cx < x_center)
     {
-        if(wx < x_center)
+        if(wpt.x < x_center)
         {
-          square_window.change_point(x_center,wy);
+          square_window.change_point(x_center,wpt.y);
         }
     }
 
   else
     {
-        if(wx >= x_center)
+        if(wpt.x >= x_center)
         {
-          square_window.change_point(0,wy);
+          square_window.change_point(0,wpt.y);
         }
     }
 }

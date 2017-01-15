@@ -1,4 +1,6 @@
 #include"trpt_player.hpp"
+#include"trpt_board.hpp"
+#include"trpt_square.hpp"
 
 
 
@@ -87,12 +89,16 @@ get_current_point() const
 }
 
 
-template<typename  T>
-T
-clamp(T  v, T  max, T  min)
+constexpr int  divide_amount = 6;
+
+
+const Square&
+Player::
+get_entering_square() const
 {
-  return((v <= min)? min:
-         (v >= max)? max: v);
+  auto  pt = get_current_point();
+
+  return board->get_const((pt.x+12)/24,(pt.y+16)/24);
 }
 
 
@@ -104,50 +110,37 @@ step()
     {
       update_willing_vector();
 
-      auto  final_vector = forced_vector+inertial_vector;
+      auto  v = willing_vector+forced_vector+inertial_vector;
 
-      constexpr int  u = 2;
+      auto&  sq = get_entering_square();
 
-        if(willing_vector.x < 0)
+      int  n = get_resistance(sq.kind);
+
+        if(!n)
         {
-            if(final_vector.x > willing_vector.x)
-            {
-              final_vector.x += willing_vector.x/u;
-            }
-        }
-
-      else
-        if(willing_vector.x > 0)
-        {
-            if(final_vector.x < willing_vector.x)
-            {
-              final_vector.x += willing_vector.x/u;
-            }
+          n = 1;
         }
 
 
-        if(willing_vector.y < 0)
+      auto  ax = std::abs(v.x)/n;
+      auto  ay = std::abs(v.y)/n;
+
+        if(v.x < 0){ax = -ax;}
+        if(v.y < 0){ay = -ay;}
+
+
+      progressive_point.x += ax;
+      progressive_point.y += ay;
+
+        if(++animation_timer > 4)
         {
-            if(final_vector.y > willing_vector.y)
+          animation_timer = 0;
+
+            if(++animation_phase > 3)
             {
-              final_vector.y += willing_vector.y/u;
+              animation_phase = 0;
             }
         }
-
-      else
-        if(willing_vector.y > 0)
-        {
-            if(final_vector.y < willing_vector.y)
-            {
-              final_vector.y += willing_vector.y/u;
-            }
-        }
-
-
-      progressive_point.x += final_vector.x;
-      progressive_point.y += final_vector.y;
-
-//      inertial_vector = final_vector;
     }
 }
 
@@ -156,6 +149,11 @@ void
 Player::
 render(const Image&  src, Image&  dst) const
 {
+  auto  pt = get_current_point();
+
+  static const int  table[] = {0,1,0,2};
+
+  src.transfer(24*table[animation_phase],0,24,32,dst,pt.x,pt.y);
 }
 
 

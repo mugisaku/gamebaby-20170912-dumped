@@ -51,19 +51,6 @@ change_content(Object*  obj, int  x, int  y)
 }
 
 
-void
-Window::
-change_point(int  x, int  y)
-{
-  Object::change_point(x,y);
-
-    if(content)
-    {
-      content->update_point();
-    }
-}
-
-
 WindowState
 Window::
 get_state() const
@@ -97,9 +84,6 @@ set_state(WindowState  st)
       change_height(height_max);
       break;
     }
-
-
-  need_to_refresh();
 }
 
 
@@ -135,8 +119,6 @@ update()
   case(WindowState::open_to_right):
         if(width < width_max)
         {
-          need_to_refresh();
-
           ++width;
 
             if(width == width_max)
@@ -148,8 +130,6 @@ update()
   case(WindowState::close_to_left):
         if(width > 1)
         {
-          need_to_refresh();
-
           --width;
 
             if(width == 1)
@@ -161,8 +141,6 @@ update()
   case(WindowState::open_to_down):
         if(height < height_max)
         {
-          need_to_refresh();
-
           ++height;
 
             if(height == height_max)
@@ -174,8 +152,6 @@ update()
   case(WindowState::close_to_up):
         if(height > 1)
         {
-          need_to_refresh();
-
           --height;
 
             if(height == 1)
@@ -194,7 +170,9 @@ render(Image&  dst)
 {
     if(state != WindowState::hidden)
     {
-      dst.frame(point.x,point.y,width,height);
+      auto  pt = get_absolute_point();
+
+      dst.frame(pt.x,pt.y,width,height);
 
         if(state == WindowState::full_opened)
         {

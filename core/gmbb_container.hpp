@@ -20,7 +20,8 @@ public:
 
   void  update() override;
 
-  void  process(Controller&  ctrl) override;
+  void  process(Controller&  ctrl                ) override;
+  void  process(Controller&  ctrl, int  x, int  y) override;
 
   void  render(Image&  dst) override;
 

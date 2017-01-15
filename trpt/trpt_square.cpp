@@ -35,6 +35,34 @@ get_name(SquareKind  k)
 }
 
 
+int
+get_resistance(SquareKind  k)
+{
+  int  r = 1;
+
+    switch(k)
+    {
+  case(SquareKind::null    ): r = 1;break;
+  case(SquareKind::plain   ): r = 1;break;
+  case(SquareKind::waste   ): r = 2;break;
+  case(SquareKind::mud     ): r = 2;break;
+  case(SquareKind::sand    ): r = 2;break;
+  case(SquareKind::snow    ): r = 2;break;
+  case(SquareKind::ice     ): r = 2;break;
+  case(SquareKind::grass   ): r = 2;break;
+  case(SquareKind::river   ): r = 2;break;
+  case(SquareKind::forest  ): r = 4;break;
+  case(SquareKind::mountain): r = 5;break;
+  case(SquareKind::see     ): r = 5;break;
+  default:;
+//      printf("[square get_resistance] %d\n",static_cast<int>(k));
+    }
+
+
+  return r;
+}
+
+
 Square::
 Square():
 kind(SquareKind::null),

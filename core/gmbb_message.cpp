@@ -133,8 +133,6 @@ clear()
 
   character_iterator = character_buffer;
   character_end      = character_buffer;
-
-  need_to_refresh();
 }
 
 
@@ -282,8 +280,6 @@ update()
         if(!page.is_full())
         {
           page.push(*character_iterator++);
-
-          need_to_refresh();
         }
 
       else
@@ -306,7 +302,9 @@ void
 Message::
 render(Image&  dst)
 {
-  page.render(dst,point.x,point.y);
+  auto  pt = get_absolute_point();
+
+  page.render(dst,pt.x,pt.y);
 }
 
 

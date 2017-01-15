@@ -37,6 +37,7 @@ Distance
 
 
 struct Board;
+struct Square;
 
 
 struct
@@ -62,8 +63,8 @@ Player
   Vector  inertial_vector;
   Vector    forced_vector;
 
-  int  animation_timer;
-  int  animation_counter;
+  int  animation_timer=0;
+  int  animation_phase=0;
 
   int  weight=40;
   int  power_max=300;
@@ -73,12 +74,16 @@ Player
 
   bool  pausing=true;
 
+  Player(){}
+
   void  set_current_point(    int  x, int  y);
   void  set_destination_point(int  x, int  y);
 
   void  step();
 
   Point  get_current_point() const;
+
+  const Square&  get_entering_square() const;
 
   Distance  update_willing_vector();
 

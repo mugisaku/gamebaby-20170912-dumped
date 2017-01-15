@@ -15,7 +15,7 @@ namespace trpt{
 struct
 Vector
 {
-  static constexpr int  shift_amount = 16;
+  static constexpr int  shift_amount = 10;
 
   int  x;
   int  y;
