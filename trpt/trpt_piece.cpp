@@ -1,4 +1,4 @@
-#include"trpt_player.hpp"
+#include"trpt_piece.hpp"
 #include"trpt_board.hpp"
 #include"trpt_square.hpp"
 
@@ -10,7 +10,7 @@ namespace trpt{
 
 
 void
-Player::
+Piece::
 set_current_point(int  x, int  y)
 {
   progressive_point.x = x<<Vector::shift_amount;
@@ -19,7 +19,7 @@ set_current_point(int  x, int  y)
 
 
 void
-Player::
+Piece::
 set_destination_point(int  x, int  y)
 {
   destination_point.x = x<<Vector::shift_amount;
@@ -28,7 +28,7 @@ set_destination_point(int  x, int  y)
 
 
 Distance
-Player::
+Piece::
 update_willing_vector()
 {
   auto  x0 = progressive_point.x>>Vector::shift_amount;
@@ -81,7 +81,7 @@ update_willing_vector()
 
 
 Point
-Player::
+Piece::
 get_current_point() const
 {
   return Point(progressive_point.x>>Vector::shift_amount,
@@ -93,7 +93,7 @@ constexpr int  divide_amount = 6;
 
 
 const Square&
-Player::
+Piece::
 get_entering_square() const
 {
   auto  pt = get_current_point();
@@ -103,7 +103,7 @@ get_entering_square() const
 
 
 void
-Player::
+Piece::
 step()
 {
     if(!pausing)
@@ -146,14 +146,14 @@ step()
 
 
 void
-Player::
-render(const Image&  src, Image&  dst) const
+Piece::
+render(const Image&  src, const Point&  offset, Image&  dst) const
 {
   auto  pt = get_current_point();
 
   static const int  table[] = {0,1,0,2};
 
-  src.transfer(24*table[animation_phase],0,24,32,dst,pt.x,pt.y);
+  src.transfer(24*table[animation_phase],0,24,32,dst,pt.x-offset.x,pt.y-offset.y);
 }
 
 

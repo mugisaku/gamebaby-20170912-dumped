@@ -1,5 +1,5 @@
-#ifndef TRPT_PLAYER_HPP
-#define TRPT_PLAYER_HPP
+#ifndef TRPT_PIECE_HPP
+#define TRPT_PIECE_HPP
 
 
 #include"trpt_vector.hpp"
@@ -18,14 +18,6 @@ constexpr int  south = 3;
 }
 
 
-enum class
-PlayerState
-{
-  stop,
-
-};
-
-
 struct
 Distance
 {
@@ -41,20 +33,9 @@ struct Square;
 
 
 struct
-Player
+Piece
 {
   Board*  board;
-
-  int  offense;
-  int  defense;
-  int  physical;
-  int  mental;
-  int  fame;
-  int  charm;
-  int  luck;
-
-  const char16_t*  hobby;
-  const char16_t*  wish;
 
   Point  destination_point;
   Point  progressive_point;
@@ -66,15 +47,9 @@ Player
   int  animation_timer=0;
   int  animation_phase=0;
 
-  int  weight=40;
-  int  power_max=300;
-  int  power_consumed=0;
-  int  foods=100;
-  int  nutrient=100;
-
   bool  pausing=true;
 
-  Player(){}
+  Piece(){}
 
   void  set_current_point(    int  x, int  y);
   void  set_destination_point(int  x, int  y);
@@ -87,7 +62,7 @@ Player
 
   Distance  update_willing_vector();
 
-  void  render(const Image&  src, Image&  dst) const;
+  void  render(const Image&  src, const Point&  offset, Image&  dst) const;
 
 };
 

@@ -56,10 +56,13 @@ ifeq ($(delay),1)
 endif
 
 
-OBJ +=                   \
-  trpt_player.o     \
-  trpt_square.o     \
+OBJ +=             \
+  trpt_square.o    \
+  trpt_facility.o  \
   trpt_board.o     \
+  trpt_piece.o     \
+  trpt_porter.o    \
+  trpt_view.o      \
 
 
 all: $(OBJ)

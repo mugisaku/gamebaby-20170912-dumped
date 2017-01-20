@@ -21,6 +21,31 @@ namespace gmbb{
 constexpr int  font_color = 7|8;
 
 
+struct
+Rectangle
+{
+  int  x;
+  int  y;
+  int  w;
+  int  h;
+
+constexpr Rectangle(int  x_=0, int  y_=0, int  w_=0, int  h_=0):
+x(x_),
+y(y_),
+w(w_),
+h(h_){}
+
+void  reset(int  x_=0, int  y_=0, int  w_=0, int  h_=0)
+{
+  x = x_;
+  y = y_;
+  w = w_;
+  h = h_;
+}
+
+};
+
+
 class
 Image
 {
@@ -28,6 +53,8 @@ Image
   int  height;
 
   std::vector<uint8_t>  pixels;
+
+  Rectangle  clip;
 
 public:
   Image();

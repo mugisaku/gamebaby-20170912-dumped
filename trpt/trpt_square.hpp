@@ -2,8 +2,8 @@
 #define TRPT_SQUARE_HPP
 
 
-#include"trpt_player.hpp"
 #include<string>
+#include"gmbb.hpp"
 
 
 namespace gmbb{
@@ -34,22 +34,19 @@ const char16_t*  get_name(SquareKind  k);
 int  get_resistance(SquareKind  k);
 
 
-struct
-Feature
-{
-  const char16_t*  name;
-
-};
+struct Facility;
 
 
 struct
 Square
 {
+  Point  index;
+
   SquareKind  kind;
 
   Point  image_point;
 
-  const Feature*  feature;
+  Facility*  facility;
 
   Square();
 

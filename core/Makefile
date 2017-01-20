@@ -78,6 +78,7 @@ OBJ +=                    \
   gmbb_environment.o      \
   gmbb_message.o          \
   gmbb_message_page.o     \
+  gmbb_unicode.o          \
 
 
 all: $(OBJ)

@@ -1,4 +1,5 @@
 #include"gmbb_font.hpp"
+#include"gmbb_unicode.hpp"
 
 
 
@@ -91,13 +92,11 @@ print_glyphs_all(FILE*  f)
 
       else
         {
-          char  buf[4];
+          UTF8Chunk  chk(c.unicode);
 
-          encode(c.unicode,buf);
+          const char*  s = chk.codes;
 
-          const char*  s = buf;
-
-            switch(buf[0])
+            switch(chk.codes[0])
             {
           case('\\'): s = "\\\\";break;
           case('\''): s = "\\\'";break;
@@ -144,50 +143,13 @@ print_combineds_all(FILE*  f)
 
       else
         {
-          char  buf[4];
+          UTF8Chunk  chk(c.unicode);
 
-          encode(c.unicode,buf);
-
-          fprintf(f,"{u\'%s\',",buf);
+          fprintf(f,"{u\'%s\',",chk.codes);
         }
 
 
       fprintf(f,"0x%04X,0x%04X},\n",c.upper,c.lower);
-    }
-}
-
-
-
-
-void
-encode(char16_t  c, char*  buf)
-{
-    if(c <= 0x7F)
-    {
-      buf[0] = c;
-
-      buf[1] = 0;
-    }
-
-  else
-    if((c >= 0x0080) &&
-       (c <= 0x07FF))
-    {
-      buf[0] = (0b11000000|(c>>6));
-      buf[1] = (0b10000000|(c&0b111111));
-
-      buf[2] = 0;
-    }
-
-  else
-    if((c >= 0x0800) &&
-       (c <= 0xFFFF))
-    {
-      buf[0] = (0b11100000|(c>>12));
-      buf[1] = (0b10000000|((c>>6)&0b111111));
-      buf[2] = (0b10000000|((c   )&0b111111));
-
-      buf[3] = 0;
     }
 }
 

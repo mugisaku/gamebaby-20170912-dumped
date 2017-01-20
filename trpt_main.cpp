@@ -34,11 +34,8 @@ Controller
 ctrl;
 
 
-Board
-board;
-
-
-Window  square_window(font::base_size*6,font::tall_size*4);
+Board  board;
+View  view;
 
 
 Image
@@ -125,55 +122,6 @@ quit()
 }
 
 
-class
-SquareMonitor: public Object
-{
-void render(Image&  dst) override
-{
-  auto  pt = get_absolute_point();
-
-  int  x = (board.current_cursor->x+12)/24;
-  int  y = (board.current_cursor->y+12)/24;
-
-  auto&  sq = board.get(x,y);
-
-  const char16_t*  s = (sq.feature? sq.feature->name:get_name(sq.kind));
-
-  dst.print_tall(s,font_color,pt.x,pt.y);
-}
-
-}  square_monitor;
-
-
-void
-move_window_position()
-{
-  auto  cx = board.current_cursor->x;
-  auto  cy = board.current_cursor->y;
-
-  auto  wpt = square_window.get_absolute_point();
-
-  constexpr int  x_center = screen::width/2;
-  constexpr int  y_center = screen::height/2;
-
-    if(cx < x_center)
-    {
-        if(wpt.x < x_center)
-        {
-          square_window.change_point(x_center,wpt.y);
-        }
-    }
-
-  else
-    {
-        if(wpt.x >= x_center)
-        {
-          square_window.change_point(0,wpt.y);
-        }
-    }
-}
-
-
 void
 main_loop()
 {
@@ -243,7 +191,7 @@ main_loop()
 
   env::change_time(SDL_GetTicks());
 
-  board.process(ctrl);
+  view.process(ctrl);
 
   static uint32_t  next_time;
 
@@ -253,14 +201,11 @@ main_loop()
     {
       constexpr uint32_t  interval_time = 40;
 
-      board.player.step();
+      board.step();
 
-      board.render(final_image);
+      view.move_window_point();
 
-      move_window_position();
-
-      square_window.set_state(WindowState::full_opened);
-      square_window.render(final_image);
+      view.render(final_image);
 
       transfer();
 
@@ -298,7 +243,7 @@ main(int  argc, char**  argv)
 
   auto  bmp = IMG_Load("data/man.png");
 
-  Board::sprite_image.load(static_cast<uint8_t*>(bmp->pixels),bmp->w,bmp->h,bmp->pitch);
+  View::sprite_image.load(static_cast<uint8_t*>(bmp->pixels),bmp->w,bmp->h,bmp->pitch);
 
   SDL_FreeSurface(bmp);
 
@@ -311,11 +256,14 @@ main(int  argc, char**  argv)
 
 
 
-  square_window.change_content(&square_monitor);
-
   File  f("",File::get_content_from("data/map.qbf"));
 
   board.load(&f);
+
+  view.change_board(board);
+
+  view.change_width( screen::width );
+  view.change_height(screen::height);
 
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop(main_loop,-1,false);

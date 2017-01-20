@@ -48,9 +48,6 @@ const Combined*  get_combined(char16_t  c);
 void  print_combineds_all(FILE*  f=stdout);
 
 
-void  encode(char16_t  c, char*  buf);
-
-
 struct
 LargeGlyph
 {

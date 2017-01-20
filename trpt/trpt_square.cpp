@@ -66,7 +66,7 @@ get_resistance(SquareKind  k)
 Square::
 Square():
 kind(SquareKind::null),
-feature(nullptr)
+facility(nullptr)
 {
 }
 
