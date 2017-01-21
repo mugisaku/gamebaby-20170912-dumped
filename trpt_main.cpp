@@ -35,7 +35,7 @@ ctrl;
 
 
 Board  board;
-View  view;
+Master  m;
 
 
 Image
@@ -191,7 +191,7 @@ main_loop()
 
   env::change_time(SDL_GetTicks());
 
-  view.process(ctrl);
+  m.process(ctrl);
 
   static uint32_t  next_time;
 
@@ -203,9 +203,9 @@ main_loop()
 
       board.step();
 
-      view.move_window_point();
+      m.move_window_point();
 
-      view.render(final_image);
+      m.render(final_image);
 
       transfer();
 
@@ -243,7 +243,8 @@ main(int  argc, char**  argv)
 
   auto  bmp = IMG_Load("data/man.png");
 
-  View::sprite_image.load(static_cast<uint8_t*>(bmp->pixels),bmp->w,bmp->h,bmp->pitch);
+  
+  Master::sprite_image.load(static_cast<uint8_t*>(bmp->pixels),bmp->w,bmp->h,bmp->pitch);
 
   SDL_FreeSurface(bmp);
 
@@ -260,10 +261,12 @@ main(int  argc, char**  argv)
 
   board.load(&f);
 
-  view.change_board(board);
+  m.change_board(board);
 
-  view.change_width( screen::width );
-  view.change_height(screen::height);
+  m.change_width( screen::width );
+  m.change_height(screen::height);
+
+  m.set_stage();
 
 #ifdef EMSCRIPTEN
   emscripten_set_main_loop(main_loop,-1,false);

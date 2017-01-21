@@ -10,7 +10,12 @@
 namespace gmbb{
 
 
-size_t  utf8_byte_number(int  c);
+struct not_utf8{};
+struct not_utf32{};
+struct invalid_utf8_byte_number{};
+
+
+size_t  utf8_byte_number(unsigned char  c);
 
 
 char32_t  to_char32(const char*  utf8, size_t  byte_number);

@@ -7,7 +7,7 @@ namespace gmbb{
 
 
 size_t
-utf8_byte_number(int  c)
+utf8_byte_number(unsigned char  c)
 {
        if(!(c>>7)             ){return 1;}
   else if( (c>>1) == 0b1111110){return 6;}
@@ -17,7 +17,9 @@ utf8_byte_number(int  c)
   else if( (c>>5) == 0b110    ){return 2;}
   else if( (c>>6) == 0b10     ){return 1;}
 
-  throw 0;
+  printf("%dはUTF8の先頭ではありません\n",c);
+
+  throw not_utf8();
 }
 
 
@@ -65,7 +67,9 @@ to_char32(const char*  utf8, size_t  byte_number)
                             decode(utf8[5]   );
     break;
   default:
-      throw 0;
+      printf("不正なUTF8のバイト数です(%d)\n",byte_number);
+
+      throw invalid_utf8_byte_number();
     }
 
 
@@ -145,7 +149,9 @@ operator=(char32_t  c)
 
   else
     {
-      throw 0;
+      printf("%dはユニコードではありません\n",c);
+
+      throw not_utf32();
     }
 
 

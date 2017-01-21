@@ -5,7 +5,7 @@
 #include"trpt_square.hpp"
 #include"trpt_board.hpp"
 #include"trpt_piece.hpp"
-#include"trpt_view.hpp"
+#include"trpt_master.hpp"
 
 
 #endif
