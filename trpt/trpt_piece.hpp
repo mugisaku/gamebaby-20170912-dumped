@@ -30,6 +30,8 @@ Distance
 
 struct Board;
 struct Square;
+struct Porter;
+struct Facility;
 
 
 struct
@@ -44,12 +46,19 @@ Piece
   Vector  inertial_vector;
   Vector    forced_vector;
 
+  Distance  distance;
+
+  int  resistance;
+
   int  animation_timer=0;
   int  animation_phase=0;
 
   bool  pausing=true;
 
-  Piece(){}
+  Porter*          porter=nullptr;
+  Square*  current_square=nullptr;
+
+  Piece(Board&  brd): board(&brd), resistance(0){}
 
   void  set_current_point(    int  x, int  y);
   void  set_destination_point(int  x, int  y);
@@ -58,9 +67,8 @@ Piece
 
   Point  get_current_point() const;
 
-  const Square&  get_entering_square() const;
-
-  Distance  update_willing_vector();
+  void  update_current_square();
+  void  update_willing_vector();
 
   void  render(const Image&  src, const Point&  offset, Image&  dst) const;
 

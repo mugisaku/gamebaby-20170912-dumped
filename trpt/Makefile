@@ -62,8 +62,11 @@ OBJ +=                \
   trpt_board.o        \
   trpt_board__load.o  \
   trpt_piece.o        \
+  trpt_piecemanager.o \
   trpt_porter.o       \
   trpt_master.o       \
+  trpt_master__draw.o     \
+  trpt_master__process.o  \
 
 
 all: $(OBJ)

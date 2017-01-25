@@ -6,6 +6,9 @@
 #include"trpt_cursor.hpp"
 #include"trpt_facility.hpp"
 #include"trpt_town.hpp"
+#include"trpt_entrybook.hpp"
+#include"trpt_piecemanager.hpp"
+#include"trpt_board.hpp"
 #include<list>
 #include<array>
 #include"gmbb.hpp"
@@ -15,7 +18,6 @@ namespace gmbb{
 namespace trpt{
 
 
-struct Board;
 struct Porter;
 struct Piece;
 
@@ -25,6 +27,8 @@ MasterState
 {
   watch,
   decide_destination,
+  change_destination,
+  choose_porter,
 
 };
 
@@ -32,15 +36,13 @@ MasterState
 class
 Master
 {
-  Board*  board;
-
   Image  board_image;
 
-  Point  offset    ;
-  Point  offset_max;
+  Board  board;
 
-  int   width;
-  int  height;
+  Rectangle  rectangle;
+
+  Point  offset_max;
 
   MasterState  state;
 
@@ -53,25 +55,36 @@ Master
   std::array<Facility,8>  facility_table;
   std::array<Town,8>          town_table;
 
-  std::list<Porter*>  reserve_table;
+  std::list<Porter*>*  porter_list;
 
   Cursor*  current_cursor;
   Piece*   current_piece;
-  Piece*    called_piece;
   Square*  current_square;
 
+  Piece*     designated_piece;
+  Square*    designated_square;
+  Facility*  designated_facility;
+
+  EntryBook<std::list<Porter*>::iterator,6,5>  entrybook;
+
+  Point  book_index;
+
+  PieceManager  pm;
+
   void  process_watch(Controller&  ctrl);
-  void  process_decide_destination(Controller&  ctrl);
+  void  process_choose_porter(Controller&  ctrl);
+  void  process_change_destination(Controller&  ctrl, bool  first=false);
 
   void  update_current_piece();
   void  update_current_square();
 
+  void  update_entrybook(Town&  t);
+
 public:
   static Image  sprite_image;
 
-  Master(Board*  brd=nullptr);
-
-  void  change_board(Board&  brd);
+   Master();
+  ~Master();
 
   void  change_width(int   v);
   void  change_height(int  v);
@@ -85,9 +98,14 @@ public:
 
   void  process(Controller&  ctrl);
 
+  void  step();
+
+  void  load(const File*  f);
+
   void  move_window_point();
 
   void  draw_windows(Image&  dst) const;
+  void  draw_entrybook(Image&  dst) const;
 
   void  render(Image&  dst) const;
 

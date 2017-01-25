@@ -8,8 +8,9 @@ namespace trpt{
 
 
 Porter::
-Porter(const char16_t*  name_):
-name(name_)
+Porter(const char16_t*  name_, Facility*  fa):
+name(name_),
+facility(fa)
 {
 }
 

@@ -22,8 +22,6 @@ Board
   int   width;
   int  height;
 
-  std::list<Piece>  piece_list;
-
   std::vector<Square>  square_table;
 
 public:
@@ -36,12 +34,6 @@ public:
 
   int  get_width() const;
   int  get_height() const;
-
-  void  step();
-
-  Piece*  get_piece(int  x, int  y);
-
-  void  get_pieces_that_are_in(int  x, int  y, int  w, int  h, std::vector<Piece*>  buf);
 
   void  load(const File*  f);
 

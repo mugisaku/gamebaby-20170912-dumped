@@ -33,9 +33,6 @@ resize(int  w, int  h)
   height = h;
 
   pixels.resize(w*h);
-
-    if(!clip.w){clip.w = w;}
-    if(!clip.h){clip.h = h;}
 }
 
 

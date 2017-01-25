@@ -23,6 +23,10 @@ height(h)
 
 
 
+int  Board::get_width() const{return width;}
+int  Board::get_height() const{return height;}
+
+
 Square&
 Board::
 get(int  x, int  y)
@@ -36,69 +40,6 @@ Board::
 get_const(int  x, int  y) const
 {
   return square_table[(width*y)+x];
-}
-
-
-void
-Board::
-step()
-{
-}
-
-
-
-
-int  Board::get_width() const{return width;}
-int  Board::get_height() const{return height;}
-
-
-Piece*
-Board::
-get_piece(int  x, int  y)
-{
-  const int  x_end = (x+12);
-  const int  y_end = (y+12);
-
-  x -= 12;
-  y -= 12;
-
-    for(auto&  p: piece_list)
-    {
-      auto  pt = p.get_current_point();
-
-        if((pt.x >= x    ) &&
-           (pt.y >= y    ) &&
-           (pt.x <  x_end) &&
-           (pt.y <  y_end))
-        {
-          return &p;
-        }
-    }
-
-
-  return nullptr;
-}
-
-
-void
-Board::
-get_pieces_that_are_in(int  x, int  y, int  w, int  h, std::vector<Piece*>  buf)
-{
-  const int  x_end = (x+w);
-  const int  y_end = (y+h);
-
-    for(auto&  p: piece_list)
-    {
-      auto  pt = p.get_current_point();
-
-        if((pt.x >= x    ) &&
-           (pt.y >= y    ) &&
-           (pt.x <  x_end) &&
-           (pt.y <  y_end))
-        {
-          buf.emplace_back(&p);
-        }
-    }
 }
 
 

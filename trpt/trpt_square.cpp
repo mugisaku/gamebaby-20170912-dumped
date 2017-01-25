@@ -38,14 +38,14 @@ get_name(SquareKind  k)
 int
 get_resistance(SquareKind  k)
 {
-  int  r = 1;
+  int  r = 0;
 
     switch(k)
     {
-  case(SquareKind::null    ): r = 1;break;
-  case(SquareKind::plain   ): r = 1;break;
-  case(SquareKind::waste   ): r = 2;break;
-  case(SquareKind::mud     ): r = 2;break;
+  case(SquareKind::null    ): r = 0;break;
+  case(SquareKind::plain   ): r = 0;break;
+  case(SquareKind::waste   ): r = 1;break;
+  case(SquareKind::mud     ): r = 1;break;
   case(SquareKind::sand    ): r = 2;break;
   case(SquareKind::snow    ): r = 2;break;
   case(SquareKind::ice     ): r = 2;break;

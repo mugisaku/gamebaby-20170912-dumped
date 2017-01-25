@@ -34,7 +34,6 @@ Controller
 ctrl;
 
 
-Board  board;
 Master  m;
 
 
@@ -201,7 +200,7 @@ main_loop()
     {
       constexpr uint32_t  interval_time = 40;
 
-      board.step();
+      m.step();
 
       m.move_window_point();
 
@@ -244,7 +243,7 @@ main(int  argc, char**  argv)
   auto  bmp = IMG_Load("data/man.png");
 
   
-  Master::sprite_image.load(static_cast<uint8_t*>(bmp->pixels),bmp->w,bmp->h,bmp->pitch);
+  PieceManager::sprite_image.load(static_cast<uint8_t*>(bmp->pixels),bmp->w,bmp->h,bmp->pitch);
 
   SDL_FreeSurface(bmp);
 
@@ -259,9 +258,7 @@ main(int  argc, char**  argv)
 
   File  f("",File::get_content_from("data/map.qbf"));
 
-  board.load(&f);
-
-  m.change_board(board);
+  m.load(&f);
 
   m.change_width( screen::width );
   m.change_height(screen::height);

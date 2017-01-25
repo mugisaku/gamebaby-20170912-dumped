@@ -31,6 +31,28 @@ Point
 };
 
 
+struct
+Rectangle: public Point
+{
+  int  w;
+  int  h;
+
+constexpr Rectangle(int  x_=0, int  y_=0, int  w_=0, int  h_=0):
+Point(x_,y_),
+w(w_),
+h(h_){}
+
+void  reset(int  x_=0, int  y_=0, int  w_=0, int  h_=0)
+{
+  Point::reset(x_,y_);
+
+  w = w_;
+  h = h_;
+}
+
+};
+
+
 class
 Object
 {

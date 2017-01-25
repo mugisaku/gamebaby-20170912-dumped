@@ -15,6 +15,8 @@ set_current_point(int  x, int  y)
 {
   progressive_point.x = x<<Vector::shift_amount;
   progressive_point.y = y<<Vector::shift_amount;
+
+  update_current_square();
 }
 
 
@@ -24,10 +26,22 @@ set_destination_point(int  x, int  y)
 {
   destination_point.x = x<<Vector::shift_amount;
   destination_point.y = y<<Vector::shift_amount;
+
+  update_willing_vector();
 }
 
 
-Distance
+void
+Piece::
+update_current_square()
+{
+  auto  pt = get_current_point();
+
+  current_square = &board->get((pt.x+12)/24,(pt.y+16)/24);
+}
+
+
+void
 Piece::
 update_willing_vector()
 {
@@ -44,11 +58,9 @@ update_willing_vector()
   Distance  x_distance(x_max-x_min);
   Distance  y_distance(y_max-y_min);
 
-  int  distance_value;  
-
     if(x_distance.value < y_distance.value)
     {
-      distance_value = y_distance.value;
+      distance.value = y_distance.value;
 
       willing_vector.x = (x_distance.value<<Vector::shift_amount)/y_distance.value;
       willing_vector.y = (               1<<Vector::shift_amount)                 ;
@@ -57,7 +69,7 @@ update_willing_vector()
   else
     if(x_distance.value > y_distance.value)
     {
-      distance_value = x_distance.value;
+      distance.value = x_distance.value;
 
       willing_vector.x = (               1<<Vector::shift_amount)                 ;
       willing_vector.y = (y_distance.value<<Vector::shift_amount)/x_distance.value;
@@ -65,7 +77,7 @@ update_willing_vector()
 
   else
     {
-      distance_value = x_distance.value;
+      distance.value = x_distance.value;
 
       willing_vector.x = (1<<Vector::shift_amount);
       willing_vector.y = (1<<Vector::shift_amount);
@@ -76,7 +88,10 @@ update_willing_vector()
     if(progressive_point.y > destination_point.y){willing_vector.y = -willing_vector.y;}
 
 
-  return Distance(distance_value);
+    if(distance.value > 2)
+    {
+      willing_vector *= 2;
+    }
 }
 
 
@@ -89,49 +104,12 @@ get_current_point() const
 }
 
 
-constexpr int  divide_amount = 6;
-
-
-const Square&
-Piece::
-get_entering_square() const
-{
-  auto  pt = get_current_point();
-
-  return board->get_const((pt.x+12)/24,(pt.y+16)/24);
-}
-
-
 void
 Piece::
 step()
 {
     if(!pausing)
     {
-      update_willing_vector();
-
-      auto  v = willing_vector+forced_vector+inertial_vector;
-
-      auto&  sq = get_entering_square();
-
-      int  n = get_resistance(sq.kind);
-
-        if(!n)
-        {
-          n = 1;
-        }
-
-
-      auto  ax = std::abs(v.x)/n;
-      auto  ay = std::abs(v.y)/n;
-
-        if(v.x < 0){ax = -ax;}
-        if(v.y < 0){ay = -ay;}
-
-
-      progressive_point.x += ax;
-      progressive_point.y += ay;
-
         if(++animation_timer > 4)
         {
           animation_timer = 0;
@@ -141,6 +119,35 @@ step()
               animation_phase = 0;
             }
         }
+
+
+      auto&  remain = distance.value;
+
+        if(!remain)
+        {
+          return;
+        }
+
+
+        if(resistance)
+        {
+          --resistance;
+
+          return;
+        }
+
+
+      auto  v = willing_vector+forced_vector+inertial_vector;
+
+      resistance = get_resistance(current_square->kind);
+
+      progressive_point.x += v.x;
+      progressive_point.y += v.y;
+
+      update_current_square();
+
+
+      --remain;
     }
 }
 
