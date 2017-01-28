@@ -36,9 +36,9 @@ void
 Master::
 change_width(int  v)
 {
-  rectangle.w = std::min(v,24*board.get_width());
+  view.w = std::min(v,24*board.get_width());
 
-  offset_max.x = (24*board.get_width())-rectangle.w;
+  offset_max.x = (24*board.get_width())-view.w;
 }
 
 
@@ -46,9 +46,9 @@ void
 Master::
 change_height(int  v)
 {
-  rectangle.h = std::min(v,24*board.get_height());
+  view.h = std::min(v,24*board.get_height());
 
-  offset_max.y = (24*board.get_height())-rectangle.h;
+  offset_max.y = (24*board.get_height())-view.h;
 }
 
 
@@ -75,8 +75,8 @@ void
 Master::
 update_current_square()
 {
-  int  sqx = (current_cursor->x-rectangle.x+12)/24;
-  int  sqy = (current_cursor->y-rectangle.y+12)/24;
+  int  sqx = (current_cursor->x-view.x+12)/24;
+  int  sqy = (current_cursor->y-view.y+12)/24;
 
   current_square = &board.get(sqx,sqy);
 }
@@ -94,7 +94,7 @@ void
 Master::
 update_current_piece()
 {
-  current_piece = pm.get_piece(current_cursor->x-rectangle.x,current_cursor->y-rectangle.y);
+  current_piece = pm.get_piece(current_cursor->x-view.x,current_cursor->y-view.y);
 }
 
 
@@ -146,8 +146,8 @@ move_window_point()
       auto  cx = current_cursor->x;
       auto  cy = current_cursor->y;
 
-      const int  x_center = rectangle.w/2;
-      const int  y_center = rectangle.h/2;
+      const int  x_center = view.w/2;
+      const int  y_center = view.h/2;
 
         if(cx < x_center)
         {
@@ -181,6 +181,11 @@ step()
       f.town->porter_list.emplace_back(p->porter);
 
       pm.pullback_previous_piece();
+
+        if(current_cursor->linked_piece == p)
+        {
+          current_cursor->unlink();
+        }
     }
 }
 
@@ -189,12 +194,12 @@ void
 Master::
 render(Image&  dst) const
 {
-  board_image.transfer(rectangle.x,
-                       rectangle.y,
-                       rectangle.w,
-                       rectangle.h,dst,0,0);
+  board_image.transfer(view.x,
+                       view.y,
+                       view.w,
+                       view.h,dst,0,0);
 
-  pm.render(rectangle,dst);
+  pm.render(view,dst);
 
 
     switch(state)
@@ -206,16 +211,16 @@ render(Image&  dst) const
       auto&  cur1 = get_first_cursor();
       auto&  cur2 = get_second_cursor();
 
-      PieceManager::sprite_image.transfer(24*3,0,24,32,dst,cur1.x-rectangle.x,cur1.y-rectangle.y);
+      PieceManager::sprite_image.transfer(24*3,0,24,32,dst,cur1.x-view.x,cur1.y-view.y);
 
         if(cur2.show)
         {
-          PieceManager::sprite_image.transfer(24*4,0,24,32,dst,cur2.x-rectangle.x,cur2.y-rectangle.y);
+          PieceManager::sprite_image.transfer(24*4,0,24,32,dst,cur2.x-view.x,cur2.y-view.y);
         }
 
 
-      auto  x = cursor_point.x+16;
-      auto  y = cursor_point.y- 8;
+      auto  x = current_cursor->x+16;
+      auto  y = current_cursor->y- 8;
 
       PieceManager::sprite_image.transfer(24*5,0,24,32,dst,x,y);
 
@@ -250,25 +255,15 @@ set_stage()
 
   fc = &facility_table[3];
 
-  fc->name = u"VILLAGE";
-  fc->kind = FacilityKind::village;
-
   board.get( 2, 2).facility = &facility_table[0];
-  board.get( 9, 2).facility = &facility_table[1];
+  board.get( 7, 2).facility = &facility_table[1];
   board.get( 2, 6).facility = &facility_table[2];
-  board.get( 8, 9).facility = &facility_table[3];
 
   auto   fa = &facility_table[0];
   auto&  ls = fa->town->porter_list;
 
   ls.emplace_back(new Porter(u"わにまる",fa));
   ls.emplace_back(new Porter(u"あるまじろう",fa));
-  ls.emplace_back(new Porter(u"いぬりん",fa));
-  ls.emplace_back(new Porter(u"こねこ",fa));
-  ls.emplace_back(new Porter(u"たぬぽん",fa));
-  ls.emplace_back(new Porter(u"もうすけ",fa));
-  ls.emplace_back(new Porter(u"うまお",fa));
-  ls.emplace_back(new Porter(u"こけこ",fa));
 }
 
 

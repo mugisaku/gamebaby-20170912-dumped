@@ -1,6 +1,7 @@
 #include"trpt_piece.hpp"
 #include"trpt_board.hpp"
 #include"trpt_square.hpp"
+#include"trpt_porter.hpp"
 
 
 
@@ -86,12 +87,6 @@ update_willing_vector()
 
     if(progressive_point.x > destination_point.x){willing_vector.x = -willing_vector.x;}
     if(progressive_point.y > destination_point.y){willing_vector.y = -willing_vector.y;}
-
-
-    if(distance.value > 2)
-    {
-      willing_vector *= 2;
-    }
 }
 
 
@@ -125,30 +120,48 @@ step()
 
         if(!remain)
         {
+          pausing = true;
+
           return;
         }
 
 
-        if(resistance)
+        if((*porter)(ActionKind::move))
         {
-          --resistance;
+            if(resistance > 0)
+            {
+              resistance -= 3;
 
-          return;
+              return;
+            }
+
+
+          auto  v = willing_vector+forced_vector+inertial_vector;
+
+          resistance = get_resistance(current_square->kind);
+
+          progressive_point.x += v.x;
+          progressive_point.y += v.y;
+
+          --remain;
+
+          sync();
         }
-
-
-      auto  v = willing_vector+forced_vector+inertial_vector;
-
-      resistance = get_resistance(current_square->kind);
-
-      progressive_point.x += v.x;
-      progressive_point.y += v.y;
-
-      update_current_square();
-
-
-      --remain;
     }
+}
+
+
+void
+Piece::
+sync()
+{
+    if(linked_cursor)
+    {
+      *static_cast<Point*>(linked_cursor) = get_current_point();
+    }
+
+
+  update_current_square();
 }
 
 

@@ -12,12 +12,17 @@ namespace trpt{
 struct Facility;
 
 
+enum class
+ActionKind
+{
+  move,
+
+};
+
+
 struct
 Porter
 {
-  int  offense;
-  int  defense;
-
   int  physical_fitness=8;
   int    mental_fitness=8;
   int  ardor=8;
@@ -28,15 +33,22 @@ Porter
   const char16_t*  hobby;
   const char16_t*  wish;
 
-  int  weight=40;
-  int  power_max=300;
-  int  power_consumed=0;
-  int  foods=100;
-  int  nutrient=100;
+  int  foods_amount;
+
+  struct Energy{
+    static constexpr int  value_max = 100;
+
+    int  value;
+
+    int  subtract_amount;
+
+  } energy;
 
   Facility*  facility;
 
   Porter(const char16_t*  name_, Facility*  fa=nullptr);
+
+  bool  operator()(ActionKind  k);
 
 };
 

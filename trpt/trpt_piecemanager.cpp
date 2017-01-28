@@ -110,9 +110,8 @@ pullback(Piece*  p)
     {
         if(standby_piece)
         {
-          reserved_pieces.emplace_back(p);
-
-          standby_piece = nullptr;
+          reserved_pieces.emplace_back(standby_piece)         ;
+                                       standby_piece = nullptr;
         }
     }
 

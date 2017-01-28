@@ -59,6 +59,7 @@ endif
 OBJ +=                \
   trpt_square.o       \
   trpt_facility.o     \
+  trpt_cursor.o        \
   trpt_board.o        \
   trpt_board__load.o  \
   trpt_piece.o        \

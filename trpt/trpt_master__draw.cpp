@@ -44,6 +44,39 @@ printxy(char16_t*  p, int  x, int  y)
 
 void
 Master::
+draw_porter(int  x, int  y, Image&  dst) const
+{
+  constexpr int  w = font::base_size*12;
+  constexpr int  h = font::tall_size*4;
+
+  auto  p = current_piece;
+
+    if(p && p->porter)
+    {
+      auto&  po = *p->porter;
+
+      dst.frame(x,y,w,h);
+
+      x += font::base_size;
+      y += font::base_size;
+
+      dst.print_tall(po.name,font_color,x,y);
+
+      y += font::tall_size;
+
+      Formatted  fmt;
+
+      dst.print(fmt("しょくりょう %2d",po.foods_amount),font_color,x,y);
+
+      y += font::base_size;
+
+      dst.print_tall(fmt("エネルギー %2d",po.energy.value),font_color,x,y);
+    }
+}
+
+
+void
+Master::
 draw_windows(Image&  dst) const
 {
   constexpr int  square_w = font::base_size*10;
@@ -83,6 +116,9 @@ draw_windows(Image&  dst) const
                               y+font::base_size);
         }
     }
+
+
+  draw_porter(window_point.x,window_point.y+square_h,dst);
 }
 
 

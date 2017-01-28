@@ -15,17 +15,12 @@ void
 Master::
 process_watch(Controller&  ctrl)
 {
-  first_cursor.x = cursor_point.x-rectangle.x;
-  first_cursor.y = cursor_point.y-rectangle.y;
-
-  update_current_square();
-  update_current_piece();
-
-    if(ctrl.test_pressed(p_flag))
+    if(first_cursor.linked_piece)
     {
-        if(current_piece)
+        if(ctrl.test_pressed(p_flag))
         {
-          designated_piece = current_piece;
+CHDST:
+          designated_piece = first_cursor.linked_piece;
 
           auto  pt = designated_piece->get_current_point();
 
@@ -40,33 +35,51 @@ process_watch(Controller&  ctrl)
           second_cursor.x = first_cursor.x;
           second_cursor.y = first_cursor.y;
 
-          state = MasterState::decide_destination;
+          state = MasterState::change_destination;
         }
+    }
 
-      else
+  else
+    {
+        if(ctrl.test_pressed(p_flag))
         {
-          designated_square = current_square;
-
-          auto  f = current_square->facility;
-
-            if(f)
+            if(current_piece)
             {
-                switch(f->kind)
+              first_cursor.link(*current_piece);
+
+                if(current_piece->pausing)
                 {
-              case(FacilityKind::village):
-                  break;
-              case(FacilityKind::town):
-                    if(f->town->porter_list.size())
+                  current_piece->sync();
+
+                  goto CHDST;
+                }
+            }
+
+          else
+            {
+              designated_square = current_square;
+
+              auto  f = current_square->facility;
+
+                if(f)
+                {
+                    switch(f->kind)
                     {
-                      designated_facility = f;
+                  case(FacilityKind::village):
+                      break;
+                  case(FacilityKind::town):
+                        if(f->town->porter_list.size())
+                        {
+                          designated_facility = f;
 
-                      update_entrybook(*f->town);
+                          update_entrybook(*f->town);
 
-                      book_index.reset();
+                          book_index.reset();
 
-                      state = MasterState::choose_porter;
+                          state = MasterState::choose_porter;
+                        }
+                      break;
                     }
-                  break;
                 }
             }
         }
@@ -85,6 +98,13 @@ process_choose_porter(Controller&  ctrl)
         if(item)
         {
           auto  p = pm.ready();
+
+            if(!p)
+            {
+              report;
+              throw;
+            }
+
 
           p->porter = **item;
 
@@ -107,7 +127,7 @@ process_choose_porter(Controller&  ctrl)
           second_cursor.x = first_cursor.x;
           second_cursor.y = first_cursor.y;
 
-          state = MasterState::decide_destination;
+          state = MasterState::change_destination;
         }
     }
 
@@ -157,14 +177,8 @@ process_choose_porter(Controller&  ctrl)
 
 void
 Master::
-process_change_destination(Controller&  ctrl, bool  first)
+process_change_destination(Controller&  ctrl)
 {
-  second_cursor.x = cursor_point.x-rectangle.x;
-  second_cursor.y = cursor_point.y-rectangle.y;
-
-  update_current_square();
-  update_current_piece();
-
     if(ctrl.test_pressed(p_flag))
     {
       current_cursor = &first_cursor;
@@ -176,23 +190,32 @@ process_change_destination(Controller&  ctrl, bool  first)
 
       designated_piece->pausing = false;
 
-      designated_piece = nullptr;
-
       second_cursor.show = false;
 
       state = MasterState::watch;
 
+      first_cursor.unlink();
+
         if(pm.get_standby_piece())
         {
+          designated_piece->porter->foods_amount   = 2;
+          designated_piece->porter->energy.value  = Porter::Energy::value_max;
+          designated_piece->porter->energy.subtract_amount = 1;
+
           pm.commit();
 
           porter_list->erase(*entrybook[book_index]);
         }
+
+
+      designated_piece = nullptr;
     }
 
   else
-    if(ctrl.test_pressed(n_flag) && first)
+    if(ctrl.test_pressed(n_flag))
     {
+      current_cursor = &first_cursor;
+
       second_cursor.show = false;
 
       designated_piece->pausing = false;
@@ -210,10 +233,29 @@ void
 Master::
 process(Controller&  ctrl)
 {
-    if(ctrl.test_pressing(   up_flag) && cursor_point.y){--cursor_point.y;}
-    if(ctrl.test_pressing( left_flag) && cursor_point.x){--cursor_point.x;}
-    if(ctrl.test_pressing(right_flag) && (cursor_point.x < rectangle.w-1)){++cursor_point.x;}
-    if(ctrl.test_pressing( down_flag) && (cursor_point.y < rectangle.h-1)){++cursor_point.y;}
+    if(current_cursor)
+    {
+      auto&  x = current_cursor->x;
+      auto&  y = current_cursor->y;
+
+      bool  moved = false;
+
+        if(ctrl.test_pressing(   up_flag) && (y                             )){  --y;  moved = true;}
+        if(ctrl.test_pressing( left_flag) && (x                             )){  --x;  moved = true;}
+        if(ctrl.test_pressing(right_flag) && (x < board_image.get_width() -1)){  ++x;  moved = true;}
+        if(ctrl.test_pressing( down_flag) && (y < board_image.get_height()-1)){  ++y;  moved = true;}
+
+
+        if(moved)
+        {
+          current_cursor->unlink();
+        }
+
+
+      update_current_square();
+      update_current_piece();
+    }
+
 
     switch(state)
     {
@@ -223,11 +265,8 @@ process(Controller&  ctrl)
   case(MasterState::choose_porter):
       process_choose_porter(ctrl);
       break;
-  case(MasterState::decide_destination):
-      process_change_destination(ctrl,true);
-      break;
   case(MasterState::change_destination):
-      process_change_destination(ctrl,false);
+      process_change_destination(ctrl);
       break;
     }
 }

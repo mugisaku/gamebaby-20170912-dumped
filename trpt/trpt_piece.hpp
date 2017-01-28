@@ -3,6 +3,7 @@
 
 
 #include"trpt_vector.hpp"
+#include"trpt_cursor.hpp"
 #include"core/gmbb_object.hpp"
 
 
@@ -58,12 +59,16 @@ Piece
   Porter*          porter=nullptr;
   Square*  current_square=nullptr;
 
+  Cursor*  linked_cursor=nullptr;
+
   Piece(Board&  brd): board(&brd), resistance(0){}
 
   void  set_current_point(    int  x, int  y);
   void  set_destination_point(int  x, int  y);
 
   void  step();
+
+  void  sync();
 
   Point  get_current_point() const;
 

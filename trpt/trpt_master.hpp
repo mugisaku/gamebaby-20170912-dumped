@@ -26,7 +26,6 @@ enum class
 MasterState
 {
   watch,
-  decide_destination,
   change_destination,
   choose_porter,
 
@@ -40,13 +39,12 @@ Master
 
   Board  board;
 
-  Rectangle  rectangle;
+  Rectangle  view;
 
   Point  offset_max;
 
   MasterState  state;
 
-  Point  cursor_point;
   Point  window_point;
 
   Cursor   first_cursor;
@@ -73,7 +71,7 @@ Master
 
   void  process_watch(Controller&  ctrl);
   void  process_choose_porter(Controller&  ctrl);
-  void  process_change_destination(Controller&  ctrl, bool  first=false);
+  void  process_change_destination(Controller&  ctrl);
 
   void  update_current_piece();
   void  update_current_square();
@@ -97,7 +95,6 @@ public:
 
 
   void  process(Controller&  ctrl);
-
   void  step();
 
   void  load(const File*  f);
@@ -105,6 +102,7 @@ public:
   void  move_window_point();
 
   void  draw_windows(Image&  dst) const;
+  void  draw_porter(int  x, int  y, Image&  dst) const;
   void  draw_entrybook(Image&  dst) const;
 
   void  render(Image&  dst) const;

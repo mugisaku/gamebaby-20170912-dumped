@@ -2,17 +2,25 @@
 #define TRPT_CURSOR_HPP
 
 
+#include"core/gmbb_object.hpp"
+
+
 namespace gmbb{
 namespace trpt{
 
 
-struct
-Cursor
-{
-  int  x=0;
-  int  y=0;
+struct Piece;
 
+
+struct
+Cursor: public Point
+{
   bool  show=true;
+
+  Piece*  linked_piece=nullptr;
+
+  void    link(Piece&  p);
+  void  unlink(         );
 
 };
 
