@@ -16,9 +16,9 @@ namespace gmbb{
 class
 FileReader
 {
-  const char*  const set;
-  const char*  const end;
-  const char*    current;
+  const char*      set;
+  const char*      end;
+  const char*  current;
 
 public:
   FileReader(const char*  p, size_t  length);

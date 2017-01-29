@@ -35,6 +35,7 @@ draw_comment(Image&  dst, int  x, int  y) const
                          font_color,x,y+font::tall_size);
         }
       break;
+  default:;
     }
 }
 

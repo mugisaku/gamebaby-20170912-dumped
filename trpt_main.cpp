@@ -1,7 +1,6 @@
 #include"gmbb.hpp"
 #include"trpt/trpt.hpp"
 #include<SDL.h>
-#include<SDL_image.h>
 #include<cstdlib>
 
 
@@ -114,7 +113,6 @@ quit()
 {
   SDL_DestroyWindow(window);
 
-  IMG_Quit();
   SDL_Quit();
 
   std::exit(0);
@@ -221,8 +219,9 @@ main_loop()
 int
 main(int  argc, char**  argv)
 {
+  Media  media("data.bin");
+
   SDL_Init(SDL_INIT_VIDEO);
-  IMG_Init(IMG_INIT_PNG);
 
   window = SDL_CreateWindow("GAME BABY - " __DATE__,SDL_WINDOWPOS_CENTERED,
                                                     SDL_WINDOWPOS_CENTERED,
@@ -240,25 +239,16 @@ main(int  argc, char**  argv)
     }
 
 
-  auto  bmp = IMG_Load("data/man.png");
+  auto  r = media.find("data/man.mgf")->reader();
 
-  
-  PieceManager::sprite_image.load(static_cast<uint8_t*>(bmp->pixels),bmp->w,bmp->h,bmp->pitch);
+  PieceManager::sprite_image.load_mgf(r);
 
-  SDL_FreeSurface(bmp);
+  r = media.find("data/map.mgf")->reader();
 
-
-  bmp = IMG_Load("data/map.png");
-
-  Board::bg_image.load(static_cast<uint8_t*>(bmp->pixels),bmp->w,bmp->h,bmp->pitch);
-
-  SDL_FreeSurface(bmp);
+  Board::bg_image.load_mgf(r);
 
 
-
-  File  f("",File::get_content_from("data/map.qbf"));
-
-  m.load(&f);
+  m.load(media.find("data/map.qbf"));
 
   m.change_width( screen::width );
   m.change_height(screen::height);

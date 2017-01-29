@@ -79,7 +79,8 @@ CHDST:
                           state = MasterState::choose_porter;
                         }
                       break;
-                    }
+                  default:;
+                   }
                 }
             }
         }

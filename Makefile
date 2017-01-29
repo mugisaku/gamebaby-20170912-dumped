@@ -31,9 +31,9 @@ endif
 
 ifeq ($(emcc),1)
   CXX      = CCACHE_DIR=/tmp/ccachedir ccache emcc
-  CXXFLAGS = -std=gnu++11 -I. -I/usr/include/SDL2 -Werror -Wno-unused-result -O2 -s USE_SDL=2 -s USE_ZLIB=1
+  CXXFLAGS = -std=gnu++11 -I. -I.. -I/usr/include/SDL2 -Werror -Wno-unused-result -O2 -s USE_SDL=2 -s USE_ZLIB=1
   EXE_EXT  = .html
-  LDFLAGS  = --embed-file data.bin
+  LDFLAGS  = --embed-file data.bin --shell-file shell.html
 else ifeq ($(ccache),1)
   CXX = CCACHE_DIR=/tmp/ccachedir ccache $(CMD_PREFIX)g++
 else
@@ -65,28 +65,26 @@ clean:
 	make -C rpg clean
 	make -C trpt clean
 	make -C libjson clean
-	rm -f ta_sample$(EXE_EXT) rpg_sample$(EXE_EXT) jsonman$(EXE_EXT) map.o map mkmap mkmap.o trpt_main
-	rm -f *.js *.html *.mem
-	rm -f makedata.o makedata data.bin 
+	rm -f ta_sample$(EXE_EXT) rpg_sample$(EXE_EXT) jsonman$(EXE_EXT) trpt_main$(EXE_EXT)
+	rm -f *.js *.mem
+	rm -f makedata data.bin 
 
 
 .PHONY: core text_adv rpg trpt libjson data.bin
 
 
-ifeq ($(emcc),1)
-else
 makedata: core makedata.cpp
-	$(CXX) -o $@  makedata.cpp core/*.o $(CXXFLAGS) $(LDFLAGS)
+	g++ -o $@  makedata.cpp core/*.o -O2 -march=core2 -std=c++11 -lz -lpng -lstdc++
 
-data.bin: makedata
-	./makedata data/*
-endif
+
+data.bin:
+	makedata data/*
 
 
 map$(EXE_EXT): core map.cpp
 	$(CXX) -o $@  map.cpp core/*.o $(CXXFLAGS) $(LDFLAGS)
 
-trpt_main$(EXE_EXT): core trpt
+trpt_main$(EXE_EXT): core trpt data.bin
 	$(CXX) -o $@  trpt_main.cpp core/*.o trpt/*.o $(CXXFLAGS) $(LDFLAGS)
 
 ta_sample$(EXE_EXT): core text_adv ta_sample.cpp
