@@ -75,8 +75,8 @@ void
 Master::
 update_current_square()
 {
-  int  sqx = (current_cursor->x-view.x+12)/24;
-  int  sqy = (current_cursor->y-view.y+12)/24;
+  int  sqx = (current_cursor->x-view.x)/24;
+  int  sqy = (current_cursor->y-view.y)/24;
 
   current_square = &board.get(sqx,sqy);
 }
@@ -211,18 +211,18 @@ render(Image&  dst) const
       auto&  cur1 = get_first_cursor();
       auto&  cur2 = get_second_cursor();
 
-      PieceManager::sprite_image.transfer(24*3,0,24,32,dst,cur1.x-view.x,cur1.y-view.y);
+      PieceManager::sprite_image.transfer(24*3,0,24,24,dst,cur1.x-view.x,cur1.y-view.y);
 
         if(cur2.show)
         {
-          PieceManager::sprite_image.transfer(24*4,0,24,32,dst,cur2.x-view.x,cur2.y-view.y);
+          PieceManager::sprite_image.transfer(24*4,0,24,24,dst,cur2.x-view.x,cur2.y-view.y);
         }
 
 
-      auto  x = current_cursor->x+16;
-      auto  y = current_cursor->y- 8;
+      auto  x = current_cursor->x+24;
+      auto  y = current_cursor->y-12;
 
-      PieceManager::sprite_image.transfer(24*5,0,24,32,dst,x,y);
+      PieceManager::sprite_image.transfer(24*5,40-15,21,15,dst,x,y);
 
       draw_windows(dst);
     }
@@ -262,8 +262,16 @@ set_stage()
   auto   fa = &facility_table[0];
   auto&  ls = fa->town->porter_list;
 
-  ls.emplace_back(new Porter(u"わにまる",fa));
-  ls.emplace_back(new Porter(u"あるまじろう",fa));
+  auto  a = new Porter(u"わにまる",fa);
+  auto  b = new Porter(u"あるまじろう",fa);
+
+  a->moving_capacity = 200;
+  b->moving_capacity = 120;
+  a->energy.change_consumption(800);
+  b->energy.change_consumption(220);
+
+  ls.emplace_back(a);
+  ls.emplace_back(b);
 }
 
 

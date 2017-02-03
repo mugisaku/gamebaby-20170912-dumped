@@ -39,7 +39,7 @@ const Square&
 Board::
 get_const(int  x, int  y) const
 {
-  return square_table[(width*y)+x];
+  return const_cast<Board*>(this)->get(x,y);
 }
 
 

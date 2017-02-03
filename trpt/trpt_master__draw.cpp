@@ -70,7 +70,7 @@ draw_porter(int  x, int  y, Image&  dst) const
 
       y += font::base_size;
 
-      dst.print_tall(fmt("エネルギー %2d",po.energy.value),font_color,x,y);
+      dst.print_tall(fmt("エネルギー %2d",po.energy.get_remaining()),font_color,x,y);
     }
 }
 
@@ -135,7 +135,7 @@ draw_entrybook(Image&  dst) const
   int  right_w = font::base_size*14;
 
   dst.frame( left_x, left_y, left_w,font::tall_size*(1+entrybook.get_line_number()));
-  dst.frame(right_x,right_y,right_w,font::tall_size*(1+entrybook.get_line_number()));
+  dst.frame(right_x,right_y,right_w,font::tall_size*8);
 
   int  x = left_x+(font::base_size*2);
   int  y = left_y+(font::base_size  );
@@ -169,11 +169,13 @@ draw_entrybook(Image&  dst) const
 
       Formatted  fmt;
 
-      dst.print_tall(fmt("たいりょく　　　%2d",(*p)->physical_fitness),font_color,x,y);
-      dst.print_tall(fmt("せいしんりょく　%2d",(*p)->mental_fitness  ),font_color,x,y+font::tall_size*1);
-      dst.print_tall(fmt("じょうねつ　　　%2d",(*p)->ardor           ),font_color,x,y+font::tall_size*2);
-      dst.print_tall(fmt("みりょく　　　　%2d",(*p)->charm           ),font_color,x,y+font::tall_size*3);
-      dst.print_tall(fmt("うん　　　　　　%2d",(*p)->luck            ),font_color,x,y+font::tall_size*4);
+      dst.print_tall(fmt("たいりょく　　　%2d",(*p)->physical_fitness     ),font_color,x,y);
+      dst.print_tall(fmt("せいしんりょく　%2d",(*p)->mental_fitness       ),font_color,x,y+font::tall_size*1);
+      dst.print_tall(fmt("じょうねつ　　　%2d",(*p)->ardor                ),font_color,x,y+font::tall_size*2);
+      dst.print_tall(fmt("みりょく　　　　%2d",(*p)->charm                ),font_color,x,y+font::tall_size*3);
+      dst.print_tall(fmt("うん　　　　　　%2d",(*p)->luck                 ),font_color,x,y+font::tall_size*4);
+      dst.print_tall(fmt("いどうりょく　　%2d",(*p)->moving_capacity      ),font_color,x,y+font::tall_size*5);
+      dst.print_tall(fmt("ENEしょうひ　%2d",(*p)->energy.get_consumption()),font_color,x,y+font::tall_size*6);
     }
 }
 

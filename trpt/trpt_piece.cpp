@@ -118,35 +118,36 @@ step()
 
       auto&  remain = distance.value;
 
-        if(!remain)
-        {
-          pausing = true;
+      if(!remain)
+      {
+        pausing = true;
 
-          return;
-        }
-
-
-        if((*porter)(ActionKind::move))
-        {
-            if(resistance > 0)
-            {
-              resistance -= 3;
-
-              return;
-            }
+        return;
+      }
 
 
-          auto  v = willing_vector+forced_vector+inertial_vector;
+      if((*porter)(ActionKind::move))
+      {
+          if(resistance > 0)
+          {
+            resistance -= porter->moving_capacity;
 
-          resistance = get_resistance(current_square->kind);
+            return;
+          }
 
-          progressive_point.x += v.x;
-          progressive_point.y += v.y;
 
-          --remain;
+        auto  v = willing_vector+forced_vector+inertial_vector;
 
-          sync();
-        }
+        resistance = get_resistance(current_square->kind);
+
+        progressive_point.x += v.x;
+        progressive_point.y += v.y;
+
+        --remain;
+      }
+
+
+      sync();
     }
 }
 

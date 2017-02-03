@@ -3,6 +3,7 @@
 
 
 #include<string>
+#include"trpt_energy.hpp"
 
 
 namespace gmbb{
@@ -30,19 +31,11 @@ Porter
   int  luck=8;
 
   const char16_t*  name;
-  const char16_t*  hobby;
-  const char16_t*  wish;
 
   int  foods_amount;
+  int  moving_capacity;
 
-  struct Energy{
-    static constexpr int  value_max = 100;
-
-    int  value;
-
-    int  subtract_amount;
-
-  } energy;
+  Energy energy;
 
   Facility*  facility;
 

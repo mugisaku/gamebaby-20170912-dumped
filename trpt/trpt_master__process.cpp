@@ -199,9 +199,9 @@ process_change_destination(Controller&  ctrl)
 
         if(pm.get_standby_piece())
         {
-          designated_piece->porter->foods_amount   = 2;
-          designated_piece->porter->energy.value  = Porter::Energy::value_max;
-          designated_piece->porter->energy.subtract_amount = 1;
+          designated_piece->porter->foods_amount = 3;
+          designated_piece->porter->energy.fill();
+          designated_piece->resistance           = 0;
 
           pm.commit();
 

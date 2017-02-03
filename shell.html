@@ -48,6 +48,16 @@
   </head>
   <body>
     <figure style="overflow:visible;" id="spinner"><div class="spinner"></div><center style="margin-top:0.5em"><strong>emscripten</strong></center></figure>
+    <table>
+    <tr>
+    <td>
+    キーボードで操作します<p>
+    ENTER,ZキーがAボタン相当<p>
+    CTRL,XキーがBボタン相当<p>
+    spaceキーがスタートボタン相当<p>
+    shiftキーがセレクトボタン相当<p>
+    </td>
+    <td>
     <div class="emscripten" id="status">Downloading...</div>
     <div class="emscripten">
       <progress value="0" max="100" id="progress" hidden=1></progress>  
@@ -59,6 +69,9 @@
     </div>
     
     <div class="emscripten" id="output"></div>
+    </td>
+    </tr>
+    </table>
     <script type='text/javascript'>
       var statusElement = document.getElementById('status');
       var progressElement = document.getElementById('progress');

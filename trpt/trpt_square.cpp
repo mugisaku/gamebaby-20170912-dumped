@@ -43,17 +43,17 @@ get_resistance(SquareKind  k)
     switch(k)
     {
   case(SquareKind::null    ): r = 0;break;
-  case(SquareKind::plain   ): r = 0;break;
-  case(SquareKind::waste   ): r = 1;break;
-  case(SquareKind::mud     ): r = 1;break;
-  case(SquareKind::sand    ): r = 2;break;
-  case(SquareKind::snow    ): r = 2;break;
-  case(SquareKind::ice     ): r = 2;break;
-  case(SquareKind::grass   ): r = 2;break;
-  case(SquareKind::river   ): r = 2;break;
-  case(SquareKind::forest  ): r = 4;break;
-  case(SquareKind::mountain): r = 5;break;
-  case(SquareKind::see     ): r = 5;break;
+  case(SquareKind::plain   ): r = 200;break;
+  case(SquareKind::waste   ): r = 200;break;
+  case(SquareKind::mud     ): r = 200;break;
+  case(SquareKind::sand    ): r = 200;break;
+  case(SquareKind::snow    ): r = 200;break;
+  case(SquareKind::ice     ): r = 200;break;
+  case(SquareKind::grass   ): r = 200;break;
+  case(SquareKind::river   ): r = 200;break;
+  case(SquareKind::forest  ): r = 600;break;
+  case(SquareKind::mountain): r = 1200;break;
+  case(SquareKind::see     ): r = 200;break;
   default:;
 //      printf("[square get_resistance] %d\n",static_cast<int>(k));
     }

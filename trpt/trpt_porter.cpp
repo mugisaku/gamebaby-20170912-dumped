@@ -24,10 +24,8 @@ operator()(ActionKind  k)
     switch(k)
     {
   case(ActionKind::move):
-        if(energy.value >= energy.subtract_amount)
+        if(energy.consume())
         {
-          energy.value -= energy.subtract_amount;
-
           return true;
         }
 
@@ -36,7 +34,7 @@ operator()(ActionKind  k)
         {
           --foods_amount;
 
-          energy.value = Energy::value_max;
+          energy.fill();
 
           return true;
         }
