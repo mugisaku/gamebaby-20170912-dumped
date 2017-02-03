@@ -172,19 +172,24 @@ void
 Master::
 step()
 {
-  auto  p = pm.step();
+  int  n = haste_flag? 4:1;
 
-    if(p)
+    while(n--)
     {
-      auto&  f = *p->current_square->facility;
+      auto  p = pm.step();
 
-      f.town->porter_list.emplace_back(p->porter);
-
-      pm.pullback_previous_piece();
-
-        if(current_cursor->linked_piece == p)
+        if(p)
         {
-          current_cursor->unlink();
+          auto&  f = *p->current_square->facility;
+
+          f.town->porter_list.emplace_back(p->porter);
+
+          pm.pullback_previous_piece();
+
+            if(current_cursor->linked_piece == p)
+            {
+              current_cursor->unlink();
+            }
         }
     }
 }
@@ -211,16 +216,16 @@ render(Image&  dst) const
       auto&  cur1 = get_first_cursor();
       auto&  cur2 = get_second_cursor();
 
-      PieceManager::sprite_image.transfer(24*3,0,24,24,dst,cur1.x-view.x,cur1.y-view.y);
+      PieceManager::sprite_image.transfer(24*3,0,16,16,dst,cur1.x-view.x-8,cur1.y-view.y-8);
 
         if(cur2.show)
         {
-          PieceManager::sprite_image.transfer(24*4,0,24,24,dst,cur2.x-view.x,cur2.y-view.y);
+          PieceManager::sprite_image.transfer(24*4,0,16,16,dst,cur2.x-view.x-8,cur2.y-view.y-8);
         }
 
 
-      auto  x = current_cursor->x+24;
-      auto  y = current_cursor->y-12;
+      auto  x = current_cursor->x+8;
+      auto  y = current_cursor->y-16;
 
       PieceManager::sprite_image.transfer(24*5,40-15,21,15,dst,x,y);
 

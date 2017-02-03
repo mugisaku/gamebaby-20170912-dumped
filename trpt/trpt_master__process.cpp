@@ -113,7 +113,7 @@ process_choose_porter(Controller&  ctrl)
 
           auto&  sq = *designated_square;
 
-          p->set_current_point(24*sq.index.x,24*sq.index.y);
+          p->set_current_point(24*sq.index.x+12,24*sq.index.y+12);
 
           auto  pt = p->get_current_point();
 
@@ -234,6 +234,8 @@ void
 Master::
 process(Controller&  ctrl)
 {
+  haste_flag = (ctrl.test_pressing(p_flag) && ctrl.test_pressing(n_flag));
+
     if(current_cursor)
     {
       auto&  x = current_cursor->x;

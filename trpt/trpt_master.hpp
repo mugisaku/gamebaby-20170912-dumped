@@ -45,6 +45,8 @@ Master
 
   MasterState  state;
 
+  bool  haste_flag;
+
   Point  window_point;
 
   Cursor   first_cursor;

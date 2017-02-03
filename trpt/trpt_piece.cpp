@@ -38,7 +38,7 @@ update_current_square()
 {
   auto  pt = get_current_point();
 
-  current_square = &board->get((pt.x+12)/24,(pt.y+16)/24);
+  current_square = &board->get((pt.x)/24,(pt.y)/24);
 }
 
 
@@ -174,7 +174,7 @@ render(const Image&  src, const Point&  offset, Image&  dst) const
 
   static const int  table[] = {0,1,0,2};
 
-  src.transfer(24*table[animation_phase],0,24,32,dst,pt.x-offset.x,pt.y-offset.y);
+  src.transfer(24*table[animation_phase],0,24,40,dst,pt.x-offset.x-12,pt.y-offset.y-24);
 }
 
 

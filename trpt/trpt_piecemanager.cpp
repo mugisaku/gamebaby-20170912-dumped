@@ -158,11 +158,11 @@ Piece*
 PieceManager::
 get_piece(int  x, int  y) const
 {
-  const int  x_end = (x+12);
-  const int  y_end = (y+12);
+  x -= 8;
+  y -= 8;
 
-  x -= 12;
-  y -= 12;
+  const int  x_end = (x+16);
+  const int  y_end = (y+24);
 
     for(auto  p: entrant_pieces)
     {
@@ -173,6 +173,8 @@ get_piece(int  x, int  y) const
            (pt.x <  x_end) &&
            (pt.y <  y_end))
         {
+//printf("%4d <= %4d < %4d\n",x,pt.x,x_end);
+//printf("%4d <= %4d < %4d\n\n",y,pt.y,y_end);
           return p;
         }
     }
