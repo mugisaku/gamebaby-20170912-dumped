@@ -16,8 +16,8 @@ using namespace trpt;
 
 
 namespace screen{
-constexpr int   width = 320;
-constexpr int  height = 280;
+constexpr int   width = 240;
+constexpr int  height = 160;
 }
 
 
@@ -250,8 +250,7 @@ main(int  argc, char**  argv)
 
   m.load(media.find("data/map.qbf"));
 
-  m.change_width( screen::width );
-  m.change_height(screen::height);
+  m.change_size( screen::width,screen::height);
 
   m.set_stage();
 

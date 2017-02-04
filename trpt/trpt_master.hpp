@@ -41,8 +41,6 @@ Master
 
   Rectangle  view;
 
-  Point  offset_max;
-
   MasterState  state;
 
   bool  haste_flag;
@@ -80,14 +78,18 @@ Master
 
   void  update_entrybook(Town&  t);
 
+  void  move_up();
+  void  move_left();
+  void  move_right();
+  void  move_down();
+
 public:
   static Image  sprite_image;
 
    Master();
   ~Master();
 
-  void  change_width(int   v);
-  void  change_height(int  v);
+  void  change_size(int  w, int  h);
 
   const Cursor&   get_first_cursor() const;
   const Cursor&  get_second_cursor() const;

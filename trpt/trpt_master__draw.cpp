@@ -107,7 +107,7 @@ draw_windows(Image&  dst) const
           const int  x = window_point.x         ;
           const int  y = window_point.y+square_h;
 
-          constexpr int  w = font::base_size*16;
+          constexpr int  w = font::base_size*12;
           constexpr int  h = font::base_size*(2+4);
 
           dst.frame(x,y,w,h);
@@ -174,7 +174,7 @@ draw_entrybook(Image&  dst) const
       dst.print_tall(fmt("じょうねつ　　　%2d",(*p)->ardor                ),font_color,x,y+font::tall_size*2);
       dst.print_tall(fmt("みりょく　　　　%2d",(*p)->charm                ),font_color,x,y+font::tall_size*3);
       dst.print_tall(fmt("うん　　　　　　%2d",(*p)->luck                 ),font_color,x,y+font::tall_size*4);
-      dst.print_tall(fmt("いどうりょく　　%2d",(*p)->moving_capacity      ),font_color,x,y+font::tall_size*5);
+      dst.print_tall(fmt("いどうりょく　%3d",(*p)->moving_capacity      ),font_color,x,y+font::tall_size*5);
       dst.print_tall(fmt("ENEしょうひ　%2d",(*p)->energy.get_consumption()),font_color,x,y+font::tall_size*6);
     }
 }

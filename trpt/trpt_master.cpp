@@ -34,21 +34,12 @@ Master::
 
 void
 Master::
-change_width(int  v)
+change_size(int  w, int  h)
 {
-  view.w = std::min(v,24*board.get_width());
+  view.w = std::min(w,24*board.get_width());
+  view.h = std::min(h,24*board.get_height());
 
-  offset_max.x = (24*board.get_width())-view.w;
-}
-
-
-void
-Master::
-change_height(int  v)
-{
-  view.h = std::min(v,24*board.get_height());
-
-  offset_max.y = (24*board.get_height())-view.h;
+  current_cursor->reset(view.x+(view.w/2),view.y+(view.h/2));
 }
 
 
@@ -75,8 +66,8 @@ void
 Master::
 update_current_square()
 {
-  int  sqx = (current_cursor->x-view.x)/24;
-  int  sqy = (current_cursor->y-view.y)/24;
+  int  sqx = (current_cursor->x/24);
+  int  sqy = (current_cursor->y/24);
 
   current_square = &board.get(sqx,sqy);
 }
@@ -94,7 +85,7 @@ void
 Master::
 update_current_piece()
 {
-  current_piece = pm.get_piece(current_cursor->x-view.x,current_cursor->y-view.y);
+  current_piece = pm.get_piece(current_cursor->x,current_cursor->y);
 }
 
 
@@ -224,13 +215,15 @@ render(Image&  dst) const
         }
 
 
-      auto  x = current_cursor->x+8;
-      auto  y = current_cursor->y-16;
+      auto  x = (current_cursor->x-view.x)+ 8;
+      auto  y = (current_cursor->y-view.y)-16;
 
       PieceManager::sprite_image.transfer(24*5,40-15,21,15,dst,x,y);
 
       draw_windows(dst);
     }
+//printf("curcur %4d %4d\n",current_cursor->x,current_cursor->y);
+//printf("view   %4d %4d\n",           view.x,           view.y);
 }
 
 

@@ -230,6 +230,112 @@ process_change_destination(Controller&  ctrl)
 }
 
 
+
+
+void
+Master::
+move_up()
+{
+  auto&  y = current_cursor->y;
+
+    if((y-view.y) > (view.h/2))
+    {
+      --y;
+    }
+
+  else
+    if(view.y)
+    {
+      --view.y;
+      --y;
+    }
+
+  else
+    if(y)
+    {
+      --y;
+    }
+}
+
+
+void
+Master::
+move_left()
+{
+  auto&  x = current_cursor->x;
+
+    if((x-view.x) > (view.w/2))
+    {
+      --x;
+    }
+
+  else
+    if(view.x)
+    {
+      --view.x;
+      --x;
+    }
+
+  else
+    if(x)
+    {
+      --x;
+    }
+}
+
+
+void
+Master::
+move_right()
+{
+  auto&  x = current_cursor->x;
+
+    if((x-view.x) < (view.w/2))
+    {
+      ++x;
+    }
+
+  else
+    if(view.x < (board_image.get_width()-view.w))
+    {
+      ++view.x;
+      ++x;
+    }
+
+  else
+    if(x < (board_image.get_width()-1))
+    {
+      ++x;
+    }
+}
+
+
+void
+Master::
+move_down()
+{
+  auto&  y = current_cursor->y;
+
+    if((y-view.y) < (view.h/2))
+    {
+      ++y;
+    }
+
+  else
+    if(view.y < (board_image.get_height()-view.h))
+    {
+      ++view.y;
+      ++y;
+    }
+
+  else
+    if(y < (board_image.get_height()-1))
+    {
+      ++y;
+    }
+}
+
+
 void
 Master::
 process(Controller&  ctrl)
@@ -243,10 +349,10 @@ process(Controller&  ctrl)
 
       bool  moved = false;
 
-        if(ctrl.test_pressing(   up_flag) && (y                             )){  --y;  moved = true;}
-        if(ctrl.test_pressing( left_flag) && (x                             )){  --x;  moved = true;}
-        if(ctrl.test_pressing(right_flag) && (x < board_image.get_width() -1)){  ++x;  moved = true;}
-        if(ctrl.test_pressing( down_flag) && (y < board_image.get_height()-1)){  ++y;  moved = true;}
+        if(ctrl.test_pressing(   up_flag)){    move_up();  moved = true;}
+        if(ctrl.test_pressing( left_flag)){  move_left();  moved = true;}
+        if(ctrl.test_pressing(right_flag)){ move_right();  moved = true;}
+        if(ctrl.test_pressing( down_flag)){  move_down();  moved = true;}
 
 
         if(moved)
