@@ -2,7 +2,7 @@
 #define TRPT_CURSOR_HPP
 
 
-#include"core/gmbb_object.hpp"
+#include"gmbb_object.hpp"
 
 
 namespace gmbb{

@@ -1,6 +1,6 @@
 #include"gmbb.hpp"
-#include"trpt/trpt.hpp"
-#include<SDL.h>
+#include"trpt.hpp"
+#include<SDL2/SDL.h>
 #include<cstdlib>
 
 
