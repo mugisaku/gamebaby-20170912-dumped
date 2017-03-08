@@ -4,12 +4,65 @@
 
 
 Field::
-Field()
+Field():
+master(nullptr)
 {
   prepare();
 }
 
 
+
+
+void
+Field::
+put(Piece*  p)
+{
+    if(p)
+    {
+      piece_list.emplace_back(p);
+
+
+      auto&  sq = table[0][0];
+
+      p->current_square = &sq;
+
+      sq.current_piece = p;
+
+        if(!master)
+        {
+          master = p;
+        }
+    }
+}
+
+
+void
+Field::
+process(const gmbb::Controller&  ctrl)
+{
+    if(ctrl.test_pressed(gmbb::left_flag))
+    {
+      master->turn_left();
+    }
+
+  else
+    if(ctrl.test_pressed(gmbb::right_flag))
+    {
+      master->turn_right();
+    }
+
+  else
+    if(ctrl.test_pressed(gmbb::up_flag))
+    {
+      master->move_advance();
+    }
+
+  else
+    if(ctrl.test_pressed(gmbb::down_flag))
+    {
+      master->move_back();
+    }
+}
 
 
 void
@@ -47,12 +100,20 @@ prepare()
 
 void
 Field::
-render(gmbb::Image&  dst) const
+render(gmbb::Image&  dst)
 {
     for(int  y = 0;  y < height;  ++y){
     for(int  x = 0;  x <  width;  ++x){
-
+      dst.fill_rectangle(4|8,24*x,24*y,24,24);
     }}
+
+
+  piece_list.sort(Piece::compare);
+
+    for(auto  p: piece_list)
+    {
+      p->render(dst,0,0);
+    }
 }
 
 

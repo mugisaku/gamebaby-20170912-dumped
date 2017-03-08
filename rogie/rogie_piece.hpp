@@ -49,6 +49,9 @@ Ammo
 struct
 Piece
 {
+  static gmbb::Image  sprite_image;
+
+
   Square*  current_square;
 
   Direction  direction;
@@ -58,6 +61,18 @@ Piece
   uint32_t  weapon_flags;
 
   Weapon  current_weapon;
+
+public:
+  Piece();
+
+  void  move_advance();
+  void  move_back();
+  void  turn_left();
+  void  turn_right();
+
+  void  render(gmbb::Image&  dst, int  x, int  y) const;
+
+  static bool  compare(Piece*  a, Piece*  b);
 
 };
 

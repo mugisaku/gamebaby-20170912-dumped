@@ -31,7 +31,11 @@ clear()
     }
 
 
+  kind = SquareKind::null;
+
   current_piece = nullptr;
+
+  passable = true;
 }
 
 

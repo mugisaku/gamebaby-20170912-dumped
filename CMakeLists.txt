@@ -17,9 +17,9 @@ endif()
 
 
 set(CMAKE_C_COMPILER  gcc)
-set(CMAKE_C_FLAGS   "-std=c11 -Werror")
+set(CMAKE_C_FLAGS   "-std=c14 -Werror")
 set(CMAKE_CXX_COMPILER  g++)
-set(CMAKE_CXX_FLAGS "-std=c++11 -Werror")
+set(CMAKE_CXX_FLAGS "-std=c++14 -Werror")
 set(CMAKE_CXX_LINK_FLAGS  "-lstdc++ -lz -lpng -lSDL2 -lSDL2main")
 
 

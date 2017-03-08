@@ -3,22 +3,32 @@
 
 
 #include"rogie_square.hpp"
+#include"rogie_piece.hpp"
+#include<list>
 
 
 struct
 Field
 {
-  static constexpr int   width = 32;
-  static constexpr int  height = 32;
+  static constexpr int   width = 6;
+  static constexpr int  height = 6;
 
   Square  table[height][width];
+
+  std::list<Piece*>  piece_list;
+
+  Piece*  master;
 
 public:
   Field();
 
   void  prepare();
 
-  void  render(gmbb::Image&  dst) const;
+  void  put(Piece*  p);
+
+  void  process(const gmbb::Controller&  ctrl);
+
+  void  render(gmbb::Image&  dst);
 
 };
 

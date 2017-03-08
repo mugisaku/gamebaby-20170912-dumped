@@ -187,6 +187,8 @@ main_loop()
 
   env::change_time(SDL_GetTicks());
 
+  field.process(ctrl);
+
   static uint32_t  next_time;
 
   auto  now = SDL_GetTicks();
@@ -194,6 +196,8 @@ main_loop()
     if(now >= next_time)
     {
       constexpr uint32_t  interval_time = 40;
+
+      field.render(final_image);
 
       transfer();
 
@@ -230,11 +234,13 @@ main(int  argc, char**  argv)
     }
 
 
+  auto  r = media.find("data/rogue.mgf")->reader();
+
+  Piece::sprite_image.load_mgf(r);
+
+  field.put(new Piece);
+
 /*
-  auto  r = media.find("data/man.mgf")->reader();
-
-  PieceManager::sprite_image.load_mgf(r);
-
   r = media.find("data/map.mgf")->reader();
 
   Board::bg_image.load_mgf(r);
