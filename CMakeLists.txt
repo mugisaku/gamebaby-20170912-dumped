@@ -82,9 +82,18 @@ set(TRPT_SOURCES
 )
 
 
+set(ROGIE_SOURCES
+  rogie/rogie_square.cpp
+  rogie/rogie_piece.cpp
+  rogie/rogie_field.cpp
+)
+
+
 include_directories(./core)
 include_directories(./trpt)
+include_directories(./rogie)
 add_executable("Trpt${EXECUTABLE_EXTENSION}" trpt.cpp ${CORE_SOURCES} ${TRPT_SOURCES})
+add_executable("Rogie${EXECUTABLE_EXTENSION}" rogie.cpp ${CORE_SOURCES} ${ROGIE_SOURCES})
 
 
 
