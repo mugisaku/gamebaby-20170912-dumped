@@ -189,6 +189,8 @@ main_loop()
 
   field.process(ctrl);
 
+  field.master->step();
+
   static uint32_t  next_time;
 
   auto  now = SDL_GetTicks();

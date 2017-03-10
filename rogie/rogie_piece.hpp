@@ -3,6 +3,7 @@
 
 
 #include"rogie_square.hpp"
+#include"rogie_context.hpp"
 
 
 
@@ -46,6 +47,15 @@ Ammo
 };
 
 
+enum class
+MotionKind
+{
+  move_to_direction,
+  move_to_opposite_direction,
+
+};
+
+
 struct
 Piece
 {
@@ -53,6 +63,12 @@ Piece
 
 
   Square*  current_square;
+
+  gmbb::Point  rendering_dst_offset;
+  gmbb::Point  rendering_src_base;
+  gmbb::Point  rendering_src_offset;
+
+  bool  shape_reversing;
 
   Direction  direction;
 
@@ -62,6 +78,10 @@ Piece
 
   Weapon  current_weapon;
 
+  int  action_currency;
+
+  std::vector<Context>  context_stack;
+
 public:
   Piece();
 
@@ -69,6 +89,15 @@ public:
   void  move_back();
   void  turn_left();
   void  turn_right();
+  void  use_weapon();
+
+  void  push_context(Callback  cb);
+  void  pop_context();
+  void  step();
+
+  void  set_offset_by_direction();
+  void  set_shape_by_direction();
+
 
   void  render(gmbb::Image&  dst, int  x, int  y) const;
 

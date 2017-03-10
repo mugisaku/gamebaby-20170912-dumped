@@ -40,27 +40,36 @@ void
 Field::
 process(const gmbb::Controller&  ctrl)
 {
-    if(ctrl.test_pressed(gmbb::left_flag))
+    if(master->context_stack.empty())
     {
-      master->turn_left();
-    }
+        if(ctrl.test_pressed(gmbb::p_flag))
+        {
+          master->use_weapon();
+        }
 
-  else
-    if(ctrl.test_pressed(gmbb::right_flag))
-    {
-      master->turn_right();
-    }
+      else
+        if(ctrl.test_pressed(gmbb::left_flag))
+        {
+          master->turn_left();
+        }
 
-  else
-    if(ctrl.test_pressed(gmbb::up_flag))
-    {
-      master->move_advance();
-    }
+      else
+        if(ctrl.test_pressed(gmbb::right_flag))
+        {
+          master->turn_right();
+        }
 
-  else
-    if(ctrl.test_pressed(gmbb::down_flag))
-    {
-      master->move_back();
+      else
+        if(ctrl.test_pressed(gmbb::up_flag))
+        {
+          master->move_advance();
+        }
+
+      else
+        if(ctrl.test_pressed(gmbb::down_flag))
+        {
+          master->move_back();
+        }
     }
 }
 

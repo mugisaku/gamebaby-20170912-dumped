@@ -1,4 +1,5 @@
 #include"rogie_piece.hpp"
+#include"rogie_basic_callback.hpp"
 
 
 
@@ -8,10 +9,98 @@ Piece::
 sprite_image;
 
 
+
+
 Piece::
 Piece():
 direction(Direction::front)
 {
+}
+
+
+
+
+void
+Piece::
+set_shape_by_direction()
+{
+  rendering_src_base.y = 0;
+  shape_reversing = false;
+
+    switch(direction)
+    {
+  case(Direction::back_left):
+      rendering_src_base.y = 4;
+      break;
+  case(Direction::back):
+      rendering_src_base.y = 2;
+      break;
+  case(Direction::back_right):
+      rendering_src_base.y = 4;
+      shape_reversing = true;
+      break;
+  case(Direction::left):
+      rendering_src_base.y = 1;
+      break;
+  case(Direction::right):
+      rendering_src_base.y = 1;
+      shape_reversing = true;
+      break;
+  case(Direction::front_left):
+      rendering_src_base.y = 3;
+      break;
+  case(Direction::front):
+      break;
+  case(Direction::front_right):
+      rendering_src_base.y = 3;
+      shape_reversing = true;
+      break;
+    }
+
+
+  rendering_src_base.y *= 48;
+}
+
+
+void
+Piece::
+set_offset_by_direction()
+{
+    switch(direction)
+    {
+  case(Direction::back_left):
+      rendering_dst_offset.x = 24;
+      rendering_dst_offset.y = 24;
+      break;
+  case(Direction::back):
+      rendering_dst_offset.x =  0;
+      rendering_dst_offset.y = 24;
+      break;
+  case(Direction::back_right):
+      rendering_dst_offset.x = -24;
+      rendering_dst_offset.y =  24;
+      break;
+  case(Direction::left):
+      rendering_dst_offset.x = 24;
+      rendering_dst_offset.y =  0;
+      break;
+  case(Direction::right):
+      rendering_dst_offset.x = -24;
+      rendering_dst_offset.y =   0;
+      break;
+  case(Direction::front_left):
+      rendering_dst_offset.x =  24;
+      rendering_dst_offset.y = -24;
+      break;
+  case(Direction::front):
+      rendering_dst_offset.x =   0;
+      rendering_dst_offset.y = -24;
+      break;
+  case(Direction::front_right):
+      rendering_dst_offset.x = -24;
+      rendering_dst_offset.y = -24;
+      break;
+    }
 }
 
 
@@ -30,6 +119,8 @@ move_advance()
            current_square->current_piece = nullptr;
 
            current_square = ln;
+
+           push_context(basic_callback::move_to_direction);
          }
     }
 }
@@ -50,6 +141,10 @@ move_back()
            current_square->current_piece = nullptr;
 
            current_square = ln;
+
+//           motion_stack.emplace_back(MotionKind::move_to_opposite_direction);
+
+//           motion_phase = 0;
          }
     }
 }
@@ -70,6 +165,9 @@ turn_left()
   case(Direction::front      ): direction = Direction::front_right;break;
   case(Direction::front_right): direction = Direction::right      ;break;
     }
+
+
+  set_shape_by_direction();
 }
 
 
@@ -88,6 +186,56 @@ turn_right()
   case(Direction::front      ): direction = Direction::front_left ;break;
   case(Direction::front_right): direction = Direction::front      ;break;
     }
+
+
+  set_shape_by_direction();
+}
+
+
+void
+Piece::
+use_weapon()
+{
+  push_context(basic_callback::punch);
+}
+
+
+
+
+void
+Piece::
+push_context(Callback  cb)
+{
+    if(cb)
+    {
+      context_stack.emplace_back(cb);
+
+      cb(context_stack.back(),*this);
+    }
+}
+
+
+void
+Piece::
+pop_context()
+{
+    if(context_stack.size())
+    {
+      context_stack.pop_back();
+    }
+}
+
+
+void
+Piece::
+step()
+{
+    if(context_stack.size())
+    {
+      auto&  bk = context_stack.back();
+
+      bk.callback(bk,*this);
+    }
 }
 
 
@@ -95,42 +243,14 @@ void
 Piece::
 render(gmbb::Image&  dst, int  x, int  y) const
 {
-  int  src_y = 0;
+  auto  src_x = rendering_src_base.x+rendering_src_offset.x;
+  auto  src_y = rendering_src_base.y+rendering_src_offset.y;
 
-  bool  rev = false;
+  auto  dst_x = rendering_dst_offset.x+(24*current_square->point.x)   ;
+  auto  dst_y = rendering_dst_offset.y+(24*current_square->point.y)-24;
 
-    switch(direction)
-    {
-  case(Direction::back_left):
-      src_y = 4;
-      break;
-  case(Direction::back):
-      src_y = 2;
-      break;
-  case(Direction::back_right):
-      src_y = 4;
-      rev = true;
-      break;
-  case(Direction::left):
-      src_y = 1;
-      break;
-  case(Direction::right):
-      src_y = 1;
-      rev = true;
-      break;
-  case(Direction::front_left):
-      src_y = 3;
-      break;
-  case(Direction::front):
-      break;
-  case(Direction::front_right):
-      src_y = 3;
-      rev = true;
-      break;
-    }
-
-
-  sprite_image.transfer(0,48*src_y,rev? -24:24,48,dst,24*current_square->point.x,(24*current_square->point.y)-24);
+  sprite_image.transfer(src_x,
+                        src_y,shape_reversing? -24:24,48,dst,dst_x,dst_y);
 }
 
 
