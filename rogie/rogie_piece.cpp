@@ -13,7 +13,10 @@ sprite_image;
 
 Piece::
 Piece():
-direction(Direction::front)
+direction(Direction::front),
+shield_remaining(100),
+action_currency(0),
+moving_cost_base(10)
 {
 }
 
@@ -64,41 +67,41 @@ set_shape_by_direction()
 
 void
 Piece::
-set_offset_by_direction()
+add_offset_by_direction(int  n)
 {
     switch(direction)
     {
   case(Direction::back_left):
-      rendering_dst_offset.x = 24;
-      rendering_dst_offset.y = 24;
+      rendering_dst_offset.x += -n;
+      rendering_dst_offset.y += -n;
       break;
   case(Direction::back):
-      rendering_dst_offset.x =  0;
-      rendering_dst_offset.y = 24;
+      rendering_dst_offset.x +=  0;
+      rendering_dst_offset.y += -n;
       break;
   case(Direction::back_right):
-      rendering_dst_offset.x = -24;
-      rendering_dst_offset.y =  24;
+      rendering_dst_offset.x +=  n;
+      rendering_dst_offset.y += -n;
       break;
   case(Direction::left):
-      rendering_dst_offset.x = 24;
-      rendering_dst_offset.y =  0;
+      rendering_dst_offset.x += -n;
+      rendering_dst_offset.y +=  0;
       break;
   case(Direction::right):
-      rendering_dst_offset.x = -24;
-      rendering_dst_offset.y =   0;
+      rendering_dst_offset.x += n;
+      rendering_dst_offset.y += 0;
       break;
   case(Direction::front_left):
-      rendering_dst_offset.x =  24;
-      rendering_dst_offset.y = -24;
+      rendering_dst_offset.x += -n;
+      rendering_dst_offset.y +=  n;
       break;
   case(Direction::front):
-      rendering_dst_offset.x =   0;
-      rendering_dst_offset.y = -24;
+      rendering_dst_offset.x += 0;
+      rendering_dst_offset.y += n;
       break;
   case(Direction::front_right):
-      rendering_dst_offset.x = -24;
-      rendering_dst_offset.y = -24;
+      rendering_dst_offset.x += n;
+      rendering_dst_offset.y += n;
       break;
     }
 }
@@ -121,6 +124,8 @@ move_advance()
            current_square = ln;
 
            push_context(basic_callback::move_to_direction);
+
+           action_currency -= moving_cost_base;
          }
     }
 }
@@ -130,7 +135,9 @@ void
 Piece::
 move_back()
 {
-  auto  ln = (*current_square)[opposite(direction)];
+  auto  dir = get_opposite(direction);
+
+  auto  ln = (*current_square)[dir];
 
     if(ln)
     {
@@ -142,9 +149,9 @@ move_back()
 
            current_square = ln;
 
-//           motion_stack.emplace_back(MotionKind::move_to_opposite_direction);
+           push_context(basic_callback::move_to_opposite_direction);
 
-//           motion_phase = 0;
+           action_currency -= moving_cost_base;
          }
     }
 }
@@ -167,6 +174,8 @@ turn_left()
     }
 
 
+  action_currency -= moving_cost_base/3;
+
   set_shape_by_direction();
 }
 
@@ -188,6 +197,8 @@ turn_right()
     }
 
 
+  action_currency -= moving_cost_base/3;
+
   set_shape_by_direction();
 }
 
@@ -196,7 +207,19 @@ void
 Piece::
 use_weapon()
 {
+  action_currency -= moving_cost_base;
+
   push_context(basic_callback::punch);
+}
+
+
+
+
+int
+Piece::
+get_moving_cost(Direction  dir) const
+{
+  return (moving_cost_base/3)*get_distance(direction,dir)+(moving_cost_base);
 }
 
 
@@ -246,11 +269,11 @@ render(gmbb::Image&  dst, int  x, int  y) const
   auto  src_x = rendering_src_base.x+rendering_src_offset.x;
   auto  src_y = rendering_src_base.y+rendering_src_offset.y;
 
-  auto  dst_x = rendering_dst_offset.x+(24*current_square->point.x)   ;
-  auto  dst_y = rendering_dst_offset.y+(24*current_square->point.y)-24;
+  auto  dst_x = x+rendering_dst_offset.x+(24*current_square->point.x)   ;
+  auto  dst_y = y+rendering_dst_offset.y+(24*current_square->point.y)-24;
 
   sprite_image.transfer(src_x,
-                        src_y,shape_reversing? -24:24,48,dst,dst_x,dst_y);
+                        src_y,shape_reversing? -24:24,48,dst,dst_x,dst_y-4);
 }
 
 

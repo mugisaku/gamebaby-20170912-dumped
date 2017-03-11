@@ -79,6 +79,7 @@ Piece
   Weapon  current_weapon;
 
   int  action_currency;
+  int  moving_cost_base;
 
   std::vector<Context>  context_stack;
 
@@ -95,6 +96,9 @@ public:
   void  pop_context();
   void  step();
 
+  int  get_moving_cost(Direction  dir) const;
+
+  void  add_offset_by_direction(int  n=1);
   void  set_offset_by_direction();
   void  set_shape_by_direction();
 

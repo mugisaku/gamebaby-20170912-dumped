@@ -4,43 +4,7 @@
 
 #include<cstdint>
 #include"gmbb.hpp"
-
-
-enum class
-Direction
-{
-  back_left,
-  back,
-  back_right,
-  left,
-  right,
-  front_left,
-  front,
-  front_right,
-
-  END,
-
-};
-
-
-constexpr Direction
-opposite(Direction  d)
-{
-    switch(d)
-    {
-  case(Direction::back_left  ): return Direction::front_right;
-  case(Direction::back       ): return Direction::front      ;
-  case(Direction::back_right ): return Direction::front_left ;
-  case(Direction::left       ): return Direction::right      ;
-  case(Direction::right      ): return Direction::left       ;
-  case(Direction::front_left ): return Direction::back_right ;
-  case(Direction::front      ): return Direction::back       ;
-  case(Direction::front_right): return Direction::back_left  ;
-    }
-
-
-  return Direction::front;
-}
+#include"rogie_direction.hpp"
 
 
 enum class
@@ -51,13 +15,22 @@ SquareKind
 };
 
 
+enum class
+TrapKind
+{
+  null,
+
+};
+
+
 struct Piece;
 
 
 struct
 Square
 {
-  SquareKind  kind;
+  SquareKind       kind;
+    TrapKind  trap_kind;
 
   bool  passable;
 
@@ -67,12 +40,17 @@ Square
 
   Piece*  current_piece;
 
+  int  reaching_cost;
+
 public:
   Square();
 
   Square*&  operator[](Direction  dir);
 
   void  clear();
+
+  void  subsearch(Piece*  actor, int  cost);
+  void     search(Piece*  actor           );
 
 };
 

@@ -1,6 +1,6 @@
 #include"gmbb.hpp"
 #include"rogie.hpp"
-#include<SDL2/SDL.h>
+#include<SDL.h>
 #include<cstdlib>
 
 
@@ -188,8 +188,7 @@ main_loop()
   env::change_time(SDL_GetTicks());
 
   field.process(ctrl);
-
-  field.master->step();
+  field.cycle();
 
   static uint32_t  next_time;
 
@@ -240,7 +239,8 @@ main(int  argc, char**  argv)
 
   Piece::sprite_image.load_mgf(r);
 
-  field.put(new Piece);
+  field.put(new Piece,2,2);
+  field.put(new Piece,3,4);
 
 /*
   r = media.find("data/map.mgf")->reader();

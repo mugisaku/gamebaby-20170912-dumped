@@ -15,6 +15,8 @@ Field
 
   Square  table[height][width];
 
+  gmbb::Image  image;
+
   std::list<Piece*>  piece_list;
 
   Piece*  master;
@@ -24,9 +26,13 @@ public:
 
   void  prepare();
 
-  void  put(Piece*  p);
+  void  put(Piece*  p, int  x, int  y);
 
   void  process(const gmbb::Controller&  ctrl);
+
+  void  cycle();
+
+  void  prepare_to_search();
 
   void  render(gmbb::Image&  dst);
 

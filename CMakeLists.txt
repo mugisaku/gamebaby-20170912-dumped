@@ -32,9 +32,9 @@ set(CMAKE_CXX_FLAGS_DEBUG   "${CMAKE_CXX_FLAGS} -Og -g")
 if(EMSCRIPTEN)
   set(EXECUTABLE_EXTENSION ".html")
   set(CMAKE_CXX_COMPILER  em++)
-  set(CMAKE_CXX_FLAGS "-std=c++11 -Werror -O2")
+  set(CMAKE_CXX_FLAGS "-std=c++14 -Werror -Wno-switch -O2")
   set(CMAKE_CXX_FLAGS_DEBUG "")
-  set(CMAKE_CXX_LINK_FLAGS  "${CMAKE_CXX_LINK_FLAGS} -s USE_SDL=2 --embed-file font.bin")
+  set(CMAKE_CXX_LINK_FLAGS  "${CMAKE_CXX_LINK_FLAGS} -s USE_ZLIB=1 -s USE_SDL=2 --embed-file font.bin")
 endif()
 
 
@@ -94,8 +94,15 @@ set(ROGIE_SOURCES
 include_directories(./core)
 include_directories(./trpt)
 include_directories(./rogie)
+include_directories(/usr/include/SDL2)
 add_executable("Trpt${EXECUTABLE_EXTENSION}" trpt.cpp ${CORE_SOURCES} ${TRPT_SOURCES})
 add_executable("Rogie${EXECUTABLE_EXTENSION}" rogie.cpp ${CORE_SOURCES} ${ROGIE_SOURCES})
+
+
+if(EMSCRIPTEN)
+  set_target_properties("Trpt${EXECUTABLE_EXTENSION}"  PROPERTIES LINK_FLAGS "--shell-file trpt_shell.html")
+  set_target_properties("Rogie${EXECUTABLE_EXTENSION}" PROPERTIES LINK_FLAGS "--shell-file rogie_shell.html")
+endif()
 
 
 

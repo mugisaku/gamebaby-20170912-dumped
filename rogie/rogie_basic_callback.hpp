@@ -9,7 +9,9 @@ namespace basic_callback{
 
 
 void  move_to_direction(Context&  ctx, Piece&  p);
+void  move_to_opposite_direction(Context&  ctx, Piece&  p);
 void  punch(Context&  ctx, Piece&  p);
+void  damage(Context&  ctx, Piece&  p);
 
 
 }

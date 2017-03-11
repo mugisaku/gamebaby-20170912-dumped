@@ -15,14 +15,21 @@ master(nullptr)
 
 void
 Field::
-put(Piece*  p)
+put(Piece*  p, int  x, int  y)
 {
     if(p)
     {
+      auto&  sq = table[x][y];
+
+        if(sq.current_piece)
+        {
+          printf("既に駒があります\n");
+
+          throw;
+        }
+
+
       piece_list.emplace_back(p);
-
-
-      auto&  sq = table[0][0];
 
       p->current_square = &sq;
 
@@ -68,8 +75,50 @@ process(const gmbb::Controller&  ctrl)
       else
         if(ctrl.test_pressed(gmbb::down_flag))
         {
-          master->move_back();
+//          master->move_back();
+prepare_to_search();
+master->current_square->search(master);
         }
+
+
+/*
+      auto&  a = master->action_currency;
+
+        if(a < 0)
+        {
+            for(auto  p:  piece_list)
+            {
+                if(p != master)
+                {
+                  p += -a;
+                }
+            }
+
+
+          a = 0;
+        }
+*/
+    }
+}
+
+
+void
+Field::
+cycle()
+{
+    for(auto  p: piece_list)
+    {
+      p->step();
+
+/*
+        if(p != master)
+        {
+            if(p->action_currency)
+            {
+              search(p->current_square);
+            }
+        }
+*/
     }
 }
 
@@ -102,27 +151,51 @@ prepare()
         if(front_is_valid &&  left_is_valid){target[Direction::front_left ] = &table[y+1][x-1];}
         if(front_is_valid && right_is_valid){target[Direction::front_right] = &table[y+1][x+1];}
     }}
+
+
+  image.resize(24*width,24*height);
+
+  image.fill(4|8);
+
+    for(int  y = 0;  y < height;  ++y){
+    for(int  x = 0;  x <  width;  ++x){
+      image.rectangle(3|8,24*x,24*y,24,24);
+    }}
+
 }
 
 
+void
+Field::
+prepare_to_search()
+{
+    for(int  y = 0;  y < height;  ++y){
+    for(int  x = 0;  x <  width;  ++x){
+      table[y][x].reaching_cost = 9999;
+    }}
+}
 
 
 void
 Field::
 render(gmbb::Image&  dst)
 {
-    for(int  y = 0;  y < height;  ++y){
-    for(int  x = 0;  x <  width;  ++x){
-      dst.fill_rectangle(4|8,24*x,24*y,24,24);
-    }}
+  dst.fill(0);
+
+  image.transfer(0,0,0,0,dst,12,12);
 
 
   piece_list.sort(Piece::compare);
 
     for(auto  p: piece_list)
     {
-      p->render(dst,0,0);
+      p->render(dst,12,12);
     }
+
+
+  gmbb::Formatted  fmt;
+
+  dst.print(fmt("%4d",master->current_square->reaching_cost),4|8,0,0);
 }
 
 
