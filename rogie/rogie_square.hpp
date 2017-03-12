@@ -24,11 +24,14 @@ TrapKind
 
 
 struct Piece;
+struct Field;
 
 
 struct
 Square
 {
+  Field*  field;
+
   SquareKind       kind;
     TrapKind  trap_kind;
 
@@ -41,6 +44,7 @@ Square
   Piece*  current_piece;
 
   int  reaching_cost;
+  int  distance;
 
 public:
   Square();
@@ -49,8 +53,11 @@ public:
 
   void  clear();
 
-  void  subsearch(Piece*  actor, int  cost);
-  void     search(Piece*  actor           );
+  void  subsearch_reaching_cost(Piece*  actor, int  cost);
+  void     search_reaching_cost(Piece*  actor           );
+
+  void  subsearch_distance(Piece*  actor, int  dist);
+  void     search_distance(Piece*  actor           );
 
 };
 

@@ -1,4 +1,5 @@
 #include"rogie_piece.hpp"
+#include"rogie_field.hpp"
 #include"rogie_basic_callback.hpp"
 
 
@@ -12,11 +13,13 @@ sprite_image;
 
 
 Piece::
-Piece():
+Piece(bool  voluntary):
 direction(Direction::front),
 shield_remaining(100),
 action_currency(0),
-moving_cost_base(10)
+moving_cost_base(10),
+task_kind(TaskKind::chase_hero),
+voluntary_flag(voluntary)
 {
 }
 
@@ -111,23 +114,7 @@ void
 Piece::
 move_advance()
 {
-  auto  ln = (*current_square)[direction];
-
-    if(ln)
-    {
-         if(!ln->current_piece)
-         {
-           ln->current_piece = this;
-
-           current_square->current_piece = nullptr;
-
-           current_square = ln;
-
-           push_context(basic_callback::move_to_direction);
-
-           action_currency -= moving_cost_base;
-         }
-    }
+  push_action(basic_callback::move_to_direction,moving_cost_base);
 }
 
 
@@ -149,9 +136,7 @@ move_back()
 
            current_square = ln;
 
-           push_context(basic_callback::move_to_opposite_direction);
-
-           action_currency -= moving_cost_base;
+           push_action(basic_callback::move_to_opposite_direction,moving_cost_base);
          }
     }
 }
@@ -161,22 +146,7 @@ void
 Piece::
 turn_left()
 {
-    switch(direction)
-    {
-  case(Direction::back_left  ): direction = Direction::left       ;break;
-  case(Direction::back       ): direction = Direction::back_left  ;break;
-  case(Direction::back_right ): direction = Direction::back       ;break;
-  case(Direction::left       ): direction = Direction::front_left ;break;
-  case(Direction::right      ): direction = Direction::back_right ;break;
-  case(Direction::front_left ): direction = Direction::front      ;break;
-  case(Direction::front      ): direction = Direction::front_right;break;
-  case(Direction::front_right): direction = Direction::right      ;break;
-    }
-
-
-  action_currency -= moving_cost_base/3;
-
-  set_shape_by_direction();
+  push_action(basic_callback::turn_left,moving_cost_base/3);
 }
 
 
@@ -184,20 +154,15 @@ void
 Piece::
 turn_right()
 {
-    switch(direction)
-    {
-  case(Direction::back_left  ): direction = Direction::back       ;break;
-  case(Direction::back       ): direction = Direction::back_right ;break;
-  case(Direction::back_right ): direction = Direction::right      ;break;
-  case(Direction::left       ): direction = Direction::back_left  ;break;
-  case(Direction::right      ): direction = Direction::front_right;break;
-  case(Direction::front_left ): direction = Direction::left       ;break;
-  case(Direction::front      ): direction = Direction::front_left ;break;
-  case(Direction::front_right): direction = Direction::front      ;break;
-    }
+  push_action(basic_callback::turn_right,moving_cost_base/3);
+}
 
 
-  action_currency -= moving_cost_base/3;
+void
+Piece::
+change_direction(Direction  d)
+{
+  direction = d;
 
   set_shape_by_direction();
 }
@@ -207,9 +172,7 @@ void
 Piece::
 use_weapon()
 {
-  action_currency -= moving_cost_base;
-
-  push_context(basic_callback::punch);
+  push_action(basic_callback::punch,moving_cost_base);
 }
 
 
@@ -227,13 +190,11 @@ get_moving_cost(Direction  dir) const
 
 void
 Piece::
-push_context(Callback  cb)
+push_action(Callback  cb, int  consum)
 {
     if(cb)
     {
-      context_stack.emplace_back(cb);
-
-      cb(context_stack.back(),*this);
+      action_queue.emplace(Action{cb,consum});
     }
 }
 
@@ -244,7 +205,7 @@ pop_context()
 {
     if(context_stack.size())
     {
-      context_stack.pop_back();
+      context_stack.pop();
     }
 }
 
@@ -255,9 +216,89 @@ step()
 {
     if(context_stack.size())
     {
-      auto&  bk = context_stack.back();
+      auto&  bk = context_stack.top();
 
       bk.callback(bk,*this);
+    }
+
+  else
+    if(action_queue.size())
+    {
+      auto&  t = action_queue.front();
+
+        if(!t.consumption || (action_currency >= 0))
+        {
+          action_currency -= t.consumption;
+
+          context_stack.emplace(t.callback);
+
+          action_queue.pop();
+        }
+    }
+
+  else
+    if(voluntary_flag)
+    {
+        switch(task_kind)
+        {
+      case(TaskKind::chase_hero):
+          chase_hero();
+          break;
+      case(TaskKind::runaway_from_hero):
+          break;
+        }
+    }
+}
+
+
+void
+Piece::
+chase_hero()
+{
+  current_square->field->prepare_to_search();
+  current_square->search_reaching_cost(this);
+  current_square->search_distance(current_square->field->master);
+
+  Direction  d;
+
+  Square*  candidate = nullptr;
+
+    for(int  i = 0;  i < number_of_directions;  ++i)
+    {
+      auto  ln = current_square->link[i];
+
+        if(ln)
+        {
+            if(!candidate ||
+               ((ln->distance      < candidate->distance     ) ||
+                (ln->reaching_cost < candidate->reaching_cost)))
+            {
+              candidate = ln;
+
+              d = static_cast<Direction>(i);
+            }
+        }
+    }
+
+
+    if(candidate)
+    {
+        if(d == direction)
+        {
+          move_advance();
+        }
+
+      else
+        {
+          auto  l = get_left( direction);
+          auto  r = get_right(direction);
+
+          auto  l_dist = get_distance(direction,l);
+          auto  r_dist = get_distance(direction,r);
+
+            if(l_dist < r_dist){turn_left();}
+          else                 {turn_right();}
+        }
     }
 }
 

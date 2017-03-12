@@ -76,6 +76,46 @@ get_opposite(Direction  d)
 }
 
 
+constexpr Direction
+get_left(Direction  d)
+{
+    switch(d)
+    {
+  case(Direction::back_left  ): return Direction::left       ;
+  case(Direction::back       ): return Direction::back_left  ;
+  case(Direction::back_right ): return Direction::back       ;
+  case(Direction::left       ): return Direction::front_left ;
+  case(Direction::right      ): return Direction::back_right ;
+  case(Direction::front_left ): return Direction::front      ;
+  case(Direction::front      ): return Direction::front_right;
+  case(Direction::front_right): return Direction::right      ;
+    }
+
+
+  return Direction::front;
+}
+
+
+constexpr Direction
+get_right(Direction  d)
+{
+    switch(d)
+    {
+  case(Direction::back_left  ): return Direction::back       ;
+  case(Direction::back       ): return Direction::back_right ;
+  case(Direction::back_right ): return Direction::right      ;
+  case(Direction::left       ): return Direction::back_left  ;
+  case(Direction::right      ): return Direction::front_right;
+  case(Direction::front_left ): return Direction::left       ;
+  case(Direction::front      ): return Direction::front_left ;
+  case(Direction::front_right): return Direction::front      ;
+    }
+
+
+  return Direction::front;
+}
+
+
 #endif
 
 

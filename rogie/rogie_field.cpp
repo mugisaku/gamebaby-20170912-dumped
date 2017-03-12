@@ -75,13 +75,9 @@ process(const gmbb::Controller&  ctrl)
       else
         if(ctrl.test_pressed(gmbb::down_flag))
         {
-//          master->move_back();
-prepare_to_search();
-master->current_square->search(master);
         }
 
 
-/*
       auto&  a = master->action_currency;
 
         if(a < 0)
@@ -90,14 +86,13 @@ master->current_square->search(master);
             {
                 if(p != master)
                 {
-                  p += -a;
+                  p->action_currency += -a;
                 }
             }
 
 
           a = 0;
         }
-*/
     }
 }
 
@@ -109,16 +104,6 @@ cycle()
     for(auto  p: piece_list)
     {
       p->step();
-
-/*
-        if(p != master)
-        {
-            if(p->action_currency)
-            {
-              search(p->current_square);
-            }
-        }
-*/
     }
 }
 
@@ -132,6 +117,8 @@ prepare()
       auto&  target = table[y][x];
 
       target.clear();
+
+      target.field = this;
 
       target.point.reset(x,y);
 
@@ -171,7 +158,10 @@ prepare_to_search()
 {
     for(int  y = 0;  y < height;  ++y){
     for(int  x = 0;  x <  width;  ++x){
-      table[y][x].reaching_cost = 9999;
+      auto&  sq = table[y][x];
+
+      sq.reaching_cost = 9999;
+      sq.distance      = 9999;
     }}
 }
 

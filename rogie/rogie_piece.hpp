@@ -4,6 +4,8 @@
 
 #include"rogie_square.hpp"
 #include"rogie_context.hpp"
+#include<queue>
+#include<stack>
 
 
 
@@ -48,10 +50,38 @@ Ammo
 
 
 enum class
-MotionKind
+GroupKind
 {
-  move_to_direction,
-  move_to_opposite_direction,
+  null,
+  own,
+  friends,
+  enemies,
+  neutrals,
+  unknown,
+
+};
+
+
+enum class
+TaskKind
+{
+  null,
+  chase_hero,
+  runaway_from_hero,
+
+};
+
+
+struct
+Field;
+
+
+struct
+Action
+{
+  Callback  callback;
+
+  int  consumption;
 
 };
 
@@ -78,23 +108,30 @@ Piece
 
   Weapon  current_weapon;
 
+  TaskKind  task_kind;
+
+  bool  voluntary_flag;
+
   int  action_currency;
   int  moving_cost_base;
 
-  std::vector<Context>  context_stack;
+  std::queue<Action>    action_queue;
+  std::stack<Context>  context_stack;
 
 public:
-  Piece();
+  Piece(bool  voluntary=false);
 
   void  move_advance();
   void  move_back();
   void  turn_left();
   void  turn_right();
+  void  change_direction(Direction  d);
   void  use_weapon();
 
-  void  push_context(Callback  cb);
+  void  push_action(Callback  cb, int  consum);
   void  pop_context();
   void  step();
+  void  chase_hero();
 
   int  get_moving_cost(Direction  dir) const;
 

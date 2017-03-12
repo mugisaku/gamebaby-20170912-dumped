@@ -29,7 +29,22 @@ move_to_direction(Context&  ctx, Piece&  p)
 
     switch(phase)
     {
-  case(0):
+  case(0): {
+      auto  ln = (*p.current_square)[p.direction];
+
+        if(!ln || ln->current_piece)
+        {
+          p.pop_context();
+        }
+
+
+      ln->current_piece = &p;
+
+      p.current_square->current_piece = nullptr;
+
+      p.current_square = ln;
+
+
       p.rendering_dst_offset.x = 0;
       p.rendering_dst_offset.y = 0;
 
@@ -42,7 +57,7 @@ move_to_direction(Context&  ctx, Piece&  p)
       counter = 24;
 
       ++phase;
-      break;
+      }break;
   case(1):
         if(sleep_counter)
         {
@@ -139,6 +154,26 @@ move_to_opposite_direction(Context&  ctx, Piece&  p)
 
 
 void
+turn_left(Context&  ctx, Piece&  p)
+{
+  p.change_direction(get_left(p.direction));
+
+  p.pop_context();
+}
+
+
+void
+turn_right(Context&  ctx, Piece&  p)
+{
+  p.change_direction(get_right(p.direction));
+
+  p.pop_context();
+}
+
+
+
+
+void
 punch(Context&  ctx, Piece&  p)
 {
   auto&          phase = ctx.memory[0];
@@ -174,7 +209,7 @@ punch(Context&  ctx, Piece&  p)
 
             if(sq && sq->current_piece)
             {
-              sq->current_piece->push_context(damage);
+              sq->current_piece->push_action(damage,0);
             }
 
 

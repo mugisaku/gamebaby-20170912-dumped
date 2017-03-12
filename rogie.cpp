@@ -240,7 +240,7 @@ main(int  argc, char**  argv)
   Piece::sprite_image.load_mgf(r);
 
   field.put(new Piece,2,2);
-  field.put(new Piece,3,4);
+  field.put(new Piece(true),3,4);
 
 /*
   r = media.find("data/map.mgf")->reader();
