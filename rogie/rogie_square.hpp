@@ -43,7 +43,6 @@ Square
 
   Piece*  current_piece;
 
-  int  reaching_cost;
   int  distance;
 
 public:
@@ -53,11 +52,8 @@ public:
 
   void  clear();
 
-  void  subsearch_reaching_cost(Piece*  actor, int  cost);
-  void     search_reaching_cost(Piece*  actor           );
-
-  void  subsearch_distance(Piece*  actor, int  dist);
-  void     search_distance(Piece*  actor           );
+  void  subsearch(Piece*  actor, int  dist);
+  void     search(Piece*  actor           );
 
 };
 

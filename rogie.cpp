@@ -239,8 +239,16 @@ main(int  argc, char**  argv)
 
   Piece::sprite_image.load_mgf(r);
 
-  field.put(new Piece,2,2);
-  field.put(new Piece(true),3,4);
+  auto  a = new Piece();
+  auto  b = new Piece(true);
+  auto  c = new Piece(true);
+
+  b->push_task(basic_callback::chase_hero);
+  c->push_task(basic_callback::runaway_from_hero);
+
+  field.put(a,2,2);
+//  field.put(b,0,0);
+  field.put(c,4,0);
 
 /*
   r = media.find("data/map.mgf")->reader();

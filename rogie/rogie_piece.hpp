@@ -4,6 +4,7 @@
 
 #include"rogie_square.hpp"
 #include"rogie_context.hpp"
+#include<list>
 #include<queue>
 #include<stack>
 
@@ -62,16 +63,6 @@ GroupKind
 };
 
 
-enum class
-TaskKind
-{
-  null,
-  chase_hero,
-  runaway_from_hero,
-
-};
-
-
 struct
 Field;
 
@@ -89,6 +80,9 @@ Action
 struct
 Piece
 {
+  static constexpr uint32_t  voluntary_flag   = 1;
+  static constexpr uint32_t  taskseeking_flag = 2;
+
   static gmbb::Image  sprite_image;
 
 
@@ -108,9 +102,7 @@ Piece
 
   Weapon  current_weapon;
 
-  TaskKind  task_kind;
-
-  bool  voluntary_flag;
+  uint32_t  flags;
 
   int  action_currency;
   int  moving_cost_base;
@@ -118,20 +110,27 @@ Piece
   std::queue<Action>    action_queue;
   std::stack<Context>  context_stack;
 
+  std::list<Context>  task_list;
+
 public:
-  Piece(bool  voluntary=false);
+  Piece(uint32_t  flags_=0);
 
   void  move_advance();
-  void  move_back();
+
   void  turn_left();
   void  turn_right();
   void  change_direction(Direction  d);
   void  use_weapon();
 
+  void  push_task(Callback  cb);
   void  push_action(Callback  cb, int  consum);
+  void  push_context(Callback  cb);
   void  pop_context();
   void  step();
-  void  chase_hero();
+
+  void    set_flag(uint32_t  v);
+  void  unset_flag(uint32_t  v);
+  bool   test_flag(uint32_t  v) const;
 
   int  get_moving_cost(Direction  dir) const;
 

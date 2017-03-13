@@ -34,7 +34,7 @@ if(EMSCRIPTEN)
   set(CMAKE_CXX_COMPILER  em++)
   set(CMAKE_CXX_FLAGS "-std=c++14 -Werror -Wno-switch -O2")
   set(CMAKE_CXX_FLAGS_DEBUG "")
-  set(CMAKE_CXX_LINK_FLAGS  "${CMAKE_CXX_LINK_FLAGS} -s USE_ZLIB=1 -s USE_SDL=2 --embed-file font.bin")
+  set(CMAKE_CXX_LINK_FLAGS  "${CMAKE_CXX_LINK_FLAGS} -s USE_ZLIB=1 -s USE_SDL=2 --embed-file font.bin --embed-file data.bin")
 endif()
 
 
@@ -101,6 +101,7 @@ add_executable("Rogie${EXECUTABLE_EXTENSION}" rogie.cpp ${CORE_SOURCES} ${ROGIE_
 
 
 if(EMSCRIPTEN)
+  add_custom_target(font.bin cp /usr/local/share/oat/font.bin ./)
   set_target_properties("Trpt${EXECUTABLE_EXTENSION}"  PROPERTIES LINK_FLAGS "--shell-file trpt_shell.html")
   set_target_properties("Rogie${EXECUTABLE_EXTENSION}" PROPERTIES LINK_FLAGS "--shell-file rogie_shell.html")
 endif()

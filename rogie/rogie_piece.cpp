@@ -13,13 +13,12 @@ sprite_image;
 
 
 Piece::
-Piece(bool  voluntary):
+Piece(uint32_t  flags_):
 direction(Direction::front),
 shield_remaining(100),
 action_currency(0),
 moving_cost_base(10),
-task_kind(TaskKind::chase_hero),
-voluntary_flag(voluntary)
+flags(flags_)
 {
 }
 
@@ -120,30 +119,6 @@ move_advance()
 
 void
 Piece::
-move_back()
-{
-  auto  dir = get_opposite(direction);
-
-  auto  ln = (*current_square)[dir];
-
-    if(ln)
-    {
-         if(!ln->current_piece)
-         {
-           ln->current_piece = this;
-
-           current_square->current_piece = nullptr;
-
-           current_square = ln;
-
-           push_action(basic_callback::move_to_opposite_direction,moving_cost_base);
-         }
-    }
-}
-
-
-void
-Piece::
 turn_left()
 {
   push_action(basic_callback::turn_left,moving_cost_base/3);
@@ -188,6 +163,24 @@ get_moving_cost(Direction  dir) const
 
 
 
+void    Piece::set_flag(uint32_t  v){flags |=  v;}
+void  Piece::unset_flag(uint32_t  v){flags &= ~v;}
+bool   Piece::test_flag(uint32_t  v) const{return(flags&v);}
+
+
+
+
+void
+Piece::
+push_task(Callback  cb)
+{
+    if(cb)
+    {
+      task_list.emplace_front(cb);
+    }
+}
+
+
 void
 Piece::
 push_action(Callback  cb, int  consum)
@@ -195,6 +188,17 @@ push_action(Callback  cb, int  consum)
     if(cb)
     {
       action_queue.emplace(Action{cb,consum});
+    }
+}
+
+
+void
+Piece::
+push_context(Callback  cb)
+{
+    if(cb)
+    {
+      context_stack.emplace(cb);
     }
 }
 
@@ -219,6 +223,11 @@ step()
       auto&  bk = context_stack.top();
 
       bk.callback(bk,*this);
+
+        if(!bk.callback)
+        {
+          context_stack.pop();
+        }
     }
 
   else
@@ -237,67 +246,32 @@ step()
     }
 
   else
-    if(voluntary_flag)
+    if(flags&voluntary_flag)
     {
-        switch(task_kind)
+      set_flag(taskseeking_flag);
+
+      auto   it = task_list.begin();
+      auto  end = task_list.end();
+
+        while(it != end)
         {
-      case(TaskKind::chase_hero):
-          chase_hero();
-          break;
-      case(TaskKind::runaway_from_hero):
-          break;
-        }
-    }
-}
+          it->callback(*it,*this);
 
-
-void
-Piece::
-chase_hero()
-{
-  current_square->field->prepare_to_search();
-  current_square->search_reaching_cost(this);
-  current_square->search_distance(current_square->field->master);
-
-  Direction  d;
-
-  Square*  candidate = nullptr;
-
-    for(int  i = 0;  i < number_of_directions;  ++i)
-    {
-      auto  ln = current_square->link[i];
-
-        if(ln)
-        {
-            if(!candidate ||
-               ((ln->distance      < candidate->distance     ) ||
-                (ln->reaching_cost < candidate->reaching_cost)))
+            if(!it->callback)
             {
-              candidate = ln;
-
-              d = static_cast<Direction>(i);
+              it = task_list.erase(it);
             }
-        }
-    }
+
+          else
+            {
+              ++it;
+            }
 
 
-    if(candidate)
-    {
-        if(d == direction)
-        {
-          move_advance();
-        }
-
-      else
-        {
-          auto  l = get_left( direction);
-          auto  r = get_right(direction);
-
-          auto  l_dist = get_distance(direction,l);
-          auto  r_dist = get_distance(direction,r);
-
-            if(l_dist < r_dist){turn_left();}
-          else                 {turn_right();}
+            if(!test_flag(taskseeking_flag))
+            {
+              break;
+            }
         }
     }
 }

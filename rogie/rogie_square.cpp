@@ -5,8 +5,7 @@
 
 
 Square::
-Square():
-reaching_cost(0)
+Square()
 {
 }
 

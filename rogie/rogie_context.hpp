@@ -17,9 +17,6 @@ Context
 {
   Callback  callback;
 
-  Callback  initializer;
-  Callback    finalizer;
-
   int  memory[8];
 
   Context(Callback  cb=nullptr);

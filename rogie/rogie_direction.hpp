@@ -116,6 +116,20 @@ get_right(Direction  d)
 }
 
 
+
+
+constexpr bool
+is_diagonal(Direction  d)
+{
+  return((d == Direction::back_left  ) ||
+         (d == Direction::back_right ) ||
+         (d == Direction::front_left ) ||
+         (d == Direction::front_right));
+}
+
+
+
+
 #endif
 
 

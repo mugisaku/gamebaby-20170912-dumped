@@ -36,6 +36,8 @@ public:
 
   void  render(gmbb::Image&  dst);
 
+  void  print() const;
+
 };
 
 

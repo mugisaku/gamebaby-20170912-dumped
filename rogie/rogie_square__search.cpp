@@ -6,51 +6,7 @@
 
 void
 Square::
-subsearch_reaching_cost(Piece*  actor, int  cost)
-{
-    if(reaching_cost > cost)
-    {
-      reaching_cost = cost;
-
-        for(auto  i = 0;  i < number_of_directions;  ++i)
-        {
-          auto  ln = link[i];
-
-            if(ln && !ln->current_piece)
-            {
-              auto  d = static_cast<Direction>(i);
-
-              ln->subsearch_reaching_cost(actor,reaching_cost+actor->get_moving_cost(d));
-            }
-        }
-    }
-}
-
-
-void
-Square::
-search_reaching_cost(Piece*  actor)
-{
-  reaching_cost = 0;
-
-    for(auto  i = 0;  i < number_of_directions;  ++i)
-    {
-      auto  ln = link[i];
-
-        if(ln && !ln->current_piece)
-        {
-          auto  d = static_cast<Direction>(i);
-
-          ln->subsearch_reaching_cost(actor,actor->get_moving_cost(d));
-        }
-    }
-}
-
-
-
-void
-Square::
-subsearch_distance(Piece*  actor, int  dist)
+subsearch(Piece*  actor, int  dist)
 {
     if(distance > dist)
     {
@@ -64,7 +20,7 @@ subsearch_distance(Piece*  actor, int  dist)
             {
               auto  d = static_cast<Direction>(i);
 
-              ln->subsearch_distance(actor,distance+1);
+              ln->subsearch(actor,distance+(is_diagonal(d)? 1333:1000));
             }
         }
     }
@@ -73,7 +29,7 @@ subsearch_distance(Piece*  actor, int  dist)
 
 void
 Square::
-search_distance(Piece*  actor)
+search(Piece*  actor)
 {
   distance = 0;
 
@@ -85,7 +41,7 @@ search_distance(Piece*  actor)
         {
           auto  d = static_cast<Direction>(i);
 
-          ln->subsearch_distance(actor,1);
+          ln->subsearch(actor,is_diagonal(d)? 1333:1000);
         }
     }
 }

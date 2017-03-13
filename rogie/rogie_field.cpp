@@ -1,4 +1,5 @@
 #include"rogie_field.hpp"
+#include<limits>
 
 
 
@@ -160,8 +161,7 @@ prepare_to_search()
     for(int  x = 0;  x <  width;  ++x){
       auto&  sq = table[y][x];
 
-      sq.reaching_cost = 9999;
-      sq.distance      = 9999;
+      sq.distance = std::numeric_limits<int>::max();
     }}
 }
 
@@ -183,11 +183,34 @@ render(gmbb::Image&  dst)
     }
 
 
-  gmbb::Formatted  fmt;
+//  gmbb::Formatted  fmt;
 
-  dst.print(fmt("%4d",master->current_square->reaching_cost),4|8,0,0);
+//  dst.print(fmt("%4d",master->current_square->reaching_cost),4|8,0,0);
 }
 
+
+void
+Field::
+print() const
+{
+  printf("{\n");
+
+    for(int  y = 0;  y < height;  ++y)
+    {
+        for(int  x = 0;  x <  width;  ++x)
+        {
+          auto&  sq = table[y][x];
+
+          printf("%6d,",sq.distance);
+        }
+
+
+      printf("\n");
+    }
+
+
+  printf("}\n\n");
+}
 
 
 
