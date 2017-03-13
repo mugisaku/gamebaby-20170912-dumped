@@ -9,7 +9,7 @@ struct Piece;
 struct Context;
 
 
-using Callback = void(*)(Context&  ctx, Piece&  p);
+using Callback = void(*)(Context&  ctx);
 
 
 struct
@@ -17,9 +17,11 @@ Context
 {
   Callback  callback;
 
+  Piece&  caller;
+
   int  memory[8];
 
-  Context(Callback  cb=nullptr);
+  Context(Callback  cb, Piece&  caller_);
 
 };
 

@@ -243,11 +243,13 @@ main(int  argc, char**  argv)
   auto  b = new Piece(true);
   auto  c = new Piece(true);
 
-  b->push_task(basic_callback::chase_hero);
-  c->push_task(basic_callback::runaway_from_hero);
+  b->push_task_back(basic_callback::attack_hero);
+  b->push_task_back(basic_callback::chase_hero);
+  c->push_task_back(basic_callback::attack_hero);
+  c->push_task_back(basic_callback::runaway_from_hero);
 
   field.put(a,2,2);
-//  field.put(b,0,0);
+  field.put(b,0,0);
   field.put(c,4,0);
 
 /*

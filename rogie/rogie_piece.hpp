@@ -122,7 +122,8 @@ public:
   void  change_direction(Direction  d);
   void  use_weapon();
 
-  void  push_task(Callback  cb);
+  void  push_task_front(Callback  cb);
+  void  push_task_back(Callback  cb);
   void  push_action(Callback  cb, int  consum);
   void  push_context(Callback  cb);
   void  pop_context();

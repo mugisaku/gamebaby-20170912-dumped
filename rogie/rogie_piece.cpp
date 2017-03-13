@@ -172,11 +172,22 @@ bool   Piece::test_flag(uint32_t  v) const{return(flags&v);}
 
 void
 Piece::
-push_task(Callback  cb)
+push_task_front(Callback  cb)
 {
     if(cb)
     {
-      task_list.emplace_front(cb);
+      task_list.emplace_front(cb,*this);
+    }
+}
+
+
+void
+Piece::
+push_task_back(Callback  cb)
+{
+    if(cb)
+    {
+      task_list.emplace_back(cb,*this);
     }
 }
 
@@ -198,7 +209,7 @@ push_context(Callback  cb)
 {
     if(cb)
     {
-      context_stack.emplace(cb);
+      context_stack.emplace(cb,*this);
     }
 }
 
@@ -222,7 +233,7 @@ step()
     {
       auto&  bk = context_stack.top();
 
-      bk.callback(bk,*this);
+      bk.callback(bk);
 
         if(!bk.callback)
         {
@@ -239,7 +250,7 @@ step()
         {
           action_currency -= t.consumption;
 
-          context_stack.emplace(t.callback);
+          context_stack.emplace(t.callback,*this);
 
           action_queue.pop();
         }
@@ -255,7 +266,7 @@ step()
 
         while(it != end)
         {
-          it->callback(*it,*this);
+          it->callback(*it);
 
             if(!it->callback)
             {

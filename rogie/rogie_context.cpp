@@ -4,8 +4,9 @@
 
 
 Context::
-Context(Callback  cb):
+Context(Callback  cb, Piece&  caller_):
 callback(cb),
+caller(caller_),
 memory{0}
 {
 }
