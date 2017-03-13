@@ -63,6 +63,7 @@ set(CORE_SOURCES
   core/gmbb_message.cpp
   core/gmbb_message_page.cpp
   core/gmbb_unicode.cpp
+  core/gmbb_random_number.cpp
 )
 
 

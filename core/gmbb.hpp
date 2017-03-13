@@ -18,6 +18,7 @@
 #include"gmbb_unicode.hpp"
 #include"gmbb_filereader.hpp"
 #include"gmbb_filewriter.hpp"
+#include"gmbb_random_number.hpp"
 
 
 
