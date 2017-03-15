@@ -6,7 +6,9 @@
 #include<cstdio>
 #include<string>
 #include<queue>
-#include"gmbb_object.hpp"
+#include"gmbb_rectangle.hpp"
+#include"gmbb_controller.hpp"
+#include"gmbb_image.hpp"
 
 
 
@@ -45,8 +47,10 @@ public:
 
 
 class
-Message: public gmbb::Object
+Message
 {
+  Rectangle  rectangle;
+
   MessagePage  page;
 
   int  fast_flag;
@@ -63,7 +67,7 @@ Message: public gmbb::Object
   uint32_t  last_update_time;
 
 public:
-  Message(int  w, int  h);
+  Message(int  column_number, int  row_number);
 
   void  clear();
 
@@ -72,11 +76,11 @@ public:
   void  push(const char16_t*   src);
   void  push(std::initializer_list<const char16_t*>  ls);
 
-  void  process(Controller&  ctrl) override;
+  void  controll(const Controller&  ctrl);
 
-  void  update() override;
+  void  update();
 
-  void  render(Image&  dst) override;
+  void  render(Image&  dst);
 
 };
 

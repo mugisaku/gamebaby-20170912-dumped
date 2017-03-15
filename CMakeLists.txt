@@ -53,8 +53,6 @@ set(CORE_SOURCES
   core/gmbb_image__frame.cpp
   core/gmbb_garden.cpp
   core/gmbb_sprite.cpp
-  core/gmbb_object.cpp
-  core/gmbb_container.cpp
   core/gmbb_window.cpp
   core/gmbb_controller.cpp
   core/gmbb_font.cpp
@@ -86,8 +84,9 @@ set(TRPT_SOURCES
 set(ROGIE_SOURCES
   rogie/rogie_square.cpp
   rogie/rogie_square__search.cpp
-  rogie/rogie_context.cpp
   rogie/rogie_basic_callback.cpp
+  rogie/rogie_item.cpp
+  rogie/rogie_object.cpp
   rogie/rogie_piece.cpp
   rogie/rogie_field.cpp
 )

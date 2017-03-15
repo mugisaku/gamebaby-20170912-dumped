@@ -3,51 +3,14 @@
 
 
 #include"rogie_square.hpp"
-#include"rogie_context.hpp"
+#include"rogie_object.hpp"
+#include"rogie_item.hpp"
+#include<array>
 #include<list>
 #include<queue>
 #include<stack>
 
 
-
-
-enum class
-WeaponKind
-{
-  punch,
-  handgun,
-  submachinegun,
-  shotgun,
-  grenade_launcher,
-  rocket_launcher,
-
-};
-
-
-struct
-Weapon
-{
-  WeaponKind  kind;
-
-  int  reload_inteval;
-  int    fire_inteval;
-
-  int   ready_cost;
-
-  int  bullete    ;
-  int  bullete_max;
-
-};
-
-
-struct
-Ammo
-{
-  WeaponKind  kind;
-
-  int  power;
-
-};
 
 
 enum class
@@ -68,21 +31,8 @@ Field;
 
 
 struct
-Action
+Piece: public Object
 {
-  Callback  callback;
-
-  int  consumption;
-
-};
-
-
-struct
-Piece
-{
-  static constexpr uint32_t  voluntary_flag   = 1;
-  static constexpr uint32_t  taskseeking_flag = 2;
-
   static gmbb::Image  sprite_image;
 
 
@@ -98,19 +48,9 @@ Piece
 
   int  shield_remaining;
 
-  uint32_t  weapon_flags;
-
-  Weapon  current_weapon;
-
-  uint32_t  flags;
-
-  int  action_currency;
   int  moving_cost_base;
 
-  std::queue<Action>    action_queue;
-  std::stack<Context>  context_stack;
-
-  std::list<Context>  task_list;
+  std::array<Item,8>  belongings_table;
 
 public:
   Piece(uint32_t  flags_=0);
@@ -121,17 +61,6 @@ public:
   void  turn_right();
   void  change_direction(Direction  d);
   void  use_weapon();
-
-  void  push_task_front(Callback  cb);
-  void  push_task_back(Callback  cb);
-  void  push_action(Callback  cb, int  consum);
-  void  push_context(Callback  cb);
-  void  pop_context();
-  void  step();
-
-  void    set_flag(uint32_t  v);
-  void  unset_flag(uint32_t  v);
-  bool   test_flag(uint32_t  v) const;
 
   int  get_moving_cost(Direction  dir) const;
 

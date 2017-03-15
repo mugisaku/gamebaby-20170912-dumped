@@ -251,6 +251,9 @@ main(int  argc, char**  argv)
   field.put(a,2,2);
   field.put(b,0,0);
   field.put(c,4,0);
+  field.put(Item(Firearm{FirearmKind::handgun}),1,1);
+
+  field.prepare();
 
 /*
   r = media.find("data/map.mgf")->reader();

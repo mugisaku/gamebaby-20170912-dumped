@@ -8,7 +8,6 @@ Field::
 Field():
 master(nullptr)
 {
-  prepare();
 }
 
 
@@ -46,9 +45,19 @@ put(Piece*  p, int  x, int  y)
 
 void
 Field::
+put(Item&&  itm, int  x, int  y)
+{
+  auto&  sq = table[x][y];
+
+  sq.placed_item = std::move(itm);
+}
+
+
+void
+Field::
 process(const gmbb::Controller&  ctrl)
 {
-    if(master->context_stack.empty())
+    if(master->work_stack.empty())
     {
         if(ctrl.test_pressed(gmbb::p_flag))
         {
@@ -147,7 +156,27 @@ prepare()
 
     for(int  y = 0;  y < height;  ++y){
     for(int  x = 0;  x <  width;  ++x){
-      image.rectangle(3|8,24*x,24*y,24,24);
+      auto  xx = 24*x;
+      auto  yy = 24*y;
+
+      image.rectangle(3|8,xx,yy,24,24);
+
+      auto&  sq = table[y][x];
+
+        switch(sq.placed_item.kind)
+        {
+      case(ItemKind::firearm):
+            switch(sq.placed_item.data.firearm.kind)
+            {
+          case(FirearmKind::handgun):
+              Piece::sprite_image.transfer(48,24*10,24,24,image,xx,yy);
+              break;
+          case(FirearmKind::submachinegun):
+              Piece::sprite_image.transfer(48,24*11,24,24,image,xx,yy);
+              break;
+            }
+          break;
+        }
     }}
 
 }

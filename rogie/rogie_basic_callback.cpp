@@ -16,10 +16,12 @@ move_to_direction(Context&  ctx)
   auto&        counter = ctx.memory[1];
   auto&  sleep_counter = ctx.memory[2];
 
-  auto&  x = ctx.caller.rendering_dst_offset.x;
-  auto&  y = ctx.caller.rendering_dst_offset.y;
+  auto&  piece = *static_cast<Piece*>(ctx.caller);
 
-  auto&  src_x = ctx.caller.rendering_src_offset.x;
+  auto&  x = piece.rendering_dst_offset.x;
+  auto&  y = piece.rendering_dst_offset.y;
+
+  auto&  src_x = piece.rendering_src_offset.x;
 
        if(counter > 20){src_x = 24;}
   else if(counter > 16){src_x =  0;}
@@ -31,7 +33,7 @@ move_to_direction(Context&  ctx)
     switch(phase)
     {
   case(0): {
-      auto  ln = (*ctx.caller.current_square)[ctx.caller.direction];
+      auto  ln = (*piece.current_square)[piece.direction];
 
         if(!ln || ln->current_piece)
         {
@@ -41,21 +43,21 @@ move_to_direction(Context&  ctx)
         }
 
 
-      ln->current_piece = &ctx.caller;
+      ln->current_piece = &piece;
 
-      ctx.caller.current_square->current_piece = nullptr;
+      piece.current_square->current_piece = nullptr;
 
-      ctx.caller.current_square = ln;
+      piece.current_square = ln;
 
 
-      ctx.caller.rendering_dst_offset.x = 0;
-      ctx.caller.rendering_dst_offset.y = 0;
+      piece.rendering_dst_offset.x = 0;
+      piece.rendering_dst_offset.y = 0;
 
-      ctx.caller.set_shape_by_direction();
-      ctx.caller.add_offset_by_direction(-24);
+      piece.set_shape_by_direction();
+      piece.add_offset_by_direction(-24);
 
-      ctx.caller.rendering_src_offset.x = 0;
-      ctx.caller.rendering_src_offset.y = 0;
+      piece.rendering_src_offset.x = 0;
+      piece.rendering_src_offset.y = 0;
 
       counter = 24;
 
@@ -94,7 +96,9 @@ move_to_direction(Context&  ctx)
 void
 turn_left(Context&  ctx)
 {
-  ctx.caller.change_direction(get_left(ctx.caller.direction));
+  auto&  piece = *static_cast<Piece*>(ctx.caller);
+
+  piece.change_direction(get_left(piece.direction));
 
   ctx.callback = nullptr;
 }
@@ -103,7 +107,9 @@ turn_left(Context&  ctx)
 void
 turn_right(Context&  ctx)
 {
-  ctx.caller.change_direction(get_right(ctx.caller.direction));
+  auto&  piece = *static_cast<Piece*>(ctx.caller);
+
+  piece.change_direction(get_right(piece.direction));
 
   ctx.callback = nullptr;
 }
@@ -114,22 +120,24 @@ turn_right(Context&  ctx)
 void
 punch(Context&  ctx)
 {
+  auto&  piece = *static_cast<Piece*>(ctx.caller);
+
   auto&          phase = ctx.memory[0];
   auto&        counter = ctx.memory[1];
   auto&  sleep_counter = ctx.memory[2];
 
-  auto&  x = ctx.caller.rendering_dst_offset.x;
-  auto&  y = ctx.caller.rendering_dst_offset.y;
+  auto&  x = piece.rendering_dst_offset.x;
+  auto&  y = piece.rendering_dst_offset.y;
 
     switch(phase)
     {
   case(0):
-      ctx.caller.rendering_dst_offset.x = 0;
-      ctx.caller.rendering_dst_offset.y = 0;
+      piece.rendering_dst_offset.x = 0;
+      piece.rendering_dst_offset.y = 0;
 
-      ctx.caller.rendering_src_offset.x = 24*3;
+      piece.rendering_src_offset.x = 24*3;
 
-      ctx.caller.set_shape_by_direction();
+      piece.set_shape_by_direction();
 
       counter = 12;
 
@@ -138,16 +146,16 @@ punch(Context&  ctx)
   case(1):
         if(counter--)
         {
-          ctx.caller.add_offset_by_direction(1);
+          piece.add_offset_by_direction(1);
         }
 
       else
         {
-          auto  sq = (*ctx.caller.current_square)[ctx.caller.direction];
+          auto  sq = (*piece.current_square)[piece.direction];
 
             if(sq && sq->current_piece)
             {
-              sq->current_piece->push_context(damage);
+              sq->current_piece->push_work(damage);
             }
 
 
@@ -159,14 +167,14 @@ punch(Context&  ctx)
   case(2):
         if(counter--)
         {
-          ctx.caller.rendering_src_offset.x = 0;
+          piece.rendering_src_offset.x = 0;
 
-          ctx.caller.add_offset_by_direction(-1);
+          piece.add_offset_by_direction(-1);
         }
 
       else
         {
-          ctx.caller.rendering_src_offset.x = 0;
+          piece.rendering_src_offset.x = 0;
 
           ctx.callback = nullptr;
         }
@@ -180,22 +188,24 @@ punch(Context&  ctx)
 void
 damage(Context&  ctx)
 {
+  auto&  piece = *static_cast<Piece*>(ctx.caller);
+
   auto&          phase = ctx.memory[0];
   auto&        counter = ctx.memory[1];
   auto&  sleep_counter = ctx.memory[2];
 
-  auto&  x = ctx.caller.rendering_dst_offset.x;
-  auto&  y = ctx.caller.rendering_dst_offset.y;
+  auto&  x = piece.rendering_dst_offset.x;
+  auto&  y = piece.rendering_dst_offset.y;
 
     switch(phase)
     {
   case(0):
-      ctx.caller.rendering_dst_offset.x = 0;
-      ctx.caller.rendering_dst_offset.y = 0;
+      piece.rendering_dst_offset.x = 0;
+      piece.rendering_dst_offset.y = 0;
 
-      ctx.caller.rendering_src_offset.x = 24*4;
+      piece.rendering_src_offset.x = 24*4;
 
-      ctx.caller.set_shape_by_direction();
+      piece.set_shape_by_direction();
 
       counter = 12;
 
@@ -208,7 +218,7 @@ damage(Context&  ctx)
 
       else
         {
-          ctx.caller.rendering_src_offset.x = 0;
+          piece.rendering_src_offset.x = 0;
 
           ctx.callback = nullptr;
         }
@@ -222,10 +232,12 @@ damage(Context&  ctx)
 void
 chase_hero(Context&  ctx)
 {
-  auto  hero = ctx.caller.current_square->field->master;
+  auto&  piece = *static_cast<Piece*>(ctx.caller);
 
-  ctx.caller.current_square->field->prepare_to_search();
-  hero->current_square->search(&ctx.caller);
+  auto  hero = piece.current_square->field->master;
+
+  piece.current_square->field->prepare_to_search();
+  hero->current_square->search(&piece);
 
   Direction  d;
 
@@ -233,7 +245,7 @@ chase_hero(Context&  ctx)
 
     for(int  i = 0;  i < number_of_directions;  ++i)
     {
-      auto  ln = ctx.caller.current_square->link[i];
+      auto  ln = piece.current_square->link[i];
 
         if(ln)
         {
@@ -249,21 +261,21 @@ chase_hero(Context&  ctx)
 
     if(candidate)
     {
-        if(d == ctx.caller.direction)
+        if(d == piece.direction)
         {
-          ctx.caller.move_advance();
+          piece.move_advance();
         }
 
       else
         {
-          auto  l = get_left( ctx.caller.direction);
-          auto  r = get_right(ctx.caller.direction);
+          auto  l = get_left( piece.direction);
+          auto  r = get_right(piece.direction);
 
           auto  l_dist = get_distance(d,l);
           auto  r_dist = get_distance(d,r);
 
-            if(l_dist < r_dist){ctx.caller.turn_left();}
-          else                 {ctx.caller.turn_right();}
+            if(l_dist < r_dist){piece.turn_left();}
+          else                 {piece.turn_right();}
         }
     }
 }
@@ -274,10 +286,12 @@ chase_hero(Context&  ctx)
 void
 runaway_from_hero(Context&  ctx)
 {
-  auto  hero = ctx.caller.current_square->field->master;
+  auto&  piece = *static_cast<Piece*>(ctx.caller);
 
-  ctx.caller.current_square->field->prepare_to_search();
-  hero->current_square->search(&ctx.caller);
+  auto  hero = piece.current_square->field->master;
+
+  piece.current_square->field->prepare_to_search();
+  hero->current_square->search(&piece);
 
   Direction  d;
 
@@ -285,7 +299,7 @@ runaway_from_hero(Context&  ctx)
 
     for(int  i = 0;  i < number_of_directions;  ++i)
     {
-      auto  ln = ctx.caller.current_square->link[i];
+      auto  ln = piece.current_square->link[i];
 
         if(ln)
         {
@@ -301,21 +315,21 @@ runaway_from_hero(Context&  ctx)
 
     if(candidate)
     {
-        if(d == ctx.caller.direction)
+        if(d == piece.direction)
         {
-          ctx.caller.move_advance();
+          piece.move_advance();
         }
 
       else
         {
-          auto  l = get_left( ctx.caller.direction);
-          auto  r = get_right(ctx.caller.direction);
+          auto  l = get_left( piece.direction);
+          auto  r = get_right(piece.direction);
 
           auto  l_dist = get_distance(d,l);
           auto  r_dist = get_distance(d,r);
 
-            if(l_dist < r_dist){ctx.caller.turn_left();}
-          else                 {ctx.caller.turn_right();}
+            if(l_dist < r_dist){piece.turn_left();}
+          else                 {piece.turn_right();}
         }
     }
 }
@@ -326,7 +340,9 @@ runaway_from_hero(Context&  ctx)
 void
 attack_hero(Context&  ctx)
 {
-  auto  hero = ctx.caller.current_square->field->master;
+  auto&  piece = *static_cast<Piece*>(ctx.caller);
+
+  auto  hero = piece.current_square->field->master;
 
   Direction  d;
 
@@ -334,7 +350,7 @@ attack_hero(Context&  ctx)
 
     for(int  i = 0;  i < number_of_directions;  ++i)
     {
-      auto  ln = ctx.caller.current_square->link[i];
+      auto  ln = piece.current_square->link[i];
 
         if(ln && (ln->current_piece == hero))
         {
@@ -349,25 +365,25 @@ attack_hero(Context&  ctx)
 
     if(sq)
     {
-        if(d == ctx.caller.direction)
+        if(d == piece.direction)
         {
-          ctx.caller.use_weapon();
+          piece.use_weapon();
         }
 
       else
         {
-          auto  l = get_left( ctx.caller.direction);
-          auto  r = get_right(ctx.caller.direction);
+          auto  l = get_left( piece.direction);
+          auto  r = get_right(piece.direction);
 
           auto  l_dist = get_distance(d,l);
           auto  r_dist = get_distance(d,r);
 
-            if(l_dist < r_dist){ctx.caller.turn_left();}
-          else                 {ctx.caller.turn_right();}
+            if(l_dist < r_dist){piece.turn_left();}
+          else                 {piece.turn_right();}
         }
 
 
-      ctx.caller.unset_flag(Piece::taskseeking_flag);
+      piece.unset_flag(Piece::taskseeking_flag);
     }
 }
 

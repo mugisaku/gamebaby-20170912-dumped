@@ -4,7 +4,8 @@
 
 #include"trpt_vector.hpp"
 #include"trpt_cursor.hpp"
-#include"gmbb_object.hpp"
+#include"gmbb_rectangle.hpp"
+#include"gmbb_image.hpp"
 
 
 namespace gmbb{

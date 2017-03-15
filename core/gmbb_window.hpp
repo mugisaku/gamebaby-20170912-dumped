@@ -2,7 +2,8 @@
 #define GMBB_WINDOW_HPP
 
 
-#include"gmbb_object.hpp"
+#include"gmbb_rectangle.hpp"
+#include"gmbb_image.hpp"
 
 
 namespace gmbb{
@@ -23,35 +24,42 @@ WindowState
 };
 
 
+struct Window;
+
+
+using WindowCallback = void(*)(Window&  win, Image&  dst);
+
+
 class
-Window: public Object
+Window
 {
-protected:
   WindowState  state;
+
+  Rectangle  rectangle;
 
   int   width_max;
   int  height_max;
 
-  Object*  content;
+  WindowCallback  callback;
+
+  void*  userdata;
 
 public:
   Window();
-  Window(int  w, int  h);
+  Window(Rectangle&&  rect, WindowCallback cb, void*  data=nullptr);
 
   bool  operator==(WindowState  st) const;
   bool  operator!=(WindowState  st) const;
 
-  Object*  get_content() const;
-  void  change_content(Object*  obj, int  x=gmbb::font::base_size,
-                                     int  y=gmbb::font::base_size);
+  void*     get_userdata(           ) const;
+  void   change_userdata(void*  data)      ;
 
   WindowState  get_state() const;
   void  set_state(WindowState  st);
 
-  void  process(Controller&  ctrl)  override;
+  void  update();
 
-  void  update() override;
-  void  render(Image&  dst) override;
+  void  render(Image&  dst);
 
 };
 

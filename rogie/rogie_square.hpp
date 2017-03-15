@@ -5,6 +5,7 @@
 #include<cstdint>
 #include"gmbb.hpp"
 #include"rogie_direction.hpp"
+#include"rogie_item.hpp"
 
 
 enum class
@@ -42,6 +43,8 @@ Square
   Square*  link[static_cast<int>(Direction::END)];
 
   Piece*  current_piece;
+
+  Item  placed_item;
 
   int  distance;
 

@@ -27,6 +27,7 @@ public:
   void  prepare();
 
   void  put(Piece*  p, int  x, int  y);
+  void  put(Item&&  itm, int  x, int  y);
 
   void  process(const gmbb::Controller&  ctrl);
 

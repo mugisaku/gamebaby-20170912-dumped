@@ -1,6 +1,5 @@
 #include"gmbb_message.hpp"
 #include"gmbb_environment.hpp"
-#include"gmbb_window.hpp"
 #include<cctype>
 
 
@@ -10,8 +9,8 @@ namespace gmbb{
 
 
 Message::
-Message(int  w, int  h):
-page(w,h),
+Message(int  column_number, int  row_number):
+page(column_number,row_number),
 fast_flag(0),
 scroll_count(0),
 scroll_key(0),
@@ -20,8 +19,8 @@ character_iterator(character_buffer),
 character_end(character_buffer),
 last_update_time(0)
 {
-  change_width( gmbb::font::base_size*w);
-  change_height(gmbb::font::tall_size*h);
+  rectangle.reset(gmbb::font::base_size*column_number,
+                  gmbb::font::tall_size*row_number);
 }
 
 
@@ -216,7 +215,7 @@ push(std::initializer_list<const char16_t*>  ls)
 
 void
 Message::
-process(Controller&  ctrl)
+controll(const Controller&  ctrl)
 {
     if(ctrl.test_pressed(p_flag))
     {
@@ -237,7 +236,7 @@ process(Controller&  ctrl)
         {
             if(scroll_key)
             {
-              scroll_count = height/2;
+              scroll_count = rectangle.h/2;
 
               scroll_key = 0;
             }
@@ -302,9 +301,7 @@ void
 Message::
 render(Image&  dst)
 {
-  auto  pt = get_absolute_point();
-
-  page.render(dst,pt.x,pt.y);
+  page.render(dst,rectangle.x,rectangle.y);
 }
 
 

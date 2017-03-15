@@ -14,11 +14,10 @@ sprite_image;
 
 Piece::
 Piece(uint32_t  flags_):
+Object(flags_),
 direction(Direction::front),
 shield_remaining(100),
-action_currency(0),
-moving_cost_base(10),
-flags(flags_)
+moving_cost_base(10)
 {
 }
 
@@ -161,131 +160,6 @@ get_moving_cost(Direction  dir) const
 }
 
 
-
-
-void    Piece::set_flag(uint32_t  v){flags |=  v;}
-void  Piece::unset_flag(uint32_t  v){flags &= ~v;}
-bool   Piece::test_flag(uint32_t  v) const{return(flags&v);}
-
-
-
-
-void
-Piece::
-push_task_front(Callback  cb)
-{
-    if(cb)
-    {
-      task_list.emplace_front(cb,*this);
-    }
-}
-
-
-void
-Piece::
-push_task_back(Callback  cb)
-{
-    if(cb)
-    {
-      task_list.emplace_back(cb,*this);
-    }
-}
-
-
-void
-Piece::
-push_action(Callback  cb, int  consum)
-{
-    if(cb)
-    {
-      action_queue.emplace(Action{cb,consum});
-    }
-}
-
-
-void
-Piece::
-push_context(Callback  cb)
-{
-    if(cb)
-    {
-      context_stack.emplace(cb,*this);
-    }
-}
-
-
-void
-Piece::
-pop_context()
-{
-    if(context_stack.size())
-    {
-      context_stack.pop();
-    }
-}
-
-
-void
-Piece::
-step()
-{
-    if(context_stack.size())
-    {
-      auto&  bk = context_stack.top();
-
-      bk.callback(bk);
-
-        if(!bk.callback)
-        {
-          context_stack.pop();
-        }
-    }
-
-  else
-    if(action_queue.size())
-    {
-      auto&  t = action_queue.front();
-
-        if(!t.consumption || (action_currency >= 0))
-        {
-          action_currency -= t.consumption;
-
-          context_stack.emplace(t.callback,*this);
-
-          action_queue.pop();
-        }
-    }
-
-  else
-    if(flags&voluntary_flag)
-    {
-      set_flag(taskseeking_flag);
-
-      auto   it = task_list.begin();
-      auto  end = task_list.end();
-
-        while(it != end)
-        {
-          it->callback(*it);
-
-            if(!it->callback)
-            {
-              it = task_list.erase(it);
-            }
-
-          else
-            {
-              ++it;
-            }
-
-
-            if(!test_flag(taskseeking_flag))
-            {
-              break;
-            }
-        }
-    }
-}
 
 
 void
