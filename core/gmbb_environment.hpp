@@ -3,6 +3,7 @@
 
 
 #include<string>
+#include"gmbb_controller.hpp"
 
 
 
@@ -21,6 +22,8 @@ constexpr int  fn7_flag = 0x02;
 constexpr int  fn8_flag = 0x01;
 
 extern uint8_t  fn_keystate;
+
+extern Controller  ctrl;
 
 
 void  change_time(uint32_t  v);

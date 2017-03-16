@@ -25,6 +25,9 @@ time;
 uint8_t  fn_keystate;
 
 
+Controller  ctrl;
+
+
 void  change_time(uint32_t  v){time = v;}
 uint32_t  get_time(){return time;}
 

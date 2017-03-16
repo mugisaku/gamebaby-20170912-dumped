@@ -84,11 +84,12 @@ set(TRPT_SOURCES
 set(ROGIE_SOURCES
   rogie/rogie_square.cpp
   rogie/rogie_square__search.cpp
-  rogie/rogie_basic_callback.cpp
   rogie/rogie_item.cpp
   rogie/rogie_object.cpp
   rogie/rogie_piece.cpp
+  rogie/rogie_piece__callback.cpp
   rogie/rogie_field.cpp
+  rogie/rogie_field__callback.cpp
 )
 
 

@@ -8,6 +8,8 @@ Field::
 Field():
 master(nullptr)
 {
+  push_task_to_last(process_input);
+  push_task_to_last(manage_pieces);
 }
 
 
@@ -50,71 +52,6 @@ put(Item&&  itm, int  x, int  y)
   auto&  sq = table[x][y];
 
   sq.placed_item = std::move(itm);
-}
-
-
-void
-Field::
-process(const gmbb::Controller&  ctrl)
-{
-    if(master->work_stack.empty())
-    {
-        if(ctrl.test_pressed(gmbb::p_flag))
-        {
-          master->use_weapon();
-        }
-
-      else
-        if(ctrl.test_pressed(gmbb::left_flag))
-        {
-          master->turn_left();
-        }
-
-      else
-        if(ctrl.test_pressed(gmbb::right_flag))
-        {
-          master->turn_right();
-        }
-
-      else
-        if(ctrl.test_pressed(gmbb::up_flag))
-        {
-          master->move_advance();
-        }
-
-      else
-        if(ctrl.test_pressed(gmbb::down_flag))
-        {
-        }
-
-
-      auto&  a = master->action_currency;
-
-        if(a < 0)
-        {
-            for(auto  p:  piece_list)
-            {
-                if(p != master)
-                {
-                  p->action_currency += -a;
-                }
-            }
-
-
-          a = 0;
-        }
-    }
-}
-
-
-void
-Field::
-cycle()
-{
-    for(auto  p: piece_list)
-    {
-      p->step();
-    }
 }
 
 

@@ -35,50 +35,39 @@ Context
 
 
 struct
-Action
-{
-  Callback  callback;
-
-  int  consumption;
-
-};
-
-
-struct
 Object
 {
-  static constexpr uint32_t  voluntary_flag   = 1;
-  static constexpr uint32_t  taskseeking_flag = 2;
-
-
-  uint32_t  flags;
-
-  int  action_currency;
-
-  std::queue<Action>  action_queue;
+  std::queue<Callback>  action_queue;
 
   std::stack<Context>  work_stack;
 
   std::list<Context>  task_list;
 
+  bool  needed_to_break_scanning;
+
   void*  userdata;
 
 public:
-  Object(uint32_t  flags_);
+  Object(Callback  first_cb=default_first_callback, void*  userdata_=nullptr);
 
   void*  get_userdata() const;
   void  set_userdata(void*  data);
 
-  void  push_task_front(Callback  cb);
-  void  push_task_back(Callback  cb);
-  void  push_action(Callback  cb, int  consum);
+  void  push_task_to_first(Callback  cb);
+  void  push_task_to_last(Callback  cb);
+  void  push_action(Callback  cb);
+
   void  push_work(Callback  cb);
   void  pop_work();
+
   void  step();
 
-  void    set_flag(uint32_t  v);
-  void  unset_flag(uint32_t  v);
-  bool   test_flag(uint32_t  v) const;
+  void  scan_task_list();
+
+  void  need_to_break_scanning();
+
+
+  static void  default_first_callback(Context&  ctx);
 
 };
 

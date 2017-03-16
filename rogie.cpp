@@ -31,10 +31,6 @@ uint32_t
 color_table[16];
 
 
-Controller
-ctrl;
-
-
 Image
 final_image(screen::width,screen::height);
 
@@ -132,19 +128,19 @@ main_loop()
           {
               switch(evt.key.keysym.sym)
               {
-            case(SDLK_UP   ): ctrl.press(up_flag   );break;
-            case(SDLK_LEFT ): ctrl.press(left_flag );break;
-            case(SDLK_RIGHT): ctrl.press(right_flag);break;
-            case(SDLK_DOWN ): ctrl.press(down_flag );break;
+            case(SDLK_UP   ): env::ctrl.press(up_flag   );break;
+            case(SDLK_LEFT ): env::ctrl.press(left_flag );break;
+            case(SDLK_RIGHT): env::ctrl.press(right_flag);break;
+            case(SDLK_DOWN ): env::ctrl.press(down_flag );break;
 
             case(SDLK_RETURN):
             case(SDLK_z):
-                ctrl.press(p_flag);
+                env::ctrl.press(p_flag);
                 break;
             case(SDLK_RCTRL):
             case(SDLK_LCTRL):
             case(SDLK_x    ):
-                ctrl.press(n_flag);
+                env::ctrl.press(n_flag);
                 break;
               }
           }
@@ -154,19 +150,19 @@ main_loop()
           {
               switch(evt.key.keysym.sym)
               {
-            case(SDLK_UP   ): ctrl.unpress(up_flag   );break;
-            case(SDLK_LEFT ): ctrl.unpress(left_flag );break;
-            case(SDLK_RIGHT): ctrl.unpress(right_flag);break;
-            case(SDLK_DOWN ): ctrl.unpress(down_flag );break;
+            case(SDLK_UP   ): env::ctrl.unpress(up_flag   );break;
+            case(SDLK_LEFT ): env::ctrl.unpress(left_flag );break;
+            case(SDLK_RIGHT): env::ctrl.unpress(right_flag);break;
+            case(SDLK_DOWN ): env::ctrl.unpress(down_flag );break;
 
             case(SDLK_RETURN):
             case(SDLK_z     ):
-                ctrl.unpress(p_flag);
+                env::ctrl.unpress(p_flag);
                 break;
             case(SDLK_RCTRL):
             case(SDLK_LCTRL):
             case(SDLK_x    ):
-                ctrl.unpress(n_flag);
+                env::ctrl.unpress(n_flag);
                 break;
               }
           }
@@ -187,8 +183,7 @@ main_loop()
 
   env::change_time(SDL_GetTicks());
 
-  field.process(ctrl);
-  field.cycle();
+  field.step();
 
   static uint32_t  next_time;
 
@@ -206,7 +201,7 @@ main_loop()
     }
 
 
-  ctrl.clean();
+  env::ctrl.clean();
 }
 
 
@@ -239,14 +234,14 @@ main(int  argc, char**  argv)
 
   Piece::sprite_image.load_mgf(r);
 
-  auto  a = new Piece();
-  auto  b = new Piece(true);
-  auto  c = new Piece(true);
+  auto  a = new Piece;
+  auto  b = new Piece;
+  auto  c = new Piece;
 
-  b->push_task_back(basic_callback::attack_hero);
-  b->push_task_back(basic_callback::chase_hero);
-  c->push_task_back(basic_callback::attack_hero);
-  c->push_task_back(basic_callback::runaway_from_hero);
+  b->push_task_to_first(Piece::attack_hero);
+  b->push_task_to_first(Piece::chase_hero);
+  c->push_task_to_first(Piece::attack_hero);
+  c->push_task_to_first(Piece::runaway_from_hero);
 
   field.put(a,2,2);
   field.put(b,0,0);

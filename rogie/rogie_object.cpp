@@ -1,14 +1,14 @@
 #include"rogie_object.hpp"
+#include"gmbb.hpp"
 
 
 
 
 Object::
-Object(uint32_t  flags_):
-flags(flags_),
-action_currency(0),
-userdata(nullptr)
+Object(Callback  first_cb, void*  userdata_):
+userdata(userdata_)
 {
+  push_work(first_cb);
 }
 
 
@@ -18,16 +18,11 @@ void*  Object::get_userdata() const{return userdata;}
 void   Object::set_userdata(void*  data){userdata = data;}
 
 
-void    Object::set_flag(uint32_t  v){flags |=  v;}
-void  Object::unset_flag(uint32_t  v){flags &= ~v;}
-bool   Object::test_flag(uint32_t  v) const{return(flags&v);}
-
-
 
 
 void
 Object::
-push_task_front(Callback  cb)
+push_task_to_first(Callback  cb)
 {
     if(cb)
     {
@@ -38,7 +33,7 @@ push_task_front(Callback  cb)
 
 void
 Object::
-push_task_back(Callback  cb)
+push_task_to_last(Callback  cb)
 {
     if(cb)
     {
@@ -49,11 +44,11 @@ push_task_back(Callback  cb)
 
 void
 Object::
-push_action(Callback  cb, int  consum)
+push_action(Callback  cb)
 {
     if(cb)
     {
-      action_queue.emplace(Action{cb,consum});
+      action_queue.emplace(cb);
     }
 }
 
@@ -95,49 +90,69 @@ step()
           work_stack.pop();
         }
     }
+}
 
-  else
-    if(action_queue.size())
+
+void
+Object::
+scan_task_list()
+{
+  needed_to_break_scanning = false;
+
+  auto   it = task_list.begin();
+  auto  end = task_list.end();
+
+    while(it != end)
     {
-      auto&  t = action_queue.front();
+      it->callback(*it);
 
-        if(!t.consumption || (action_currency >= 0))
+        if(!it->callback)
         {
-          action_currency -= t.consumption;
+          it = task_list.erase(it);
+        }
 
-          work_stack.emplace(t.callback,this);
+      else
+        {
+          ++it;
+        }
 
-          action_queue.pop();
+
+        if(needed_to_break_scanning)
+        {
+          break;
         }
     }
+}
 
-  else
-    if(flags&voluntary_flag)
+
+void
+Object::
+need_to_break_scanning()
+{
+  needed_to_break_scanning = true;
+}
+
+
+void
+Object::
+default_first_callback(Context&  ctx)
+{
+  auto&  obj = *ctx.caller;
+
+    if(obj.work_stack.size() == 1)
     {
-      set_flag(taskseeking_flag);
-
-      auto   it = task_list.begin();
-      auto  end = task_list.end();
-
-        while(it != end)
+        if(obj.action_queue.size())
         {
-          it->callback(*it);
+          auto&  t = obj.action_queue.front();
 
-            if(!it->callback)
-            {
-              it = task_list.erase(it);
-            }
+          obj.work_stack.emplace(t,&obj);
 
-          else
-            {
-              ++it;
-            }
+          obj.action_queue.pop();
+        }
 
-
-            if(!test_flag(taskseeking_flag))
-            {
-              break;
-            }
+      else
+        {
+          obj.scan_task_list();
         }
     }
 }

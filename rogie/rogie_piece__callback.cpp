@@ -1,15 +1,11 @@
-#include"rogie_basic_callback.hpp"
+#include"rogie_piece.hpp"
 #include"rogie_field.hpp"
 
 
 
 
-namespace basic_callback{
-
-
-
-
 void
+Piece::
 move_to_direction(Context&  ctx)
 {
   auto&          phase = ctx.memory[0];
@@ -33,6 +29,12 @@ move_to_direction(Context&  ctx)
     switch(phase)
     {
   case(0): {
+          if(!piece.consume_currency(piece.moving_cost_base))
+          {
+            return;
+          }
+
+
       auto  ln = (*piece.current_square)[piece.direction];
 
         if(!ln || ln->current_piece)
@@ -79,7 +81,7 @@ move_to_direction(Context&  ctx)
                if(y < 0){++y;}
           else if(y > 0){--y;}
 
-          sleep_counter = 2;
+          sleep_counter = 4;
         }
 
       else
@@ -94,30 +96,51 @@ move_to_direction(Context&  ctx)
 
 
 void
+Piece::
 turn_left(Context&  ctx)
 {
   auto&  piece = *static_cast<Piece*>(ctx.caller);
 
-  piece.change_direction(get_left(piece.direction));
+    if(piece.consume_currency(piece.moving_cost_base/3))
+    {
+      piece.change_direction(get_left(piece.direction));
 
-  ctx.callback = nullptr;
+      ctx.callback = nullptr;
+    }
 }
 
 
 void
+Piece::
 turn_right(Context&  ctx)
 {
   auto&  piece = *static_cast<Piece*>(ctx.caller);
 
-  piece.change_direction(get_right(piece.direction));
+    if(piece.consume_currency(piece.moving_cost_base/3))
+    {
+      piece.change_direction(get_right(piece.direction));
 
-  ctx.callback = nullptr;
+      ctx.callback = nullptr;
+    }
 }
 
 
 
 
 void
+Piece::
+use_weapon(Context&  ctx)
+{
+  auto&  piece = *static_cast<Piece*>(ctx.caller);
+
+  piece.push_action(punch);
+
+  ctx.callback = nullptr;
+}
+
+
+void
+Piece::
 punch(Context&  ctx)
 {
   auto&  piece = *static_cast<Piece*>(ctx.caller);
@@ -132,6 +155,12 @@ punch(Context&  ctx)
     switch(phase)
     {
   case(0):
+        if(!piece.consume_currency(piece.moving_cost_base))
+        {
+          return;
+        }
+
+
       piece.rendering_dst_offset.x = 0;
       piece.rendering_dst_offset.y = 0;
 
@@ -186,6 +215,7 @@ punch(Context&  ctx)
 
 
 void
+Piece::
 damage(Context&  ctx)
 {
   auto&  piece = *static_cast<Piece*>(ctx.caller);
@@ -230,6 +260,7 @@ damage(Context&  ctx)
 
 
 void
+Piece::
 chase_hero(Context&  ctx)
 {
   auto&  piece = *static_cast<Piece*>(ctx.caller);
@@ -263,7 +294,7 @@ chase_hero(Context&  ctx)
     {
         if(d == piece.direction)
         {
-          piece.move_advance();
+          piece.push_action(move_to_direction);
         }
 
       else
@@ -274,8 +305,8 @@ chase_hero(Context&  ctx)
           auto  l_dist = get_distance(d,l);
           auto  r_dist = get_distance(d,r);
 
-            if(l_dist < r_dist){piece.turn_left();}
-          else                 {piece.turn_right();}
+            if(l_dist < r_dist){piece.push_action(turn_left);}
+          else                 {piece.push_action(turn_right);}
         }
     }
 }
@@ -284,6 +315,7 @@ chase_hero(Context&  ctx)
 
 
 void
+Piece::
 runaway_from_hero(Context&  ctx)
 {
   auto&  piece = *static_cast<Piece*>(ctx.caller);
@@ -317,7 +349,7 @@ runaway_from_hero(Context&  ctx)
     {
         if(d == piece.direction)
         {
-          piece.move_advance();
+          piece.push_action(move_to_direction);
         }
 
       else
@@ -328,8 +360,8 @@ runaway_from_hero(Context&  ctx)
           auto  l_dist = get_distance(d,l);
           auto  r_dist = get_distance(d,r);
 
-            if(l_dist < r_dist){piece.turn_left();}
-          else                 {piece.turn_right();}
+            if(l_dist < r_dist){piece.push_action(turn_left);}
+          else                 {piece.push_action(turn_right);}
         }
     }
 }
@@ -338,6 +370,7 @@ runaway_from_hero(Context&  ctx)
 
 
 void
+Piece::
 attack_hero(Context&  ctx)
 {
   auto&  piece = *static_cast<Piece*>(ctx.caller);
@@ -367,7 +400,8 @@ attack_hero(Context&  ctx)
     {
         if(d == piece.direction)
         {
-          piece.use_weapon();
+report;
+          piece.push_action(use_weapon);
         }
 
       else
@@ -378,18 +412,13 @@ attack_hero(Context&  ctx)
           auto  l_dist = get_distance(d,l);
           auto  r_dist = get_distance(d,r);
 
-            if(l_dist < r_dist){piece.turn_left();}
-          else                 {piece.turn_right();}
+            if(l_dist < r_dist){piece.push_action(turn_left );}
+          else                 {piece.push_action(turn_right);}
         }
 
 
-      piece.unset_flag(Piece::taskseeking_flag);
+      piece.need_to_break_scanning();
     }
-}
-
-
-
-
 }
 
 

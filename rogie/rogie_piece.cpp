@@ -1,6 +1,5 @@
 #include"rogie_piece.hpp"
 #include"rogie_field.hpp"
-#include"rogie_basic_callback.hpp"
 
 
 
@@ -14,10 +13,11 @@ sprite_image;
 
 Piece::
 Piece(uint32_t  flags_):
-Object(flags_),
+flags(flags_),
 direction(Direction::front),
 shield_remaining(100),
-moving_cost_base(10)
+moving_cost_base(10),
+action_currency(0)
 {
 }
 
@@ -108,27 +108,26 @@ add_offset_by_direction(int  n)
 }
 
 
-void
+
+
+void    Piece::set_flag(uint32_t  v){flags |=  v;}
+void  Piece::unset_flag(uint32_t  v){flags &= ~v;}
+bool   Piece::test_flag(uint32_t  v) const{return(flags&v);}
+
+
+bool
 Piece::
-move_advance()
+consume_currency(int  v)
 {
-  push_action(basic_callback::move_to_direction,moving_cost_base);
-}
+    if(action_currency >= 0)
+    {
+      action_currency -= v;
+
+      return true;
+    }
 
 
-void
-Piece::
-turn_left()
-{
-  push_action(basic_callback::turn_left,moving_cost_base/3);
-}
-
-
-void
-Piece::
-turn_right()
-{
-  push_action(basic_callback::turn_right,moving_cost_base/3);
+  return false;
 }
 
 
@@ -139,14 +138,6 @@ change_direction(Direction  d)
   direction = d;
 
   set_shape_by_direction();
-}
-
-
-void
-Piece::
-use_weapon()
-{
-  push_action(basic_callback::punch,moving_cost_base);
 }
 
 
