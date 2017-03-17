@@ -133,6 +133,10 @@ main_loop()
             case(SDLK_RIGHT): env::ctrl.press(right_flag);break;
             case(SDLK_DOWN ): env::ctrl.press(down_flag );break;
 
+            case(SDLK_SPACE ): env::ctrl.press(start_flag );break;
+            case(SDLK_LSHIFT):
+            case(SDLK_RSHIFT): env::ctrl.press(shift_flag );break;
+
             case(SDLK_RETURN):
             case(SDLK_z):
                 env::ctrl.press(p_flag);
@@ -154,6 +158,10 @@ main_loop()
             case(SDLK_LEFT ): env::ctrl.unpress(left_flag );break;
             case(SDLK_RIGHT): env::ctrl.unpress(right_flag);break;
             case(SDLK_DOWN ): env::ctrl.unpress(down_flag );break;
+
+            case(SDLK_SPACE ): env::ctrl.unpress(start_flag );break;
+            case(SDLK_LSHIFT):
+            case(SDLK_RSHIFT): env::ctrl.unpress(shift_flag );break;
 
             case(SDLK_RETURN):
             case(SDLK_z     ):
@@ -234,21 +242,25 @@ main(int  argc, char**  argv)
 
   Piece::sprite_image.load_mgf(r);
 
-  auto  a = new Piece;
-  auto  b = new Piece;
-  auto  c = new Piece;
-
-  b->push_task_to_first(Piece::attack_hero);
-  b->push_task_to_first(Piece::chase_hero);
-  c->push_task_to_first(Piece::attack_hero);
-  c->push_task_to_first(Piece::runaway_from_hero);
-
-  field.put(a,2,2);
-  field.put(b,0,0);
-  field.put(c,4,0);
   field.put(Item(Firearm{FirearmKind::handgun}),1,1);
 
   field.prepare();
+
+  auto  a = new Piece;
+  auto  b = new Piece;
+  auto  c = new Piece;
+  auto  d = new Piece;
+
+  b->push_task_to_first(Piece::chase_hero);
+  b->push_task_to_first(Piece::attack_hero);
+  c->push_task_to_first(Piece::runaway_from_hero);
+  c->push_task_to_first(Piece::attack_hero);
+
+  field.put(a,0,0);
+  field.put(b,5,3);
+  field.put(c,4,0);
+  field.put(d,5,5);
+
 
 /*
   r = media.find("data/map.mgf")->reader();

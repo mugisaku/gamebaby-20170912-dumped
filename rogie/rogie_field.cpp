@@ -40,6 +40,8 @@ put(Piece*  p, int  x, int  y)
         if(!master)
         {
           master = p;
+
+          master->set_flag(Piece::master_flag);
         }
     }
 }
@@ -89,33 +91,47 @@ prepare()
 
   image.resize(24*width,24*height);
 
-  image.fill(4|8);
+  update_image();
+}
 
+
+void
+Field::
+update_image()
+{
     for(int  y = 0;  y < height;  ++y){
     for(int  x = 0;  x <  width;  ++x){
-      auto  xx = 24*x;
-      auto  yy = 24*y;
+      update_image(x,y);
+    }}
+}
 
-      image.rectangle(3|8,xx,yy,24,24);
 
-      auto&  sq = table[y][x];
+void
+Field::
+update_image(int  x, int  y)
+{
+  auto  xx = 24*x;
+  auto  yy = 24*y;
 
-        switch(sq.placed_item.kind)
+  image.fill_rectangle(3|8,xx,yy,24,24);
+  image.rectangle(     4|8,xx,yy,24,24);
+
+  auto&  sq = table[y][x];
+
+    switch(sq.placed_item.kind)
+    {
+  case(ItemKind::firearm):
+        switch(sq.placed_item.data.firearm.kind)
         {
-      case(ItemKind::firearm):
-            switch(sq.placed_item.data.firearm.kind)
-            {
-          case(FirearmKind::handgun):
-              Piece::sprite_image.transfer(48,24*10,24,24,image,xx,yy);
-              break;
-          case(FirearmKind::submachinegun):
-              Piece::sprite_image.transfer(48,24*11,24,24,image,xx,yy);
-              break;
-            }
+      case(FirearmKind::handgun):
+          Piece::sprite_image.transfer(48,24*10,24,24,image,xx,yy);
+          break;
+      case(FirearmKind::submachinegun):
+          Piece::sprite_image.transfer(48,24*11,24,24,image,xx,yy);
           break;
         }
-    }}
-
+      break;
+    }
 }
 
 
@@ -149,9 +165,7 @@ render(gmbb::Image&  dst)
     }
 
 
-//  gmbb::Formatted  fmt;
-
-//  dst.print(fmt("%4d",master->current_square->reaching_cost),4|8,0,0);
+  dst.print_tall(master->test_flag(Piece::use_gun_flag)? "ハンドガン":"パンチ",4|8,180,0);
 }
 
 
@@ -167,7 +181,7 @@ print() const
         {
           auto&  sq = table[y][x];
 
-          printf("%6d,",sq.distance);
+          printf("%6d,",sq.current_piece? 1:0);
         }
 
 

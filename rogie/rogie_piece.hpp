@@ -33,6 +33,12 @@ Field;
 struct
 Piece: public Object
 {
+  static constexpr int  master_flag = 1;
+  static constexpr int  have_gun_flag = 2;
+  static constexpr int  use_gun_flag = 4;
+  static constexpr int  readied_flag = 8;
+
+
   static gmbb::Image  sprite_image;
 
 
@@ -69,6 +75,7 @@ public:
   void  set_offset_by_direction();
   void  set_shape_by_direction();
 
+  bool  append_item(Item&&  new_item);
 
   void    set_flag(uint32_t  v);
   void  unset_flag(uint32_t  v);
@@ -86,7 +93,11 @@ public:
   static void  turn_right(Context&  ctx);
 
   static void  use_weapon(Context&  ctx);
+  static void  change_weapon(Context&  ctx);
+  static void  ready_to_fire(Context&  ctx);
+  static void  cancel_ready(Context&  ctx);
   static void  punch(Context&  ctx);
+  static void  fire(Context&  ctx);
   static void  damage(Context&  ctx);
 
   static void  chase_hero(Context&  ctx);

@@ -31,6 +31,9 @@ public:
 
   void  prepare_to_search();
 
+  void  update_image(              );
+  void  update_image(int  x, int  y);
+
   void  render(gmbb::Image&  dst);
 
   void  print() const;

@@ -9,7 +9,7 @@ process_input(Context&  ctx)
 {
   auto&  field = *static_cast<Field*>(ctx.caller);
 
-//    if(field.master->work_stack.empty())
+    if(field.master->work_stack.size() == 1)
     {
         if(gmbb::env::ctrl.test_pressed(gmbb::p_flag))
         {
@@ -37,6 +37,13 @@ process_input(Context&  ctx)
       else
         if(gmbb::env::ctrl.test_pressed(gmbb::down_flag))
         {
+          field.master->push_action(Piece::cancel_ready);
+        }
+
+      else
+        if(gmbb::env::ctrl.test_pressed(gmbb::shift_flag))
+        {
+          field.master->push_action(Piece::change_weapon);
         }
 
 
@@ -65,11 +72,19 @@ manage_pieces(Context&  ctx)
 {
   auto&  field = *static_cast<Field*>(ctx.caller);
 
-  field.master->step();
+  bool  flag = false;
 
     for(auto  p: field.piece_list)
     {
       p->step();
+
+      flag |= (p->work_stack.size() > 1);
+    }
+
+
+    if(!flag)
+    {
+      field.master->step();
     }
 }
 

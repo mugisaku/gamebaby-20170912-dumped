@@ -29,18 +29,18 @@ move_to_direction(Context&  ctx)
     switch(phase)
     {
   case(0): {
-          if(!piece.consume_currency(piece.moving_cost_base))
-          {
-            return;
-          }
-
-
       auto  ln = (*piece.current_square)[piece.direction];
 
-        if(!ln || ln->current_piece)
+        if(!ln || ln->current_piece || piece.test_flag(readied_flag))
         {
           ctx.callback = nullptr;
 
+          return;
+        }
+
+
+        if(!piece.consume_currency(piece.moving_cost_base))
+        {
           return;
         }
 
@@ -81,11 +81,27 @@ move_to_direction(Context&  ctx)
                if(y < 0){++y;}
           else if(y > 0){--y;}
 
-          sleep_counter = 4;
+          sleep_counter = 2;
         }
 
       else
         {
+            if(piece.test_flag(master_flag))
+            {
+              auto&  itm = piece.current_square->placed_item;
+
+                if(itm)
+                {
+                    if(piece.append_item(std::move(itm)))
+                    {
+                      auto&  pt = piece.current_square->point;
+
+                      piece.current_square->field->update_image(pt.x,pt.y);
+                    }
+                }
+            }
+
+
           ctx.callback = nullptr;
         }
       break;
@@ -129,13 +145,126 @@ turn_right(Context&  ctx)
 
 void
 Piece::
+change_weapon(Context&  ctx)
+{
+  auto&  piece = *static_cast<Piece*>(ctx.caller);
+
+    if(piece.test_flag(use_gun_flag) && !piece.test_flag(readied_flag))
+    {
+      piece.unset_flag(use_gun_flag);
+    }
+
+  else
+    if(piece.test_flag(have_gun_flag))
+    {
+      piece.set_flag(use_gun_flag);
+    }
+
+
+  ctx.callback = nullptr;
+}
+
+
+void
+Piece::
 use_weapon(Context&  ctx)
 {
   auto&  piece = *static_cast<Piece*>(ctx.caller);
 
-  piece.push_action(punch);
+    if(piece.test_flag(use_gun_flag))
+    {
+        if(piece.test_flag(readied_flag))
+        {
+          piece.push_action(fire);
+        }
+
+      else
+        {
+          piece.push_action(ready_to_fire);
+        }
+    }
+
+  else
+    {
+      piece.push_action(punch);
+    }
+
 
   ctx.callback = nullptr;
+}
+
+
+void
+Piece::
+ready_to_fire(Context&  ctx)
+{
+  auto&  piece = *static_cast<Piece*>(ctx.caller);
+
+    if(piece.consume_currency(piece.moving_cost_base))
+    {
+      piece.set_flag(readied_flag);
+
+      piece.rendering_src_base.x   = 24*3;
+      piece.rendering_src_offset.x =    0;
+
+
+      ctx.callback = nullptr;
+    }
+}
+
+
+void
+Piece::
+cancel_ready(Context&  ctx)
+{
+  auto&  piece = *static_cast<Piece*>(ctx.caller);
+
+    if(piece.consume_currency(piece.moving_cost_base))
+    {
+      piece.unset_flag(readied_flag);
+
+      piece.rendering_src_base.x   = 0;
+      piece.rendering_src_offset.x = 0;
+
+
+      ctx.callback = nullptr;
+    }
+}
+
+
+void
+Piece::
+fire(Context&  ctx)
+{
+  auto&  piece = *static_cast<Piece*>(ctx.caller);
+
+    if(piece.consume_currency(piece.moving_cost_base))
+    {
+      auto  sq = (*piece.current_square)[piece.direction];
+
+      Piece*  target = nullptr;
+
+        while(sq)
+        {
+          target = sq->current_piece;
+
+            if(target)
+            {
+              break;
+            }
+
+
+          sq = (*sq)[piece.direction];
+        }
+
+
+        if(target)
+        {
+          target->push_work(damage);
+        }
+
+      ctx.callback = nullptr;
+    }
 }
 
 
@@ -145,28 +274,23 @@ punch(Context&  ctx)
 {
   auto&  piece = *static_cast<Piece*>(ctx.caller);
 
-  auto&          phase = ctx.memory[0];
-  auto&        counter = ctx.memory[1];
-  auto&  sleep_counter = ctx.memory[2];
+  auto&    phase = ctx.memory[0];
+  auto&  counter = ctx.memory[1];
+  auto&     last = ctx.memory[2];
 
-  auto&  x = piece.rendering_dst_offset.x;
-  auto&  y = piece.rendering_dst_offset.y;
+  auto&  x = piece.rendering_src_base.x;
 
     switch(phase)
     {
   case(0):
-        if(!piece.consume_currency(piece.moving_cost_base))
+        if(!piece.consume_currency(piece.moving_cost_base/3))
         {
           return;
         }
 
 
-      piece.rendering_dst_offset.x = 0;
-      piece.rendering_dst_offset.y = 0;
-
-      piece.rendering_src_offset.x = 24*3;
-
-      piece.set_shape_by_direction();
+      last = x       ;
+             x = 24*3;
 
       counter = 12;
 
@@ -196,14 +320,12 @@ punch(Context&  ctx)
   case(2):
         if(counter--)
         {
-          piece.rendering_src_offset.x = 0;
-
           piece.add_offset_by_direction(-1);
         }
 
       else
         {
-          piece.rendering_src_offset.x = 0;
+          x = last;
 
           ctx.callback = nullptr;
         }
@@ -220,22 +342,17 @@ damage(Context&  ctx)
 {
   auto&  piece = *static_cast<Piece*>(ctx.caller);
 
-  auto&          phase = ctx.memory[0];
-  auto&        counter = ctx.memory[1];
-  auto&  sleep_counter = ctx.memory[2];
+  auto&    phase = ctx.memory[0];
+  auto&  counter = ctx.memory[1];
+  auto&     last = ctx.memory[2];
 
-  auto&  x = piece.rendering_dst_offset.x;
-  auto&  y = piece.rendering_dst_offset.y;
+  auto&  x = piece.rendering_src_base.x;
 
     switch(phase)
     {
   case(0):
-      piece.rendering_dst_offset.x = 0;
-      piece.rendering_dst_offset.y = 0;
-
-      piece.rendering_src_offset.x = 24*4;
-
-      piece.set_shape_by_direction();
+      last = x       ;
+             x = 24*4;
 
       counter = 12;
 
@@ -248,7 +365,7 @@ damage(Context&  ctx)
 
       else
         {
-          piece.rendering_src_offset.x = 0;
+          x = last;
 
           ctx.callback = nullptr;
         }
@@ -308,6 +425,9 @@ chase_hero(Context&  ctx)
             if(l_dist < r_dist){piece.push_action(turn_left);}
           else                 {piece.push_action(turn_right);}
         }
+
+
+      piece.need_to_break_scanning();
     }
 }
 
@@ -363,6 +483,9 @@ runaway_from_hero(Context&  ctx)
             if(l_dist < r_dist){piece.push_action(turn_left);}
           else                 {piece.push_action(turn_right);}
         }
+
+
+      piece.need_to_break_scanning();
     }
 }
 
@@ -400,7 +523,6 @@ attack_hero(Context&  ctx)
     {
         if(d == piece.direction)
         {
-report;
           piece.push_action(use_weapon);
         }
 

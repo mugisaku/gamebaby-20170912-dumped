@@ -108,6 +108,25 @@ add_offset_by_direction(int  n)
 }
 
 
+bool
+Piece::
+append_item(Item&&  new_item)
+{
+    for(auto&  itm: belongings_table)
+    {
+        if(!itm)
+        {
+set_flag(have_gun_flag);
+set_flag(use_gun_flag);
+          itm = std::move(new_item);
+
+          return true;
+        }
+    }
+
+
+  return false;
+}
 
 
 void    Piece::set_flag(uint32_t  v){flags |=  v;}
@@ -138,6 +157,18 @@ change_direction(Direction  d)
   direction = d;
 
   set_shape_by_direction();
+
+    if(test_flag(readied_flag))
+    {
+      rendering_src_base.x   = 24*3;
+      rendering_src_offset.x =    0;
+    }
+
+  else
+    {
+      rendering_src_base.x   = 0;
+      rendering_src_offset.x = 0;
+    }
 }
 
 

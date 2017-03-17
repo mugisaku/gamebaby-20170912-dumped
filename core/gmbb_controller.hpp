@@ -14,6 +14,8 @@ constexpr int  right_flag = 0x04;
 constexpr int  down_flag  = 0x08;
 constexpr int  p_flag     = 0x10;
 constexpr int  n_flag     = 0x20;
+constexpr int  start_flag = 0x40;
+constexpr int  shift_flag = 0x80;
 
 
 class

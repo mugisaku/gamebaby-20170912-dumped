@@ -20,7 +20,7 @@ operator=(Item&&  rhs) noexcept
 {
   clear();
 
-  kind = rhs.kind;
+  std::swap(kind,rhs.kind);
 
     switch(kind)
     {
@@ -54,6 +54,13 @@ operator=(const Item&   rhs) noexcept
 }
 
 
+
+
+Item::
+operator bool() const
+{
+  return(kind != ItemKind::null);
+}
 
 
 void

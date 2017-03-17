@@ -42,6 +42,8 @@ public:
   Item&  operator=(      Item&&  rhs) noexcept;
   Item&  operator=(const Item&   rhs) noexcept;
 
+  operator bool() const;
+
   void  clear();
 
 };
