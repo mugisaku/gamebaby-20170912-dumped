@@ -247,14 +247,9 @@ main(int  argc, char**  argv)
   field.prepare();
 
   auto  a = new Piece;
-  auto  b = new Piece;
-  auto  c = new Piece;
-  auto  d = new Piece;
-
-  b->push_task_to_first(Piece::chase_hero);
-  b->push_task_to_first(Piece::attack_hero);
-  c->push_task_to_first(Piece::runaway_from_hero);
-  c->push_task_to_first(Piece::attack_hero);
+  auto  b = new Piece({Piece::attack_hero,Piece::chase_hero,Piece::wait});
+  auto  c = new Piece({Piece::attack_hero,Piece::runaway_from_hero,Piece::wait});
+  auto  d = new Piece({Piece::wait});
 
   field.put(a,0,0);
   field.put(b,5,3);

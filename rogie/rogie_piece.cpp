@@ -12,16 +12,25 @@ sprite_image;
 
 
 Piece::
-Piece(uint32_t  flags_):
+Piece(std::initializer_list<TaskCallback>  tskcb, uint32_t  flags_):
 flags(flags_),
 direction(Direction::front),
 shield_remaining(100),
 moving_cost_base(10),
-action_currency(0)
+action_currency(0),
+taskman(tskcb,this)
 {
 }
 
 
+
+
+TaskManager&
+Piece::
+get_task_manager()
+{
+  return taskman;
+}
 
 
 void
@@ -138,7 +147,7 @@ bool
 Piece::
 consume_currency(int  v)
 {
-    if(action_currency >= 0)
+    if(test_flag(master_flag) || (action_currency > 0))
     {
       action_currency -= v;
 
@@ -179,6 +188,16 @@ Piece::
 get_moving_cost(Direction  dir) const
 {
   return (moving_cost_base/3)*get_distance(direction,dir)+(moving_cost_base);
+}
+
+
+
+
+bool
+Piece::
+step()
+{
+  return taskman();
 }
 
 

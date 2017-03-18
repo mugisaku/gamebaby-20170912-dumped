@@ -4,6 +4,15 @@
 
 
 
+namespace{
+Piece&
+get(Context&  ctx)
+{
+  return *static_cast<Piece*>(ctx.taskmanager->get_owner());
+}
+}
+
+
 void
 Piece::
 move_to_direction(Context&  ctx)
@@ -12,7 +21,7 @@ move_to_direction(Context&  ctx)
   auto&        counter = ctx.memory[1];
   auto&  sleep_counter = ctx.memory[2];
 
-  auto&  piece = *static_cast<Piece*>(ctx.caller);
+  auto&  piece = get(ctx);
 
   auto&  x = piece.rendering_dst_offset.x;
   auto&  y = piece.rendering_dst_offset.y;
@@ -115,7 +124,7 @@ void
 Piece::
 turn_left(Context&  ctx)
 {
-  auto&  piece = *static_cast<Piece*>(ctx.caller);
+  auto&  piece = get(ctx);
 
     if(piece.consume_currency(piece.moving_cost_base/3))
     {
@@ -130,7 +139,7 @@ void
 Piece::
 turn_right(Context&  ctx)
 {
-  auto&  piece = *static_cast<Piece*>(ctx.caller);
+  auto&  piece = get(ctx);
 
     if(piece.consume_currency(piece.moving_cost_base/3))
     {
@@ -147,7 +156,7 @@ void
 Piece::
 change_weapon(Context&  ctx)
 {
-  auto&  piece = *static_cast<Piece*>(ctx.caller);
+  auto&  piece = get(ctx);
 
     if(piece.test_flag(use_gun_flag) && !piece.test_flag(readied_flag))
     {
@@ -169,24 +178,24 @@ void
 Piece::
 use_weapon(Context&  ctx)
 {
-  auto&  piece = *static_cast<Piece*>(ctx.caller);
+  auto&  piece = get(ctx);
 
     if(piece.test_flag(use_gun_flag))
     {
         if(piece.test_flag(readied_flag))
         {
-          piece.push_action(fire);
+          piece.get_task_manager().push(fire);
         }
 
       else
         {
-          piece.push_action(ready_to_fire);
+          piece.get_task_manager().push(ready_to_fire);
         }
     }
 
   else
     {
-      piece.push_action(punch);
+      piece.get_task_manager().push(punch);
     }
 
 
@@ -198,7 +207,7 @@ void
 Piece::
 ready_to_fire(Context&  ctx)
 {
-  auto&  piece = *static_cast<Piece*>(ctx.caller);
+  auto&  piece = get(ctx);
 
     if(piece.consume_currency(piece.moving_cost_base))
     {
@@ -217,7 +226,7 @@ void
 Piece::
 cancel_ready(Context&  ctx)
 {
-  auto&  piece = *static_cast<Piece*>(ctx.caller);
+  auto&  piece = get(ctx);
 
     if(piece.consume_currency(piece.moving_cost_base))
     {
@@ -236,7 +245,7 @@ void
 Piece::
 fire(Context&  ctx)
 {
-  auto&  piece = *static_cast<Piece*>(ctx.caller);
+  auto&  piece = get(ctx);
 
     if(piece.consume_currency(piece.moving_cost_base))
     {
@@ -260,7 +269,7 @@ fire(Context&  ctx)
 
         if(target)
         {
-          target->push_work(damage);
+          target->get_task_manager().push(damage);
         }
 
       ctx.callback = nullptr;
@@ -272,7 +281,7 @@ void
 Piece::
 punch(Context&  ctx)
 {
-  auto&  piece = *static_cast<Piece*>(ctx.caller);
+  auto&  piece = get(ctx);
 
   auto&    phase = ctx.memory[0];
   auto&  counter = ctx.memory[1];
@@ -308,7 +317,7 @@ punch(Context&  ctx)
 
             if(sq && sq->current_piece)
             {
-              sq->current_piece->push_work(damage);
+              sq->current_piece->get_task_manager().push(damage);
             }
 
 
@@ -340,7 +349,7 @@ void
 Piece::
 damage(Context&  ctx)
 {
-  auto&  piece = *static_cast<Piece*>(ctx.caller);
+  auto&  piece = get(ctx);
 
   auto&    phase = ctx.memory[0];
   auto&  counter = ctx.memory[1];
@@ -370,176 +379,6 @@ damage(Context&  ctx)
           ctx.callback = nullptr;
         }
       break;
-    }
-}
-
-
-
-
-void
-Piece::
-chase_hero(Context&  ctx)
-{
-  auto&  piece = *static_cast<Piece*>(ctx.caller);
-
-  auto  hero = piece.current_square->field->master;
-
-  piece.current_square->field->prepare_to_search();
-  hero->current_square->search(&piece);
-
-  Direction  d;
-
-  Square*  candidate = nullptr;
-
-    for(int  i = 0;  i < number_of_directions;  ++i)
-    {
-      auto  ln = piece.current_square->link[i];
-
-        if(ln)
-        {
-            if(!candidate || (ln->distance < candidate->distance))
-            {
-              candidate = ln;
-
-              d = static_cast<Direction>(i);
-            }
-        }
-    }
-
-
-    if(candidate)
-    {
-        if(d == piece.direction)
-        {
-          piece.push_action(move_to_direction);
-        }
-
-      else
-        {
-          auto  l = get_left( piece.direction);
-          auto  r = get_right(piece.direction);
-
-          auto  l_dist = get_distance(d,l);
-          auto  r_dist = get_distance(d,r);
-
-            if(l_dist < r_dist){piece.push_action(turn_left);}
-          else                 {piece.push_action(turn_right);}
-        }
-
-
-      piece.need_to_break_scanning();
-    }
-}
-
-
-
-
-void
-Piece::
-runaway_from_hero(Context&  ctx)
-{
-  auto&  piece = *static_cast<Piece*>(ctx.caller);
-
-  auto  hero = piece.current_square->field->master;
-
-  piece.current_square->field->prepare_to_search();
-  hero->current_square->search(&piece);
-
-  Direction  d;
-
-  Square*  candidate = nullptr;
-
-    for(int  i = 0;  i < number_of_directions;  ++i)
-    {
-      auto  ln = piece.current_square->link[i];
-
-        if(ln)
-        {
-            if(!candidate || (ln->distance > candidate->distance))
-            {
-              candidate = ln;
-
-              d = static_cast<Direction>(i);
-            }
-        }
-    }
-
-
-    if(candidate)
-    {
-        if(d == piece.direction)
-        {
-          piece.push_action(move_to_direction);
-        }
-
-      else
-        {
-          auto  l = get_left( piece.direction);
-          auto  r = get_right(piece.direction);
-
-          auto  l_dist = get_distance(d,l);
-          auto  r_dist = get_distance(d,r);
-
-            if(l_dist < r_dist){piece.push_action(turn_left);}
-          else                 {piece.push_action(turn_right);}
-        }
-
-
-      piece.need_to_break_scanning();
-    }
-}
-
-
-
-
-void
-Piece::
-attack_hero(Context&  ctx)
-{
-  auto&  piece = *static_cast<Piece*>(ctx.caller);
-
-  auto  hero = piece.current_square->field->master;
-
-  Direction  d;
-
-  Square*  sq = nullptr;
-
-    for(int  i = 0;  i < number_of_directions;  ++i)
-    {
-      auto  ln = piece.current_square->link[i];
-
-        if(ln && (ln->current_piece == hero))
-        {
-          sq = ln;
-
-          d = static_cast<Direction>(i);
-
-          break;
-        }
-    }
-
-
-    if(sq)
-    {
-        if(d == piece.direction)
-        {
-          piece.push_action(use_weapon);
-        }
-
-      else
-        {
-          auto  l = get_left( piece.direction);
-          auto  r = get_right(piece.direction);
-
-          auto  l_dist = get_distance(d,l);
-          auto  r_dist = get_distance(d,r);
-
-            if(l_dist < r_dist){piece.push_action(turn_left );}
-          else                 {piece.push_action(turn_right);}
-        }
-
-
-      piece.need_to_break_scanning();
     }
 }
 

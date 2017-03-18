@@ -6,10 +6,9 @@
 
 Field::
 Field():
+taskman({process_input,manage_pieces},this),
 master(nullptr)
 {
-  push_task_to_last(process_input);
-  push_task_to_last(manage_pieces);
 }
 
 
@@ -145,6 +144,14 @@ prepare_to_search()
 
       sq.distance = std::numeric_limits<int>::max();
     }}
+}
+
+
+bool
+Field::
+step()
+{
+  return taskman();
 }
 
 

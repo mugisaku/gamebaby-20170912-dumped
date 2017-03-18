@@ -8,7 +8,7 @@
 
 
 struct
-Field: public Object
+Field
 {
   static constexpr int   width = 6;
   static constexpr int  height = 6;
@@ -16,6 +16,8 @@ Field: public Object
   Square  table[height][width];
 
   gmbb::Image  image;
+
+  TaskManager  taskman;
 
   std::list<Piece*>  piece_list;
 
@@ -31,6 +33,8 @@ public:
 
   void  prepare_to_search();
 
+  bool  step();
+
   void  update_image(              );
   void  update_image(int  x, int  y);
 
@@ -39,8 +43,9 @@ public:
   void  print() const;
 
 
-  static void  process_input(Context&  ctx);
-  static void  manage_pieces(Context&  ctx);
+  static void  process_input(Task&  tsk);
+  static void  manage_pieces(Task&  tsk);
+  static void  select_item_at_main_menu(Task&  tsk);
 
 };
 

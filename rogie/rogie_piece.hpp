@@ -3,12 +3,10 @@
 
 
 #include"rogie_square.hpp"
-#include"rogie_object.hpp"
+#include"rogie_taskmanager.hpp"
 #include"rogie_item.hpp"
 #include<array>
-#include<list>
-#include<queue>
-#include<stack>
+#include<initializer_list>
 
 
 
@@ -31,7 +29,7 @@ Field;
 
 
 struct
-Piece: public Object
+Piece
 {
   static constexpr int  master_flag = 1;
   static constexpr int  have_gun_flag = 2;
@@ -41,6 +39,7 @@ Piece: public Object
 
   static gmbb::Image  sprite_image;
 
+  TaskManager  taskman;
 
   uint32_t  flags;
 
@@ -63,7 +62,7 @@ Piece: public Object
   std::array<Item,8>  belongings_table;
 
 public:
-  Piece(uint32_t  flags_=0);
+  Piece(std::initializer_list<TaskCallback>  tskcb={}, uint32_t  flags_=0);
 
   void  change_direction(Direction  d);
 
@@ -80,6 +79,10 @@ public:
   void    set_flag(uint32_t  v);
   void  unset_flag(uint32_t  v);
   bool   test_flag(uint32_t  v) const;
+
+  TaskManager&  get_task_manager();
+
+  bool  step();
 
 
   void  render(gmbb::Image&  dst, int  x, int  y) const;
@@ -100,9 +103,10 @@ public:
   static void  fire(Context&  ctx);
   static void  damage(Context&  ctx);
 
-  static void  chase_hero(Context&  ctx);
-  static void  runaway_from_hero(Context&  ctx);
-  static void  attack_hero(Context&  ctx);
+  static void  chase_hero(Task&  tsk);
+  static void  runaway_from_hero(Task&  tsk);
+  static void  attack_hero(Task&  tsk);
+  static void  wait(Task&  tsk);
 
 };
 
