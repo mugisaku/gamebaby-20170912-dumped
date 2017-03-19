@@ -82,17 +82,14 @@ set(TRPT_SOURCES
 
 
 set(ROGIE_SOURCES
-  rogie/rogie_task.cpp
-  rogie/rogie_taskmanager.cpp
   rogie/rogie_square.cpp
   rogie/rogie_square__search.cpp
   rogie/rogie_item.cpp
   rogie/rogie_piece.cpp
-  rogie/rogie_piece__contextcallback.cpp
-  rogie/rogie_piece__taskcallback.cpp
+  rogie/rogie_piece__callback.cpp
+  rogie/rogie_piece__autoplay.cpp
   rogie/rogie_field.cpp
-  rogie/rogie_field__contextcallback.cpp
-  rogie/rogie_field__taskcallback.cpp
+  rogie/rogie_field__manage.cpp
 )
 
 

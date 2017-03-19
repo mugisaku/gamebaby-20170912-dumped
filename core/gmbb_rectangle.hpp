@@ -5,7 +5,11 @@
 
 
 #ifndef report
-#define report  printf("[report] %s %s %d\n",__FILE__,__func__,__LINE__);
+namespace gmbb{
+namespace  env{
+extern unsigned int  count_of_report;
+}}
+#define report  printf("[report %8d] %s %s %d\n",gmbb::env::count_of_report++,__FILE__,__func__,__LINE__);
 #endif
 
 

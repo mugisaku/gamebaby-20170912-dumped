@@ -4,8 +4,14 @@
 
 
 
+
+
 namespace gmbb{
 namespace env{
+
+
+unsigned int
+count_of_report;
 
 
 namespace{

@@ -12,25 +12,16 @@ sprite_image;
 
 
 Piece::
-Piece(std::initializer_list<TaskCallback>  tskcb, uint32_t  flags_):
+Piece(uint32_t  flags_):
 flags(flags_),
 direction(Direction::front),
 shield_remaining(100),
 moving_cost_base(10),
-action_currency(0),
-taskman(tskcb,this)
+action_currency(0)
 {
 }
 
 
-
-
-TaskManager&
-Piece::
-get_task_manager()
-{
-  return taskman;
-}
 
 
 void
@@ -193,14 +184,111 @@ get_moving_cost(Direction  dir) const
 
 
 
-bool
+const Task&  Piece::get_own_task() const{return own_task;}
+const std::stack<Task>&  Piece::get_task_stack() const{return task_stack;}
+
+
+void
 Piece::
-step()
+push_task(Callback  cb)
 {
-  return taskman();
+  task_stack.push({cb,{0}});
 }
 
 
+
+
+void
+Piece::
+step()
+{
+    if(task_stack.size())
+    {
+      auto&  tsk = task_stack.top();
+
+      tsk.callback(tsk,this);
+
+        if(!tsk.callback)
+        {
+          task_stack.pop();
+        }
+    }
+
+  else
+    if(own_task.callback)
+    {
+      own_task.callback(own_task,this);
+    }
+
+  else
+    if(test_flag(master_flag))
+    {
+      play();
+    }
+
+  else
+    {
+      autoplay();
+    }
+}
+
+
+void
+Piece::
+play()
+{
+    if(gmbb::env::ctrl.test_pressed(gmbb::p_flag))
+    {
+      own_task = Task{use_weapon,{0}};
+    }
+
+  else
+    if(gmbb::env::ctrl.test_pressed(gmbb::left_flag))
+    {
+      own_task = Task{turn_left,{0}};
+    }
+
+  else
+    if(gmbb::env::ctrl.test_pressed(gmbb::right_flag))
+    {
+      own_task = Task{turn_right,{0}};
+    }
+
+  else
+    if(gmbb::env::ctrl.test_pressed(gmbb::up_flag))
+    {
+      own_task = Task{move_to_direction,{0}};
+    }
+
+  else
+    if(gmbb::env::ctrl.test_pressed(gmbb::down_flag))
+    {
+      own_task = Task{cancel_ready,{0}};
+    }
+
+  else
+    if(gmbb::env::ctrl.test_pressed(gmbb::shift_flag))
+    {
+      own_task = Task{change_weapon,{0}};
+    }
+
+
+  auto&  a = action_currency;
+
+    if(a < 0)
+    {
+        for(auto  p:  current_field->piece_list)
+        {
+            if(p != this)
+            {
+              p->action_currency += -a;
+            }
+        }
+
+
+      a = 0;
+    }
+}
 
 
 void

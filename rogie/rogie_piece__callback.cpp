@@ -6,22 +6,22 @@
 
 namespace{
 Piece&
-get(Context&  ctx)
+get(void*  ptr)
 {
-  return *static_cast<Piece*>(ctx.taskmanager->get_owner());
+  return *static_cast<Piece*>(ptr);
 }
 }
 
 
 void
 Piece::
-move_to_direction(Context&  ctx)
+move_to_direction(Task&  tsk, void*  caller)
 {
-  auto&          phase = ctx.memory[0];
-  auto&        counter = ctx.memory[1];
-  auto&  sleep_counter = ctx.memory[2];
+  auto&          phase = tsk.memory[0];
+  auto&        counter = tsk.memory[1];
+  auto&  sleep_counter = tsk.memory[2];
 
-  auto&  piece = get(ctx);
+  auto&  piece = get(caller);
 
   auto&  x = piece.rendering_dst_offset.x;
   auto&  y = piece.rendering_dst_offset.y;
@@ -42,7 +42,7 @@ move_to_direction(Context&  ctx)
 
         if(!ln || ln->current_piece || piece.test_flag(readied_flag))
         {
-          ctx.callback = nullptr;
+          tsk.callback = nullptr;
 
           return;
         }
@@ -111,7 +111,7 @@ move_to_direction(Context&  ctx)
             }
 
 
-          ctx.callback = nullptr;
+          tsk.callback = nullptr;
         }
       break;
     }
@@ -122,30 +122,30 @@ move_to_direction(Context&  ctx)
 
 void
 Piece::
-turn_left(Context&  ctx)
+turn_left(Task&  tsk, void*  caller)
 {
-  auto&  piece = get(ctx);
+  auto&  piece = get(caller);
 
     if(piece.consume_currency(piece.moving_cost_base/3))
     {
       piece.change_direction(get_left(piece.direction));
 
-      ctx.callback = nullptr;
+      tsk.callback = nullptr;
     }
 }
 
 
 void
 Piece::
-turn_right(Context&  ctx)
+turn_right(Task&  tsk, void*  caller)
 {
-  auto&  piece = get(ctx);
+  auto&  piece = get(caller);
 
     if(piece.consume_currency(piece.moving_cost_base/3))
     {
       piece.change_direction(get_right(piece.direction));
 
-      ctx.callback = nullptr;
+      tsk.callback = nullptr;
     }
 }
 
@@ -154,9 +154,9 @@ turn_right(Context&  ctx)
 
 void
 Piece::
-change_weapon(Context&  ctx)
+change_weapon(Task&  tsk, void*  caller)
 {
-  auto&  piece = get(ctx);
+  auto&  piece = get(caller);
 
     if(piece.test_flag(use_gun_flag) && !piece.test_flag(readied_flag))
     {
@@ -170,44 +170,41 @@ change_weapon(Context&  ctx)
     }
 
 
-  ctx.callback = nullptr;
+  tsk.callback = nullptr;
 }
 
 
 void
 Piece::
-use_weapon(Context&  ctx)
+use_weapon(Task&  tsk, void*  caller)
 {
-  auto&  piece = get(ctx);
+  auto&  piece = get(caller);
 
     if(piece.test_flag(use_gun_flag))
     {
         if(piece.test_flag(readied_flag))
         {
-          piece.get_task_manager().push(fire);
+          piece.own_task = Task{fire,{0}};
         }
 
       else
         {
-          piece.get_task_manager().push(ready_to_fire);
+          piece.own_task = Task{ready_to_fire,{0}};
         }
     }
 
   else
     {
-      piece.get_task_manager().push(punch);
+      piece.own_task = Task{punch,{0}};
     }
-
-
-  ctx.callback = nullptr;
 }
 
 
 void
 Piece::
-ready_to_fire(Context&  ctx)
+ready_to_fire(Task&  tsk, void*  caller)
 {
-  auto&  piece = get(ctx);
+  auto&  piece = get(caller);
 
     if(piece.consume_currency(piece.moving_cost_base))
     {
@@ -217,16 +214,16 @@ ready_to_fire(Context&  ctx)
       piece.rendering_src_offset.x =    0;
 
 
-      ctx.callback = nullptr;
+      tsk.callback = nullptr;
     }
 }
 
 
 void
 Piece::
-cancel_ready(Context&  ctx)
+cancel_ready(Task&  tsk, void*  caller)
 {
-  auto&  piece = get(ctx);
+  auto&  piece = get(caller);
 
     if(piece.consume_currency(piece.moving_cost_base))
     {
@@ -236,16 +233,16 @@ cancel_ready(Context&  ctx)
       piece.rendering_src_offset.x = 0;
 
 
-      ctx.callback = nullptr;
+      tsk.callback = nullptr;
     }
 }
 
 
 void
 Piece::
-fire(Context&  ctx)
+fire(Task&  tsk, void*  caller)
 {
-  auto&  piece = get(ctx);
+  auto&  piece = get(caller);
 
     if(piece.consume_currency(piece.moving_cost_base))
     {
@@ -269,30 +266,30 @@ fire(Context&  ctx)
 
         if(target)
         {
-          target->get_task_manager().push(damage);
+          target->push_task(damage);
         }
 
-      ctx.callback = nullptr;
+      tsk.callback = nullptr;
     }
 }
 
 
 void
 Piece::
-punch(Context&  ctx)
+punch(Task&  tsk, void*  caller)
 {
-  auto&  piece = get(ctx);
+  auto&  piece = get(caller);
 
-  auto&    phase = ctx.memory[0];
-  auto&  counter = ctx.memory[1];
-  auto&     last = ctx.memory[2];
+  auto&    phase = tsk.memory[0];
+  auto&  counter = tsk.memory[1];
+  auto&     last = tsk.memory[2];
 
   auto&  x = piece.rendering_src_base.x;
 
     switch(phase)
     {
   case(0):
-        if(!piece.consume_currency(piece.moving_cost_base/3))
+        if(!piece.consume_currency(piece.moving_cost_base/(piece.test_flag(master_flag)? 3:1)))
         {
           return;
         }
@@ -317,7 +314,7 @@ punch(Context&  ctx)
 
             if(sq && sq->current_piece)
             {
-              sq->current_piece->get_task_manager().push(damage);
+              sq->current_piece->push_task(damage);
             }
 
 
@@ -336,7 +333,7 @@ punch(Context&  ctx)
         {
           x = last;
 
-          ctx.callback = nullptr;
+          tsk.callback = nullptr;
         }
       break;
     }
@@ -347,13 +344,13 @@ punch(Context&  ctx)
 
 void
 Piece::
-damage(Context&  ctx)
+damage(Task&  tsk, void*  caller)
 {
-  auto&  piece = get(ctx);
+  auto&  piece = get(caller);
 
-  auto&    phase = ctx.memory[0];
-  auto&  counter = ctx.memory[1];
-  auto&     last = ctx.memory[2];
+  auto&    phase = tsk.memory[0];
+  auto&  counter = tsk.memory[1];
+  auto&     last = tsk.memory[2];
 
   auto&  x = piece.rendering_src_base.x;
 
@@ -376,7 +373,7 @@ damage(Context&  ctx)
         {
           x = last;
 
-          ctx.callback = nullptr;
+          tsk.callback = nullptr;
         }
       break;
     }

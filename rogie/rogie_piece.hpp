@@ -3,10 +3,10 @@
 
 
 #include"rogie_square.hpp"
-#include"rogie_taskmanager.hpp"
+#include"rogie_task.hpp"
 #include"rogie_item.hpp"
+#include<stack>
 #include<array>
-#include<initializer_list>
 
 
 
@@ -35,14 +35,14 @@ Piece
   static constexpr int  have_gun_flag = 2;
   static constexpr int  use_gun_flag = 4;
   static constexpr int  readied_flag = 8;
+  static constexpr int  locked_flag = 16;
 
 
   static gmbb::Image  sprite_image;
 
-  TaskManager  taskman;
-
   uint32_t  flags;
 
+  Field*    current_field;
   Square*  current_square;
 
   gmbb::Point  rendering_dst_offset;
@@ -61,8 +61,12 @@ Piece
 
   std::array<Item,8>  belongings_table;
 
+  Task  own_task;
+
+  std::stack<Task>  task_stack;
+
 public:
-  Piece(std::initializer_list<TaskCallback>  tskcb={}, uint32_t  flags_=0);
+  Piece(uint32_t  flags_=0);
 
   void  change_direction(Direction  d);
 
@@ -80,9 +84,12 @@ public:
   void  unset_flag(uint32_t  v);
   bool   test_flag(uint32_t  v) const;
 
-  TaskManager&  get_task_manager();
+  void  push_task(Callback  cb);
 
-  bool  step();
+  const Task&  get_own_task() const;
+  const std::stack<Task>&  get_task_stack() const;
+
+  void  step();
 
 
   void  render(gmbb::Image&  dst, int  x, int  y) const;
@@ -90,23 +97,28 @@ public:
   static bool  compare(Piece*  a, Piece*  b);
 
 
-  static void  move_to_direction(Context&  ctx);
+  static void  move_to_direction(Task&  tsk, void*  caller);
 
-  static void  turn_left( Context&  ctx);
-  static void  turn_right(Context&  ctx);
+  static void  turn_left( Task&  tsk, void*  caller);
+  static void  turn_right(Task&  tsk, void*  caller);
 
-  static void  use_weapon(Context&  ctx);
-  static void  change_weapon(Context&  ctx);
-  static void  ready_to_fire(Context&  ctx);
-  static void  cancel_ready(Context&  ctx);
-  static void  punch(Context&  ctx);
-  static void  fire(Context&  ctx);
-  static void  damage(Context&  ctx);
+  static void  use_weapon(Task&  tsk, void*  caller);
+  static void  change_weapon(Task&  tsk, void*  caller);
+  static void  ready_to_fire(Task&  tsk, void*  caller);
+  static void  cancel_ready(Task&  tsk, void*  caller);
+  static void  punch(Task&  tsk, void*  caller);
+  static void  fire(Task&  tsk, void*  caller);
+  static void  damage(Task&  tsk, void*  caller);
 
-  static void  chase_hero(Task&  tsk);
-  static void  runaway_from_hero(Task&  tsk);
-  static void  attack_hero(Task&  tsk);
-  static void  wait(Task&  tsk);
+
+  void  play();
+
+  void  autoplay();
+
+  void  chase_hero();
+  void  runaway_from_hero();
+  void  attack_hero();
+  void  wait();
 
 };
 

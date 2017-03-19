@@ -191,7 +191,7 @@ main_loop()
 
   env::change_time(SDL_GetTicks());
 
-  field.step();
+  field.manage();
 
   static uint32_t  next_time;
 
@@ -242,18 +242,18 @@ main(int  argc, char**  argv)
 
   Piece::sprite_image.load_mgf(r);
 
-  field.put(Item(Firearm{FirearmKind::handgun}),1,1);
+  field.put(Item(Firearm{FirearmKind::handgun}),4,4);
 
   field.prepare();
 
   auto  a = new Piece;
-  auto  b = new Piece({Piece::attack_hero,Piece::chase_hero,Piece::wait});
-  auto  c = new Piece({Piece::attack_hero,Piece::runaway_from_hero,Piece::wait});
-  auto  d = new Piece({Piece::wait});
+  auto  b = new Piece;
+  auto  c = new Piece;
+  auto  d = new Piece;
 
   field.put(a,0,0);
   field.put(b,5,3);
-  field.put(c,4,0);
+  field.put(c,2,0);
   field.put(d,5,5);
 
 

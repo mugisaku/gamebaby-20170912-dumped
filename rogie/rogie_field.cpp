@@ -6,7 +6,6 @@
 
 Field::
 Field():
-taskman({process_input,manage_pieces},this),
 master(nullptr)
 {
 }
@@ -32,6 +31,7 @@ put(Piece*  p, int  x, int  y)
 
       piece_list.emplace_back(p);
 
+      p->current_field  = this;
       p->current_square = &sq;
 
       sq.current_piece = p;
@@ -147,12 +147,6 @@ prepare_to_search()
 }
 
 
-bool
-Field::
-step()
-{
-  return taskman();
-}
 
 
 void
