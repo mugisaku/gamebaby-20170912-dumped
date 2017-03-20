@@ -7,15 +7,18 @@
 
 struct Task;
 
-using Callback = void(*)(Task&  tsk, void*  caller);
+using TaskCallback = void(*)(Task&  tsk, void*  caller);
 
 
 struct
 Task
 {
-  Callback  callback;
+  TaskCallback  callback;
 
   int  memory[8];
+
+  Task(TaskCallback  cb=nullptr):
+  callback(cb), memory{0}{}
 
 };
 

@@ -8,11 +8,20 @@ void
 Piece::
 autoplay()
 {
-    if(!own_task.callback && !test_flag(master_flag))
+    if(action_currency > 0)
     {
-        if(!own_task.callback){attack_hero();}
-        if(!own_task.callback){chase_hero();}
-        if(!own_task.callback){wait();}
+        for(auto  cb: callback_list)
+        {
+          (this->*cb)();
+
+            if(own_task.callback || task_stack.size())
+            {
+              return;
+            }
+        }
+
+
+      action_currency = 0;
     }
 }
 
@@ -50,7 +59,7 @@ chase_hero()
     {
         if(d == direction)
         {
-          own_task = Task{move_to_direction};
+          own_task = Task(move_to_direction);
         }
 
       else
@@ -61,8 +70,8 @@ chase_hero()
           auto  l_dist = get_distance(d,l);
           auto  r_dist = get_distance(d,r);
 
-            if(l_dist < r_dist){own_task = Task{turn_left };}
-          else                 {own_task = Task{turn_right};}
+            if(l_dist < r_dist){own_task = Task(turn_left );}
+          else                 {own_task = Task(turn_right);}
         }
     }
 }
@@ -103,7 +112,7 @@ runaway_from_hero()
     {
         if(d == direction)
         {
-          own_task = Task{move_to_direction};
+          own_task = Task(move_to_direction);
         }
 
       else
@@ -114,8 +123,8 @@ runaway_from_hero()
           auto  l_dist = get_distance(d,l);
           auto  r_dist = get_distance(d,r);
 
-            if(l_dist < r_dist){own_task = Task{turn_left };}
-          else                 {own_task = Task{turn_right};}
+            if(l_dist < r_dist){own_task = Task(turn_left );}
+          else                 {own_task = Task(turn_right);}
         }
     }
 }
@@ -152,7 +161,7 @@ attack_hero()
     {
         if(d == direction)
         {
-          own_task = Task{use_weapon};
+          own_task = Task(use_weapon);
         }
 
       else
@@ -163,20 +172,10 @@ attack_hero()
           auto  l_dist = get_distance(d,l);
           auto  r_dist = get_distance(d,r);
 
-            if(l_dist < r_dist){own_task = Task{turn_left };}
-          else                 {own_task = Task{turn_right};}
+            if(l_dist < r_dist){own_task = Task(turn_left );}
+          else                 {own_task = Task(turn_right);}
         }
     }
-}
-
-
-
-
-void
-Piece::
-wait()
-{
-  action_currency = 0;
 }
 
 

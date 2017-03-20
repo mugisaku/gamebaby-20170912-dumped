@@ -12,13 +12,21 @@ sprite_image;
 
 
 Piece::
-Piece(uint32_t  flags_):
-flags(flags_),
+Piece(std::initializer_list<Callback>  cbls):
+flags(0),
 direction(Direction::front),
-shield_remaining(100),
+shield_remaining(shield_max),
+life_remaining(life_max),
+oxygen_remaining(oxygen_max),
 moving_cost_base(10),
-action_currency(0)
+action_currency(0),
+current_firearm(nullptr),
+callback_list(cbls)
 {
+    for(auto&  itm: belongings_table)
+    {
+      itm = nullptr;
+    }
 }
 
 
@@ -110,17 +118,24 @@ add_offset_by_direction(int  n)
 
 bool
 Piece::
-append_item(Item&&  new_item)
+append_item(Item*  new_item)
 {
-    for(auto&  itm: belongings_table)
+    if(new_item)
     {
-        if(!itm)
+        for(auto&  itm: belongings_table)
         {
-set_flag(have_gun_flag);
-set_flag(use_gun_flag);
-          itm = std::move(new_item);
+            if(!itm)
+            {
+              itm = new_item;
 
-          return true;
+                if((itm->kind == ItemKind::firearm) && !current_firearm)
+                {
+                  current_firearm = &itm->data.firearm;
+                }
+
+
+              return true;
+            }
         }
     }
 
@@ -132,22 +147,6 @@ set_flag(use_gun_flag);
 void    Piece::set_flag(uint32_t  v){flags |=  v;}
 void  Piece::unset_flag(uint32_t  v){flags &= ~v;}
 bool   Piece::test_flag(uint32_t  v) const{return(flags&v);}
-
-
-bool
-Piece::
-consume_currency(int  v)
-{
-    if(test_flag(master_flag) || (action_currency > 0))
-    {
-      action_currency -= v;
-
-      return true;
-    }
-
-
-  return false;
-}
 
 
 void
@@ -188,11 +187,14 @@ const Task&  Piece::get_own_task() const{return own_task;}
 const std::stack<Task>&  Piece::get_task_stack() const{return task_stack;}
 
 
+const Firearm*  Piece::get_current_firearm() const{return current_firearm;}
+
+
 void
 Piece::
-push_task(Callback  cb)
+push_task(TaskCallback  cb)
 {
-  task_stack.push({cb,{0}});
+  task_stack.emplace(cb);
 }
 
 
@@ -237,40 +239,12 @@ void
 Piece::
 play()
 {
-    if(gmbb::env::ctrl.test_pressed(gmbb::p_flag))
-    {
-      own_task = Task{use_weapon,{0}};
-    }
-
-  else
-    if(gmbb::env::ctrl.test_pressed(gmbb::left_flag))
-    {
-      own_task = Task{turn_left,{0}};
-    }
-
-  else
-    if(gmbb::env::ctrl.test_pressed(gmbb::right_flag))
-    {
-      own_task = Task{turn_right,{0}};
-    }
-
-  else
-    if(gmbb::env::ctrl.test_pressed(gmbb::up_flag))
-    {
-      own_task = Task{move_to_direction,{0}};
-    }
-
-  else
-    if(gmbb::env::ctrl.test_pressed(gmbb::down_flag))
-    {
-      own_task = Task{cancel_ready,{0}};
-    }
-
-  else
-    if(gmbb::env::ctrl.test_pressed(gmbb::shift_flag))
-    {
-      own_task = Task{change_weapon,{0}};
-    }
+       if(gmbb::env::ctrl.test_pressed(gmbb::p_flag    )){own_task = Task(       use_weapon);}
+  else if(gmbb::env::ctrl.test_pressed(gmbb::left_flag )){own_task = Task(        turn_left);}
+  else if(gmbb::env::ctrl.test_pressed(gmbb::right_flag)){own_task = Task(       turn_right);}
+  else if(gmbb::env::ctrl.test_pressed(gmbb::up_flag   )){own_task = Task(move_to_direction);}
+  else if(gmbb::env::ctrl.test_pressed(gmbb::down_flag )){own_task = Task(     cancel_ready);}
+  else if(gmbb::env::ctrl.test_pressed(gmbb::shift_flag)){own_task = Task(    change_weapon);}
 
 
   auto&  a = action_currency;

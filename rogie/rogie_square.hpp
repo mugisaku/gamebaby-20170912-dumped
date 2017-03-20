@@ -44,7 +44,7 @@ Square
 
   Piece*  current_piece;
 
-  Item  placed_item;
+  Item*  placed_item;
 
   int  distance;
 

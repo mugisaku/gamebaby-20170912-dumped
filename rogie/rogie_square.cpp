@@ -5,7 +5,8 @@
 
 
 Square::
-Square()
+Square():
+placed_item(nullptr)
 {
 }
 
@@ -33,6 +34,9 @@ clear()
 
 
   kind = SquareKind::null;
+
+  delete placed_item          ;
+         placed_item = nullptr;
 
   current_piece = nullptr;
 

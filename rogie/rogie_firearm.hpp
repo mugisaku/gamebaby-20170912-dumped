@@ -2,6 +2,7 @@
 #define ROGIE_FIREARM_HPP_INCLUDED
 
 
+#include"gmbb.hpp"
 
 
 enum class
@@ -15,12 +16,12 @@ FirearmKind
 };
 
 
-enum class
-AmmoKind
+struct
+Ammo
 {
-  normal,
-  grenade,
-  rocket,
+  FirearmKind  kind;
+
+  int  number;
 
 };
 
@@ -28,15 +29,16 @@ AmmoKind
 struct
 FirearmSpec
 {
+  const char16_t*  name;
+
+  int  power;
   int  durability;
 
-  int  handling_cost;
-  int    reload_cost;
+  int   handling_cost;
+  int  reloading_cost;
   int      fire_cost;
 
-  AmmoKind  ammo_kind;
-
-  int  loadable_quantity;
+  int  bullet_max;
 
 };
 
@@ -45,10 +47,15 @@ struct
 Firearm
 {
   FirearmKind  kind;
+  FirearmSpec  spec;
 
   int  health;
+  int  bullet;
 
-  int  ammo_quantity;
+public:
+  Firearm(FirearmKind  k);
+
+  void  render(gmbb::Image&  dst, int  x, int  y) const;
 
 };
 

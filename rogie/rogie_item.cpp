@@ -6,6 +6,7 @@
 
 Item::Item(             ):kind(ItemKind::null){}
 Item::Item(Firearm&&  fa):kind(ItemKind::firearm){new(&data) Firearm(std::move(fa));}
+Item::Item(Ammo&&     am):kind(ItemKind::ammo){new(&data) Ammo(std::move(am));}
 
 
 Item::Item(      Item&&  rhs) noexcept: kind(ItemKind::null){*this = std::move(rhs);}
@@ -27,6 +28,9 @@ operator=(Item&&  rhs) noexcept
   case(ItemKind::firearm):
       new(&data) Firearm(std::move(rhs.data.firearm));
       break;
+  case(ItemKind::ammo):
+      new(&data) Ammo(std::move(rhs.data.ammo));
+      break;
     }
 
 
@@ -46,6 +50,9 @@ operator=(const Item&   rhs) noexcept
     {
   case(ItemKind::firearm):
       new(&data) Firearm(rhs.data.firearm);
+      break;
+  case(ItemKind::ammo):
+      new(&data) Ammo(rhs.data.ammo);
       break;
     }
 
@@ -70,6 +77,8 @@ clear()
     switch(kind)
     {
   case(ItemKind::firearm):
+      break;
+  case(ItemKind::ammo):
       break;
     }
 

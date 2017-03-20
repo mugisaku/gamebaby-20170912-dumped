@@ -48,10 +48,8 @@ move_to_direction(Task&  tsk, void*  caller)
         }
 
 
-        if(!piece.consume_currency(piece.moving_cost_base))
-        {
-          return;
-        }
+      piece.action_currency -= piece.moving_cost_base;
+
 
 
       ln->current_piece = &piece;
@@ -101,8 +99,10 @@ move_to_direction(Task&  tsk, void*  caller)
 
                 if(itm)
                 {
-                    if(piece.append_item(std::move(itm)))
+                    if(piece.append_item(itm))
                     {
+                      itm = nullptr;
+
                       auto&  pt = piece.current_square->point;
 
                       piece.current_square->field->update_image(pt.x,pt.y);
@@ -126,12 +126,11 @@ turn_left(Task&  tsk, void*  caller)
 {
   auto&  piece = get(caller);
 
-    if(piece.consume_currency(piece.moving_cost_base/3))
-    {
-      piece.change_direction(get_left(piece.direction));
+  piece.action_currency -= piece.moving_cost_base/3;
 
-      tsk.callback = nullptr;
-    }
+  piece.change_direction(get_left(piece.direction));
+
+  tsk.callback = nullptr;
 }
 
 
@@ -141,12 +140,11 @@ turn_right(Task&  tsk, void*  caller)
 {
   auto&  piece = get(caller);
 
-    if(piece.consume_currency(piece.moving_cost_base/3))
-    {
-      piece.change_direction(get_right(piece.direction));
+  piece.action_currency -= piece.moving_cost_base/3;
 
-      tsk.callback = nullptr;
-    }
+  piece.change_direction(get_right(piece.direction));
+
+  tsk.callback = nullptr;
 }
 
 
@@ -158,15 +156,22 @@ change_weapon(Task&  tsk, void*  caller)
 {
   auto&  piece = get(caller);
 
-    if(piece.test_flag(use_gun_flag) && !piece.test_flag(readied_flag))
+    if(piece.current_firearm && !piece.test_flag(readied_flag))
     {
-      piece.unset_flag(use_gun_flag);
+      piece.current_firearm = nullptr;
     }
 
   else
-    if(piece.test_flag(have_gun_flag))
     {
-      piece.set_flag(use_gun_flag);
+        for(auto  item: piece.belongings_table)
+        {
+            if(item && (item->kind == ItemKind::firearm))
+            {
+              piece.current_firearm = &item->data.firearm;
+
+              break;
+            }
+        }
     }
 
 
@@ -180,22 +185,22 @@ use_weapon(Task&  tsk, void*  caller)
 {
   auto&  piece = get(caller);
 
-    if(piece.test_flag(use_gun_flag))
+    if(piece.current_firearm)
     {
         if(piece.test_flag(readied_flag))
         {
-          piece.own_task = Task{fire,{0}};
+          piece.own_task = Task(fire);
         }
 
       else
         {
-          piece.own_task = Task{ready_to_fire,{0}};
+          piece.own_task = Task(ready_to_fire);
         }
     }
 
   else
     {
-      piece.own_task = Task{punch,{0}};
+      piece.own_task = Task(punch);
     }
 }
 
@@ -206,16 +211,15 @@ ready_to_fire(Task&  tsk, void*  caller)
 {
   auto&  piece = get(caller);
 
-    if(piece.consume_currency(piece.moving_cost_base))
-    {
-      piece.set_flag(readied_flag);
+  piece.action_currency -= piece.moving_cost_base;
 
-      piece.rendering_src_base.x   = 24*3;
-      piece.rendering_src_offset.x =    0;
+  piece.set_flag(readied_flag);
+
+  piece.rendering_src_base.x   = 24*3;
+  piece.rendering_src_offset.x =    0;
 
 
-      tsk.callback = nullptr;
-    }
+  tsk.callback = nullptr;
 }
 
 
@@ -225,16 +229,15 @@ cancel_ready(Task&  tsk, void*  caller)
 {
   auto&  piece = get(caller);
 
-    if(piece.consume_currency(piece.moving_cost_base))
-    {
-      piece.unset_flag(readied_flag);
+  piece.action_currency -= piece.moving_cost_base;
 
-      piece.rendering_src_base.x   = 0;
-      piece.rendering_src_offset.x = 0;
+  piece.unset_flag(readied_flag);
+
+  piece.rendering_src_base.x   = 0;
+  piece.rendering_src_offset.x = 0;
 
 
-      tsk.callback = nullptr;
-    }
+  tsk.callback = nullptr;
 }
 
 
@@ -244,33 +247,33 @@ fire(Task&  tsk, void*  caller)
 {
   auto&  piece = get(caller);
 
-    if(piece.consume_currency(piece.moving_cost_base))
+  piece.action_currency -= piece.moving_cost_base;
+
+  auto  sq = (*piece.current_square)[piece.direction];
+
+  Piece*  target = nullptr;
+
+    while(sq)
     {
-      auto  sq = (*piece.current_square)[piece.direction];
-
-      Piece*  target = nullptr;
-
-        while(sq)
-        {
-          target = sq->current_piece;
-
-            if(target)
-            {
-              break;
-            }
-
-
-          sq = (*sq)[piece.direction];
-        }
-
+      target = sq->current_piece;
 
         if(target)
         {
-          target->push_task(damage);
+          break;
         }
 
-      tsk.callback = nullptr;
+
+      sq = (*sq)[piece.direction];
     }
+
+
+    if(target)
+    {
+      target->push_task(damage);
+    }
+
+
+  tsk.callback = nullptr;
 }
 
 
@@ -289,10 +292,7 @@ punch(Task&  tsk, void*  caller)
     switch(phase)
     {
   case(0):
-        if(!piece.consume_currency(piece.moving_cost_base/(piece.test_flag(master_flag)? 3:1)))
-        {
-          return;
-        }
+      piece.action_currency -= (piece.moving_cost_base/(piece.test_flag(master_flag)? 3:1));
 
 
       last = x       ;

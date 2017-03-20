@@ -6,7 +6,9 @@
 #include"rogie_task.hpp"
 #include"rogie_item.hpp"
 #include<stack>
+#include<list>
 #include<array>
+#include<initializer_list>
 
 
 
@@ -31,14 +33,16 @@ Field;
 struct
 Piece
 {
-  static constexpr int  master_flag = 1;
-  static constexpr int  have_gun_flag = 2;
-  static constexpr int  use_gun_flag = 4;
-  static constexpr int  readied_flag = 8;
-  static constexpr int  locked_flag = 16;
+  static constexpr int  master_flag  = 1;
+  static constexpr int  readied_flag = 2;
 
+  static constexpr int shield_max = 9999;
+  static constexpr int oxygen_max =  999;
+  static constexpr int   life_max =  999;
 
   static gmbb::Image  sprite_image;
+
+  using Callback = void(Piece::*)();
 
   uint32_t  flags;
 
@@ -53,41 +57,48 @@ Piece
 
   Direction  direction;
 
+
   int  shield_remaining;
+  int  oxygen_remaining;
+  int    life_remaining;
 
   int  action_currency;
 
   int  moving_cost_base;
 
-  std::array<Item,8>  belongings_table;
+  Firearm*  current_firearm;
+
+  std::array<Item*,8>  belongings_table;
 
   Task  own_task;
 
   std::stack<Task>  task_stack;
 
+  std::vector<Callback>  callback_list;
+
 public:
-  Piece(uint32_t  flags_=0);
+  Piece(std::initializer_list<Callback>  cbls={});
 
   void  change_direction(Direction  d);
 
   int  get_moving_cost(Direction  dir) const;
 
-  bool  consume_currency(int  v);
-
   void  add_offset_by_direction(int  n=1);
   void  set_offset_by_direction();
   void  set_shape_by_direction();
 
-  bool  append_item(Item&&  new_item);
+  bool  append_item(Item*  new_item);
 
   void    set_flag(uint32_t  v);
   void  unset_flag(uint32_t  v);
   bool   test_flag(uint32_t  v) const;
 
-  void  push_task(Callback  cb);
+  void  push_task(TaskCallback  cb);
 
   const Task&  get_own_task() const;
   const std::stack<Task>&  get_task_stack() const;
+
+  const Firearm*  get_current_firearm() const;
 
   void  step();
 
@@ -118,7 +129,6 @@ public:
   void  chase_hero();
   void  runaway_from_hero();
   void  attack_hero();
-  void  wait();
 
 };
 

@@ -12,6 +12,7 @@ ItemKind
 {
   null,
   firearm,
+  ammo,
 
 };
 
@@ -20,6 +21,7 @@ union
 ItemData
 {
   Firearm  firearm;
+  Ammo        ammo;
 
    ItemData(){}
   ~ItemData(){}
@@ -36,6 +38,7 @@ Item
 public:
   Item();
   Item(Firearm&&  fa);
+  Item(Ammo&&     am);
   Item(      Item&&  rhs) noexcept;
   Item(const Item&   rhs) noexcept;
 

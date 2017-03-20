@@ -48,11 +48,19 @@ put(Piece*  p, int  x, int  y)
 
 void
 Field::
-put(Item&&  itm, int  x, int  y)
+put(Item*  itm, int  x, int  y)
 {
   auto&  sq = table[x][y];
 
-  sq.placed_item = std::move(itm);
+    if(sq.placed_item)
+    {
+      delete sq.placed_item;
+    }
+
+
+  sq.placed_item = itm;
+
+  update_image(x,y);
 }
 
 
@@ -117,19 +125,16 @@ update_image(int  x, int  y)
 
   auto&  sq = table[y][x];
 
-    switch(sq.placed_item.kind)
+    if(sq.placed_item)
     {
-  case(ItemKind::firearm):
-        switch(sq.placed_item.data.firearm.kind)
+      auto&  itm = *sq.placed_item;
+
+        switch(itm.kind)
         {
-      case(FirearmKind::handgun):
-          Piece::sprite_image.transfer(48,24*10,24,24,image,xx,yy);
-          break;
-      case(FirearmKind::submachinegun):
-          Piece::sprite_image.transfer(48,24*11,24,24,image,xx,yy);
+      case(ItemKind::firearm):
+          itm.data.firearm.render(image,xx,yy);
           break;
         }
-      break;
     }
 }
 
@@ -166,7 +171,18 @@ render(gmbb::Image&  dst)
     }
 
 
-  dst.print_tall(master->test_flag(Piece::use_gun_flag)? "ハンドガン":"パンチ",4|8,180,0);
+    if(master)
+    {
+        if(master->current_firearm)
+        {
+          dst.print_tall(master->current_firearm->spec.name,4|8,180,0);
+        }
+
+      else
+        {
+          dst.print_tall("パンチ",4|8,180,0);
+        }
+    }
 }
 
 
