@@ -1,5 +1,6 @@
 #include"rogie_piece.hpp"
 #include"rogie_field.hpp"
+#include<limits>
 
 
 
@@ -32,7 +33,7 @@ chase_hero()
 {
   auto  hero = current_field->master;
 
-  current_field->prepare_to_search();
+  current_field->prepare_to_search(std::numeric_limits<int>::max());
   hero->current_square->search(this);
 
   Direction  d;

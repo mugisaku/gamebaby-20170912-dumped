@@ -34,7 +34,6 @@ FirearmSpec
   int  power;
   int  durability;
 
-  int   handling_cost;
   int  reloading_cost;
   int      fire_cost;
 
@@ -55,7 +54,10 @@ Firearm
 public:
   Firearm(FirearmKind  k);
 
-  void  render(gmbb::Image&  dst, int  x, int  y) const;
+  int  fulfill();
+
+  void  render(          gmbb::Image&  dst, int  x, int  y) const;
+  void  render_with_data(gmbb::Image&  dst, int  x, int  y) const;
 
 };
 

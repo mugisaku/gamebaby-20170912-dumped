@@ -1,5 +1,4 @@
 #include"rogie_field.hpp"
-#include<limits>
 
 
 
@@ -141,13 +140,13 @@ update_image(int  x, int  y)
 
 void
 Field::
-prepare_to_search()
+prepare_to_search(int  initial_distance)
 {
     for(int  y = 0;  y < height;  ++y){
     for(int  x = 0;  x <  width;  ++x){
       auto&  sq = table[y][x];
 
-      sq.distance = std::numeric_limits<int>::max();
+      sq.distance = initial_distance;
     }}
 }
 
@@ -173,15 +172,23 @@ render(gmbb::Image&  dst)
 
     if(master)
     {
+      constexpr int  x = 160;
+                int  y =   0;
+
         if(master->current_firearm)
         {
-          dst.print_tall(master->current_firearm->spec.name,4|8,180,0);
+          master->current_firearm->render_with_data(dst,x,y);
         }
 
       else
         {
-          dst.print_tall("パンチ",4|8,180,0);
+          dst.print_tall("パンチ",4|8,x,y);
         }
+
+
+      y += 24;
+
+      master->render_data(dst,x,y);
     }
 }
 

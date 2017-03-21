@@ -29,7 +29,7 @@ public:
   void  put(Piece*  p, int  x, int  y);
   void  put(Item*  itm, int  x, int  y);
 
-  void  prepare_to_search();
+  void  prepare_to_search(int  initial_distance=0);
 
   void  update_image(              );
   void  update_image(int  x, int  y);

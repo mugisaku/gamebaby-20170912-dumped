@@ -246,11 +246,12 @@ main(int  argc, char**  argv)
   field.prepare();
 
   field.put(new Item(Firearm(FirearmKind::handgun)),4,4);
+  field.put(new Item(Firearm(FirearmKind::submachinegun)),1,1);
 
-  auto  a = new Piece;
-  auto  b = new Piece({&Piece::attack_hero,&Piece::chase_hero});
-  auto  c = new Piece({&Piece::attack_hero,&Piece::runaway_from_hero});
-  auto  d = new Piece({&Piece::attack_hero});
+  auto  a = new Piece("hero");
+  auto  b = new Piece("a",{&Piece::attack_hero,&Piece::chase_hero});
+  auto  c = new Piece("b",{&Piece::attack_hero,&Piece::runaway_from_hero});
+  auto  d = new Piece("c",{&Piece::attack_hero});
 
   field.put(a,0,0);
   field.put(b,5,3);

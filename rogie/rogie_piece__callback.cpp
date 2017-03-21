@@ -40,7 +40,7 @@ move_to_direction(Task&  tsk, void*  caller)
   case(0): {
       auto  ln = (*piece.current_square)[piece.direction];
 
-        if(!ln || ln->current_piece || piece.test_flag(readied_flag))
+        if(!ln || ln->current_piece)
         {
           tsk.callback = nullptr;
 
@@ -156,7 +156,7 @@ change_weapon(Task&  tsk, void*  caller)
 {
   auto&  piece = get(caller);
 
-    if(piece.current_firearm && !piece.test_flag(readied_flag))
+    if(piece.current_firearm)
     {
       piece.current_firearm = nullptr;
     }
@@ -187,15 +187,7 @@ use_weapon(Task&  tsk, void*  caller)
 
     if(piece.current_firearm)
     {
-        if(piece.test_flag(readied_flag))
-        {
-          piece.own_task = Task(fire);
-        }
-
-      else
-        {
-          piece.own_task = Task(ready_to_fire);
-        }
+      piece.own_task = Task(fire);
     }
 
   else
@@ -207,69 +199,44 @@ use_weapon(Task&  tsk, void*  caller)
 
 void
 Piece::
-ready_to_fire(Task&  tsk, void*  caller)
-{
-  auto&  piece = get(caller);
-
-  piece.action_currency -= piece.moving_cost_base;
-
-  piece.set_flag(readied_flag);
-
-  piece.rendering_src_base.x   = 24*3;
-  piece.rendering_src_offset.x =    0;
-
-
-  tsk.callback = nullptr;
-}
-
-
-void
-Piece::
-cancel_ready(Task&  tsk, void*  caller)
-{
-  auto&  piece = get(caller);
-
-  piece.action_currency -= piece.moving_cost_base;
-
-  piece.unset_flag(readied_flag);
-
-  piece.rendering_src_base.x   = 0;
-  piece.rendering_src_offset.x = 0;
-
-
-  tsk.callback = nullptr;
-}
-
-
-void
-Piece::
 fire(Task&  tsk, void*  caller)
 {
   auto&  piece = get(caller);
 
-  piece.action_currency -= piece.moving_cost_base;
+  piece.action_currency -= piece.current_firearm->spec.fire_cost;
 
-  auto  sq = (*piece.current_square)[piece.direction];
-
-  Piece*  target = nullptr;
-
-    while(sq)
+    if(piece.current_firearm->bullet)
     {
-      target = sq->current_piece;
+      --piece.current_firearm->bullet;
 
-        if(target)
+      auto  sq = (*piece.current_square)[piece.direction];
+
+      Piece*  target = nullptr;
+
+        while(sq)
         {
-          break;
+          target = sq->current_piece;
+
+            if(target)
+            {
+              break;
+            }
+
+
+          sq = (*sq)[piece.direction];
         }
 
 
-      sq = (*sq)[piece.direction];
+        if(target)
+        {
+          target->push_task(damage);
+        }
     }
 
-
-    if(target)
+  else
+    if(1)
     {
-      target->push_task(damage);
+      piece.action_currency -= piece.current_firearm->fulfill();
     }
 
 

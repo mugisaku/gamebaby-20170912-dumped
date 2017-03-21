@@ -34,7 +34,6 @@ struct
 Piece
 {
   static constexpr int  master_flag  = 1;
-  static constexpr int  readied_flag = 2;
 
   static constexpr int shield_max = 9999;
   static constexpr int oxygen_max =  999;
@@ -43,6 +42,8 @@ Piece
   static gmbb::Image  sprite_image;
 
   using Callback = void(Piece::*)();
+
+  const char*  name;
 
   uint32_t  flags;
 
@@ -77,7 +78,7 @@ Piece
   std::vector<Callback>  callback_list;
 
 public:
-  Piece(std::initializer_list<Callback>  cbls={});
+  Piece(const char*  name_, std::initializer_list<Callback>  cbls={});
 
   void  change_direction(Direction  d);
 
@@ -104,6 +105,10 @@ public:
 
 
   void  render(gmbb::Image&  dst, int  x, int  y) const;
+  void  render_data(gmbb::Image&  dst, int  x, int  y) const;
+
+  void  print() const;
+
 
   static bool  compare(Piece*  a, Piece*  b);
 
@@ -115,8 +120,6 @@ public:
 
   static void  use_weapon(Task&  tsk, void*  caller);
   static void  change_weapon(Task&  tsk, void*  caller);
-  static void  ready_to_fire(Task&  tsk, void*  caller);
-  static void  cancel_ready(Task&  tsk, void*  caller);
   static void  punch(Task&  tsk, void*  caller);
   static void  fire(Task&  tsk, void*  caller);
   static void  damage(Task&  tsk, void*  caller);

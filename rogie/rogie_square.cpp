@@ -6,6 +6,7 @@
 
 Square::
 Square():
+current_piece(nullptr),
 placed_item(nullptr)
 {
 }

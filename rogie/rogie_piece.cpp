@@ -12,7 +12,8 @@ sprite_image;
 
 
 Piece::
-Piece(std::initializer_list<Callback>  cbls):
+Piece(const char*  name_, std::initializer_list<Callback>  cbls):
+name(name_),
 flags(0),
 direction(Direction::front),
 shield_remaining(shield_max),
@@ -157,17 +158,8 @@ change_direction(Direction  d)
 
   set_shape_by_direction();
 
-    if(test_flag(readied_flag))
-    {
-      rendering_src_base.x   = 24*3;
-      rendering_src_offset.x =    0;
-    }
-
-  else
-    {
-      rendering_src_base.x   = 0;
-      rendering_src_offset.x = 0;
-    }
+  rendering_src_base.x   = 0;
+  rendering_src_offset.x = 0;
 }
 
 
@@ -243,7 +235,6 @@ play()
   else if(gmbb::env::ctrl.test_pressed(gmbb::left_flag )){own_task = Task(        turn_left);}
   else if(gmbb::env::ctrl.test_pressed(gmbb::right_flag)){own_task = Task(       turn_right);}
   else if(gmbb::env::ctrl.test_pressed(gmbb::up_flag   )){own_task = Task(move_to_direction);}
-  else if(gmbb::env::ctrl.test_pressed(gmbb::down_flag )){own_task = Task(     cancel_ready);}
   else if(gmbb::env::ctrl.test_pressed(gmbb::shift_flag)){own_task = Task(    change_weapon);}
 
 
@@ -277,6 +268,34 @@ render(gmbb::Image&  dst, int  x, int  y) const
 
   sprite_image.transfer(src_x,
                         src_y,shape_reversing? -24:24,48,dst,dst_x,dst_y-4);
+}
+
+
+void
+Piece::
+render_data(gmbb::Image&  dst, int  x, int  y) const
+{
+  sprite_image.transfer(72,240,72,3,dst,x,y);
+
+  y += 3;
+
+    for(int  n = 0;  n < 64;  ++n)
+    {
+      sprite_image.transfer(72,243,72,1,dst,x,y++);
+    }
+
+
+  sprite_image.transfer(72,275,72,13,dst,x,y);
+}
+
+
+void
+Piece::
+print() const
+{
+  auto&  pt = current_square->point;
+
+  printf("[piece %s] %3d,%3d  %d %s %d\n",name,pt.x,pt.y,action_currency,own_task.callback? "O":"X",task_stack.size());
 }
 
 
