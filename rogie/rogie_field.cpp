@@ -63,6 +63,42 @@ put(Item*  itm, int  x, int  y)
 }
 
 
+Piece*
+Field::
+unput(Piece*  p)
+{
+  auto   it = piece_list.begin();
+  auto  end = piece_list.end();
+
+    while(it != end)
+    {
+        if(*it == p)
+        {
+          piece_list.erase(it);
+
+          p->current_square->current_piece = nullptr;
+          p->current_square                = nullptr;
+
+            if(master == p)
+            {
+              master = nullptr;
+            }
+
+
+          return p;
+        }
+
+      else
+        {
+          ++it;
+        }
+    }
+
+
+  return nullptr;
+}
+
+
 void
 Field::
 prepare()

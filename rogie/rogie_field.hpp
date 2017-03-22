@@ -29,6 +29,8 @@ public:
   void  put(Piece*  p, int  x, int  y);
   void  put(Item*  itm, int  x, int  y);
 
+  Piece*  unput(Piece*  ptr);
+
   void  prepare_to_search(int  initial_distance=0);
 
   void  update_image(              );

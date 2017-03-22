@@ -4,44 +4,52 @@
 
 
 
-constexpr
-FirearmSpec
-get_spec(FirearmKind  k)
+const WeaponSpec&
+get_weapon_spec(WeaponKind  k)
 {
-  FirearmSpec  spec = {0};
-
-    switch(k)
+  static const WeaponSpec  specs[] = {
     {
-  case(FirearmKind::handgun):
-      spec.name           = u"ハンドガン";
-      spec.power          = 32;
-      spec.bullet_max     = 8;
-      spec.fire_cost      = 10;
-      spec.reloading_cost = 10;
-      break;
-  case(FirearmKind::submachinegun):
-      spec.name           = u"サブマシンガン";
-      spec.power          = 32;
-      spec.bullet_max     = 24;
-      spec.fire_cost      =  1;
-      spec.reloading_cost = 10;
-      break;
-      break;
-    }
+      u"パンチ",//名前
+      40,//威力
+      10,//リロードコスト
+      20,//発射コスト
+       1,//最大装填数
+    },
+    {
+      u"ハンドガン",
+      80,
+      40,
+      24,
+       8,
+    },
+    {
+      u"サブマシンガン",
+      60,
+      60,
+       4,
+      24,
+    },
+    {0},
+    {0},
+    {0},
+    {0},
+    {0},
+    {0},
+  };
 
 
-  return spec;
+
+  return specs[static_cast<int>(k)];
 }
 
 
 
 
 Firearm::
-Firearm(FirearmKind  k):
-kind(k),
-spec(get_spec(k))
+Firearm(WeaponKind  k):
+weapon_kind(k)
 {
-  bullet = spec.bullet_max;
+  fulfill();
 }
 
 
@@ -51,6 +59,8 @@ int
 Firearm::
 fulfill()
 {
+  auto&  spec = get_weapon_spec(weapon_kind);
+
   bullet = spec.bullet_max;
 
   return spec.reloading_cost;
@@ -61,12 +71,12 @@ void
 Firearm::
 render(gmbb::Image&  dst, int  x, int  y) const
 {
-    switch(kind)
+    switch(weapon_kind)
     {
-  case(FirearmKind::handgun):
+  case(WeaponKind::handgun):
       Piece::sprite_image.transfer(48,24*10,24,24,dst,x,y);
       break;
-  case(FirearmKind::submachinegun):
+  case(WeaponKind::submachinegun):
       Piece::sprite_image.transfer(48,24*11,24,24,dst,x,y);
       break;
     }
@@ -77,15 +87,17 @@ void
 Firearm::
 render_with_data(gmbb::Image&  dst, int  x, int  y) const
 {
+  auto&  spec = get_weapon_spec(weapon_kind);
+
   render(dst,x+32,y);
 
   bool  flag = false;
 
   int  n = 0;
 
-    switch(kind)
+    switch(weapon_kind)
     {
-  case(FirearmKind::handgun):
+  case(WeaponKind::handgun):
         for(;  n <= spec.bullet_max;  ++n)
         {
           flag = (n < bullet);
@@ -95,7 +107,7 @@ render_with_data(gmbb::Image&  dst, int  x, int  y) const
           x += 4;
         }
       break;
-  case(FirearmKind::submachinegun):
+  case(WeaponKind::submachinegun):
       constexpr int  w = 6;
 
         for(int  yy = 0;  yy < spec.bullet_max/w;  ++yy)

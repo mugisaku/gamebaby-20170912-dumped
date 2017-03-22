@@ -6,8 +6,9 @@
 
 
 enum class
-FirearmKind
+WeaponKind
 {
+  punch,
   handgun,
   submachinegun,
   grenade_launcher,
@@ -19,7 +20,7 @@ FirearmKind
 struct
 Ammo
 {
-  FirearmKind  kind;
+  WeaponKind  kind;
 
   int  number;
 
@@ -27,32 +28,33 @@ Ammo
 
 
 struct
-FirearmSpec
+WeaponSpec
 {
   const char16_t*  name;
 
   int  power;
-  int  durability;
 
   int  reloading_cost;
-  int      fire_cost;
+  int       fire_cost;
 
   int  bullet_max;
 
 };
 
 
+const WeaponSpec&  get_weapon_spec(WeaponKind  k);
+
+
 struct
 Firearm
 {
-  FirearmKind  kind;
-  FirearmSpec  spec;
+  WeaponKind  weapon_kind;
 
   int  health;
   int  bullet;
 
 public:
-  Firearm(FirearmKind  k);
+  Firearm(WeaponKind  k);
 
   int  fulfill();
 

@@ -9,6 +9,12 @@ manage()
 {
   int  n = 0;
 
+    if(!master)
+    {
+      return;
+    }
+
+
     for(auto  p: piece_list)
     {
         if(p != master)
@@ -24,6 +30,12 @@ manage()
         }
     }
 //printf("****\n");
+
+
+    if(!master)
+    {
+      return;
+    }
 
 
     if(!n)

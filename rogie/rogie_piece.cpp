@@ -1,5 +1,6 @@
 #include"rogie_piece.hpp"
 #include"rogie_field.hpp"
+#include"rogie_firearm.hpp"
 
 
 
@@ -19,9 +20,11 @@ direction(Direction::front),
 shield_remaining(shield_max),
 life_remaining(life_max),
 oxygen_remaining(oxygen_max),
-moving_cost_base(10),
+moving_cost(moving_cost_base),
+armor_strength(2),
 action_currency(0),
 current_firearm(nullptr),
+weapon_spec(&get_weapon_spec(WeaponKind::punch)),
 callback_list(cbls)
 {
     for(auto&  itm: belongings_table)
@@ -132,6 +135,8 @@ append_item(Item*  new_item)
                 if((itm->kind == ItemKind::firearm) && !current_firearm)
                 {
                   current_firearm = &itm->data.firearm;
+
+                  weapon_spec = &get_weapon_spec(itm->data.firearm.weapon_kind);
                 }
 
 
@@ -275,17 +280,23 @@ void
 Piece::
 render_data(gmbb::Image&  dst, int  x, int  y) const
 {
+  constexpr int  bar_height = 64;
+
   sprite_image.transfer(72,240,72,3,dst,x,y);
 
   y += 3;
 
-    for(int  n = 0;  n < 64;  ++n)
+    for(int  n = 0;  n < bar_height;  ++n)
     {
-      sprite_image.transfer(72,243,72,1,dst,x,y++);
+      sprite_image.transfer(72,243,72,1,dst,x,y+n);
     }
 
 
-  sprite_image.transfer(72,275,72,13,dst,x,y);
+  int  h = ((bar_height<<16)/life_max*life_remaining)>>16;
+
+  dst.fill_rectangle(3|8,x+24+6,y+bar_height-h,12,h);
+
+  sprite_image.transfer(72,275,72,13,dst,x,y+bar_height);
 }
 
 
@@ -304,6 +315,32 @@ Piece::
 compare(Piece*  a, Piece*  b)
 {
   return a->current_square->point.y < b->current_square->point.y;
+}
+
+
+void
+Piece::
+attack(Piece&  a, Piece&  b)
+{
+  int  n = ((a.weapon_spec->power<<16)/armor_strength_max*(armor_strength_max-b.armor_strength))>>16;
+
+  int  res = b.life_remaining-n;
+
+    if(res < 0)
+    {
+      res = 0;
+    }
+
+
+  b.life_remaining = res;
+
+  b.push_task(damage);
+
+    if(!res)
+    {
+//      b.own_task = Task(disappear);
+delete b.current_field->unput(&b);
+    }
 }
 
 

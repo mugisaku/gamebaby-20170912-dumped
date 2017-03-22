@@ -33,6 +33,12 @@ chase_hero()
 {
   auto  hero = current_field->master;
 
+    if(!hero)
+    {
+      return;
+    }
+
+
   current_field->prepare_to_search(std::numeric_limits<int>::max());
   hero->current_square->search(this);
 
@@ -86,6 +92,12 @@ runaway_from_hero()
 {
   auto  hero = current_field->master;
 
+    if(!hero)
+    {
+      return;
+    }
+
+
   current_field->prepare_to_search();
   hero->current_square->search(this);
 
@@ -138,6 +150,12 @@ Piece::
 attack_hero()
 {
   auto  hero = current_field->master;
+
+    if(!hero)
+    {
+      return;
+    }
+
 
   Direction  d;
 

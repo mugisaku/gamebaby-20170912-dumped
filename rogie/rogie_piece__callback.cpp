@@ -48,7 +48,7 @@ move_to_direction(Task&  tsk, void*  caller)
         }
 
 
-      piece.action_currency -= piece.moving_cost_base;
+      piece.action_currency -= piece.moving_cost;
 
 
 
@@ -126,7 +126,7 @@ turn_left(Task&  tsk, void*  caller)
 {
   auto&  piece = get(caller);
 
-  piece.action_currency -= piece.moving_cost_base/3;
+  piece.action_currency -= piece.moving_cost/3;
 
   piece.change_direction(get_left(piece.direction));
 
@@ -140,7 +140,7 @@ turn_right(Task&  tsk, void*  caller)
 {
   auto&  piece = get(caller);
 
-  piece.action_currency -= piece.moving_cost_base/3;
+  piece.action_currency -= piece.moving_cost/3;
 
   piece.change_direction(get_right(piece.direction));
 
@@ -159,6 +159,8 @@ change_weapon(Task&  tsk, void*  caller)
     if(piece.current_firearm)
     {
       piece.current_firearm = nullptr;
+
+      piece.weapon_spec = &get_weapon_spec(WeaponKind::punch);
     }
 
   else
@@ -168,6 +170,8 @@ change_weapon(Task&  tsk, void*  caller)
             if(item && (item->kind == ItemKind::firearm))
             {
               piece.current_firearm = &item->data.firearm;
+
+              piece.weapon_spec = &get_weapon_spec(piece.current_firearm->weapon_kind);
 
               break;
             }
@@ -203,7 +207,7 @@ fire(Task&  tsk, void*  caller)
 {
   auto&  piece = get(caller);
 
-  piece.action_currency -= piece.current_firearm->spec.fire_cost;
+  piece.action_currency -= piece.weapon_spec->fire_cost;
 
     if(piece.current_firearm->bullet)
     {
@@ -229,7 +233,7 @@ fire(Task&  tsk, void*  caller)
 
         if(target)
         {
-          target->push_task(damage);
+          attack(piece,*target);
         }
     }
 
@@ -259,7 +263,7 @@ punch(Task&  tsk, void*  caller)
     switch(phase)
     {
   case(0):
-      piece.action_currency -= (piece.moving_cost_base/(piece.test_flag(master_flag)? 3:1));
+      piece.action_currency -= (piece.moving_cost/(piece.test_flag(master_flag)? 3:1));
 
 
       last = x       ;
@@ -282,6 +286,8 @@ punch(Task&  tsk, void*  caller)
             if(sq && sq->current_piece)
             {
               sq->current_piece->push_task(damage);
+
+              attack(piece,*sq->current_piece);
             }
 
 
@@ -312,6 +318,45 @@ punch(Task&  tsk, void*  caller)
 void
 Piece::
 damage(Task&  tsk, void*  caller)
+{
+  auto&  piece = get(caller);
+
+  auto&    phase = tsk.memory[0];
+  auto&  counter = tsk.memory[1];
+  auto&     last = tsk.memory[2];
+
+  auto&  x = piece.rendering_src_base.x;
+
+    switch(phase)
+    {
+  case(0):
+      last = x       ;
+             x = 24*4;
+
+      counter = 12;
+
+      ++phase;
+      break;
+  case(1):
+        if(counter--)
+        {
+        }
+
+      else
+        {
+          x = last;
+
+          tsk.callback = nullptr;
+        }
+      break;
+    }
+}
+
+
+
+void
+Piece::
+disappear(Task&  tsk, void*  caller)
 {
   auto&  piece = get(caller);
 

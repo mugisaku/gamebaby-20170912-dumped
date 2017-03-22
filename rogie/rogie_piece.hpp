@@ -35,9 +35,13 @@ Piece
 {
   static constexpr int  master_flag  = 1;
 
+  static constexpr int  moving_cost_base = 64;
+
+  static constexpr int  armor_strength_max = 16;
+
   static constexpr int shield_max = 9999;
   static constexpr int oxygen_max =  999;
-  static constexpr int   life_max =  999;
+  static constexpr int   life_max =  300;
 
   static gmbb::Image  sprite_image;
 
@@ -63,11 +67,15 @@ Piece
   int  oxygen_remaining;
   int    life_remaining;
 
+  int  armor_strength;
+
   int  action_currency;
 
-  int  moving_cost_base;
+  int  moving_cost;
 
   Firearm*  current_firearm;
+
+  const WeaponSpec*  weapon_spec;
 
   std::array<Item*,8>  belongings_table;
 
@@ -111,6 +119,7 @@ public:
 
 
   static bool  compare(Piece*  a, Piece*  b);
+  static void   attack(Piece&  a, Piece&  b);
 
 
   static void  move_to_direction(Task&  tsk, void*  caller);
@@ -123,6 +132,7 @@ public:
   static void  punch(Task&  tsk, void*  caller);
   static void  fire(Task&  tsk, void*  caller);
   static void  damage(Task&  tsk, void*  caller);
+  static void  disappear(Task&  tsk, void*  caller);
 
 
   void  play();
