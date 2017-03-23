@@ -17,9 +17,12 @@ Field
 
   gmbb::Image  image;
 
-  std::list<Piece*>  piece_list;
+  std::list<Piece*>         piece_list;
+  std::vector<Piece*>  dead_piece_list;
 
   Piece*  master;
+
+  uint32_t  rendering_count;
 
 public:
   Field();
@@ -28,8 +31,6 @@ public:
 
   void  put(Piece*  p, int  x, int  y);
   void  put(Item*  itm, int  x, int  y);
-
-  Piece*  unput(Piece*  ptr);
 
   void  prepare_to_search(int  initial_distance=0);
 

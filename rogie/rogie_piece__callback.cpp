@@ -156,28 +156,20 @@ change_weapon(Task&  tsk, void*  caller)
 {
   auto&  piece = get(caller);
 
-    if(piece.current_firearm)
-    {
-      piece.current_firearm = nullptr;
+  auto&  fa = piece.current_firearm;
 
-      piece.weapon_spec = &get_weapon_spec(WeaponKind::punch);
+    if(fa)
+    {
+      fa = fa->next;
     }
 
   else
     {
-        for(auto  item: piece.belongings_table)
-        {
-            if(item && (item->kind == ItemKind::firearm))
-            {
-              piece.current_firearm = &item->data.firearm;
-
-              piece.weapon_spec = &get_weapon_spec(piece.current_firearm->weapon_kind);
-
-              break;
-            }
-        }
+      fa = piece.first_firearm;
     }
 
+
+  piece.weapon_spec = &get_weapon_spec(fa? fa->weapon_kind:WeaponKind::punch);
 
   tsk.callback = nullptr;
 }
@@ -207,10 +199,10 @@ fire(Task&  tsk, void*  caller)
 {
   auto&  piece = get(caller);
 
-  piece.action_currency -= piece.weapon_spec->fire_cost;
-
     if(piece.current_firearm->bullet)
     {
+      piece.action_currency -= piece.weapon_spec->fire_cost;
+
       --piece.current_firearm->bullet;
 
       auto  sq = (*piece.current_square)[piece.direction];
@@ -238,8 +230,13 @@ fire(Task&  tsk, void*  caller)
     }
 
   else
-    if(1)
     {
+        if(!piece.current_firearm->ammo)
+        {
+          piece.current_firearm->find_ammo(piece.first_ammo);
+        }
+
+
       piece.action_currency -= piece.current_firearm->fulfill();
     }
 
@@ -360,32 +357,39 @@ disappear(Task&  tsk, void*  caller)
 {
   auto&  piece = get(caller);
 
-  auto&    phase = tsk.memory[0];
-  auto&  counter = tsk.memory[1];
-  auto&     last = tsk.memory[2];
+  auto&         phase = tsk.memory[0];
+  auto&       counter = tsk.memory[1];
+  auto&  last_counter = tsk.memory[2];
+
+  auto&  c = piece.current_field->rendering_count;
 
   auto&  x = piece.rendering_src_base.x;
 
     switch(phase)
     {
   case(0):
-      last = x       ;
-             x = 24*4;
-
-      counter = 12;
+      last_counter = c;
+      counter = 16;
 
       ++phase;
       break;
   case(1):
-        if(counter--)
+        if(c > last_counter)
         {
-        }
+          last_counter = c;
 
-      else
-        {
-          x = last;
+            if(counter--)
+            {
+                if(piece.test_flag(invisible_flag)){piece.unset_flag(invisible_flag);}
+              else                                 {piece.set_flag(  invisible_flag);}
+            }
 
-          tsk.callback = nullptr;
+          else
+            {
+              piece.set_flag(died_flag);
+
+              tsk.callback = nullptr;
+            }
         }
       break;
     }

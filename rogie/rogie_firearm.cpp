@@ -47,23 +47,55 @@ get_weapon_spec(WeaponKind  k)
 
 Firearm::
 Firearm(WeaponKind  k):
-weapon_kind(k)
+weapon_kind(k),
+ammo(nullptr),
+next(nullptr)
 {
-  fulfill();
+  bullet = get_weapon_spec(weapon_kind).bullet_max;
 }
 
 
+
+
+bool
+Firearm::
+find_ammo(Ammo*  ptr)
+{
+    while(ptr)
+    {
+        if(ptr->kind == weapon_kind)
+        {
+          ammo = ptr;
+
+          return true;
+        }
+
+
+      ptr = ptr->next;
+    }
+
+
+  return false;
+}
 
 
 int
 Firearm::
 fulfill()
 {
-  auto&  spec = get_weapon_spec(weapon_kind);
+    if(ammo && ammo->number)
+    {
+      --ammo->number;
 
-  bullet = spec.bullet_max;
+      auto&  spec = get_weapon_spec(weapon_kind);
 
-  return spec.reloading_cost;
+      bullet = spec.bullet_max;
+
+      return spec.reloading_cost;
+    }
+
+
+  return 0;
 }
 
 
@@ -98,7 +130,7 @@ render_with_data(gmbb::Image&  dst, int  x, int  y) const
     switch(weapon_kind)
     {
   case(WeaponKind::handgun):
-        for(;  n <= spec.bullet_max;  ++n)
+        for(;  n < spec.bullet_max;  ++n)
         {
           flag = (n < bullet);
 
@@ -116,7 +148,7 @@ render_with_data(gmbb::Image&  dst, int  x, int  y) const
 
             for(int  xx = 0;  xx < w;  ++xx)
             {
-              flag = (n++ < bullet);
+              flag = (n++ <= bullet);
 
               Piece::sprite_image.transfer(26+(flag? 0:5),265,3,5,dst,x+(4*xx),y);
             }

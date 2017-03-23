@@ -5,7 +5,8 @@
 
 Field::
 Field():
-master(nullptr)
+master(nullptr),
+rendering_count(0)
 {
 }
 
@@ -49,7 +50,7 @@ void
 Field::
 put(Item*  itm, int  x, int  y)
 {
-  auto&  sq = table[x][y];
+  auto&  sq = table[y][x];
 
     if(sq.placed_item)
     {
@@ -60,42 +61,6 @@ put(Item*  itm, int  x, int  y)
   sq.placed_item = itm;
 
   update_image(x,y);
-}
-
-
-Piece*
-Field::
-unput(Piece*  p)
-{
-  auto   it = piece_list.begin();
-  auto  end = piece_list.end();
-
-    while(it != end)
-    {
-        if(*it == p)
-        {
-          piece_list.erase(it);
-
-          p->current_square->current_piece = nullptr;
-          p->current_square                = nullptr;
-
-            if(master == p)
-            {
-              master = nullptr;
-            }
-
-
-          return p;
-        }
-
-      else
-        {
-          ++it;
-        }
-    }
-
-
-  return nullptr;
 }
 
 
@@ -226,6 +191,9 @@ render(gmbb::Image&  dst)
 
       master->render_data(dst,x,y);
     }
+
+
+  ++rendering_count;
 }
 
 

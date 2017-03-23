@@ -33,15 +33,18 @@ Field;
 struct
 Piece
 {
-  static constexpr int  master_flag  = 1;
+  static constexpr int  master_flag    = 1;
+  static constexpr int  blink_flag     = 2;
+  static constexpr int  invisible_flag = 4;
+  static constexpr int       died_flag = 8;
 
   static constexpr int  moving_cost_base = 64;
 
   static constexpr int  armor_strength_max = 16;
 
-  static constexpr int shield_max = 9999;
-  static constexpr int oxygen_max =  999;
-  static constexpr int   life_max =  300;
+  static const int  shield_max;
+  static const int  oxygen_max;
+  static const int    life_max;
 
   static gmbb::Image  sprite_image;
 
@@ -73,9 +76,16 @@ Piece
 
   int  moving_cost;
 
+
+  Firearm*    first_firearm;
+  Firearm*     last_firearm;
   Firearm*  current_firearm;
 
+  Ammo*  first_ammo;
+  Ammo*   last_ammo;
+
   const WeaponSpec*  weapon_spec;
+
 
   std::array<Item*,8>  belongings_table;
 
@@ -97,6 +107,8 @@ public:
   void  set_shape_by_direction();
 
   bool  append_item(Item*  new_item);
+
+  void  append(Firearm*  fa);
 
   void    set_flag(uint32_t  v);
   void  unset_flag(uint32_t  v);

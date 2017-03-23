@@ -15,11 +15,38 @@ manage()
     }
 
 
-    for(auto  p: piece_list)
+  auto   it = piece_list.begin();
+  auto  end = piece_list.end();
+
+    while(it != end)
     {
+      auto  now = it++;
+
+      auto  p = *now;
+
         if(p != master)
         {
-//p->print();
+            if(p->test_flag(Piece::died_flag))
+            {
+              piece_list.erase(now);
+
+              p->current_square->current_piece = nullptr;
+              p->current_square                = nullptr;
+
+                if(master == p)
+                {
+                  master = nullptr;
+
+                  return;
+                }
+
+
+              dead_piece_list.emplace_back(p);
+
+              continue;
+            }
+
+          else
             if(p->action_currency > 0)
             {
               ++n;
@@ -29,7 +56,6 @@ manage()
           p->step();
         }
     }
-//printf("****\n");
 
 
     if(!master)

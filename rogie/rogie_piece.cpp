@@ -5,6 +5,11 @@
 
 
 
+const int  Piece::shield_max = 9999;
+const int  Piece::oxygen_max =  999;
+const int    Piece::life_max =  200;
+
+
 gmbb::Image
 Piece::
 sprite_image;
@@ -21,9 +26,13 @@ shield_remaining(shield_max),
 life_remaining(life_max),
 oxygen_remaining(oxygen_max),
 moving_cost(moving_cost_base),
-armor_strength(2),
+armor_strength(0),
 action_currency(0),
+first_firearm(nullptr),
+last_firearm(nullptr),
 current_firearm(nullptr),
+first_ammo(nullptr),
+last_ammo(nullptr),
 weapon_spec(&get_weapon_spec(WeaponKind::punch)),
 callback_list(cbls)
 {
@@ -132,11 +141,9 @@ append_item(Item*  new_item)
             {
               itm = new_item;
 
-                if((itm->kind == ItemKind::firearm) && !current_firearm)
+                if(itm->kind == ItemKind::firearm)
                 {
-                  current_firearm = &itm->data.firearm;
-
-                  weapon_spec = &get_weapon_spec(itm->data.firearm.weapon_kind);
+                  append(&itm->data.firearm);
                 }
 
 
@@ -148,6 +155,31 @@ append_item(Item*  new_item)
 
   return false;
 }
+
+
+void
+Piece::
+append(Firearm*  fa)
+{
+    if(!first_firearm)
+    {
+      first_firearm = fa;
+       last_firearm = fa;
+    }
+
+  else
+    {
+      last_firearm->next = fa;
+      last_firearm = fa;
+    }
+
+
+  current_firearm = fa;
+
+  weapon_spec = &get_weapon_spec(fa->weapon_kind);
+}
+
+
 
 
 void    Piece::set_flag(uint32_t  v){flags |=  v;}
@@ -265,6 +297,12 @@ void
 Piece::
 render(gmbb::Image&  dst, int  x, int  y) const
 {
+    if(test_flag(invisible_flag))
+    {
+      return;
+    }
+
+
   auto  src_x = rendering_src_base.x+rendering_src_offset.x;
   auto  src_y = rendering_src_base.y+rendering_src_offset.y;
 
@@ -338,8 +376,7 @@ attack(Piece&  a, Piece&  b)
 
     if(!res)
     {
-//      b.own_task = Task(disappear);
-delete b.current_field->unput(&b);
+      b.own_task = Task(disappear);
     }
 }
 

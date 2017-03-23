@@ -20,9 +20,13 @@ WeaponKind
 struct
 Ammo
 {
-  WeaponKind  kind;
+  const WeaponKind  kind;
 
   int  number;
+
+  Ammo*  next;
+
+  Ammo(WeaponKind  k): kind(k), number(1), next(nullptr){}
 
 };
 
@@ -53,8 +57,14 @@ Firearm
   int  health;
   int  bullet;
 
+  Ammo*  ammo;
+
+  Firearm*  next;
+
 public:
   Firearm(WeaponKind  k);
+
+  bool  find_ammo(Ammo*  ptr);
 
   int  fulfill();
 
