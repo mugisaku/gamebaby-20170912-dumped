@@ -1,6 +1,5 @@
 #include"rogie_piece.hpp"
 #include"rogie_field.hpp"
-#include<limits>
 
 
 
@@ -39,7 +38,6 @@ chase_hero()
     }
 
 
-  current_field->prepare_to_search(std::numeric_limits<int>::max());
   hero->current_square->search(this);
 
   Direction  d;
@@ -50,7 +48,7 @@ chase_hero()
     {
       auto  ln = current_square->link[i];
 
-        if(ln)
+        if(ln && !ln->current_piece)
         {
             if(!candidate || (ln->distance < candidate->distance))
             {
@@ -98,7 +96,6 @@ runaway_from_hero()
     }
 
 
-  current_field->prepare_to_search();
   hero->current_square->search(this);
 
   Direction  d;
@@ -109,7 +106,7 @@ runaway_from_hero()
     {
       auto  ln = current_square->link[i];
 
-        if(ln)
+        if(ln && !ln->current_piece)
         {
             if(!candidate || (ln->distance > candidate->distance))
             {

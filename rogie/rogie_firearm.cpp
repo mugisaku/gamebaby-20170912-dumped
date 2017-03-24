@@ -148,7 +148,7 @@ render_with_data(gmbb::Image&  dst, int  x, int  y) const
 
             for(int  xx = 0;  xx < w;  ++xx)
             {
-              flag = (n++ <= bullet);
+              flag = (n++ < bullet);
 
               Piece::sprite_image.transfer(26+(flag? 0:5),265,3,5,dst,x+(4*xx),y);
             }

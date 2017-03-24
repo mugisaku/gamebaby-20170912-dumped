@@ -1,5 +1,7 @@
 #include"rogie_square.hpp"
+#include"rogie_field.hpp"
 #include"rogie_piece.hpp"
+#include<limits>
 
 
 
@@ -31,6 +33,8 @@ void
 Square::
 search(Piece*  actor)
 {
+  field->prepare_to_search(9999999);
+
   distance = 0;
 
     for(auto  i = 0;  i < number_of_directions;  ++i)
@@ -45,6 +49,7 @@ search(Piece*  actor)
         }
     }
 }
+
 
 
 

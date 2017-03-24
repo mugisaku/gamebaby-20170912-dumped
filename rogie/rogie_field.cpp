@@ -200,7 +200,7 @@ print() const
         {
           auto&  sq = table[y][x];
 
-          printf("%6d,",sq.current_piece? 1:0);
+          printf("%6d,",sq.distance);
         }
 
 
