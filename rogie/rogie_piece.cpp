@@ -21,6 +21,8 @@ Piece::
 Piece(const char*  name_, std::initializer_list<Callback>  cbls):
 name(name_),
 flags(0),
+current_square(nullptr),
+current_field(nullptr),
 direction(Direction::front),
 shield_remaining(shield_max),
 life_remaining(life_max),
@@ -180,6 +182,39 @@ append(Firearm*  fa)
 }
 
 
+void
+Piece::
+link_with_square(Square&  sq)
+{
+    if(sq.current_piece)
+    {
+      printf("既に駒があります\n");
+
+      throw;
+    }
+
+
+  unlink_with_square();
+
+  current_square                =  &sq;
+  current_square->current_piece = this;
+
+  current_point = sq.point;
+}
+
+
+void
+Piece::
+unlink_with_square()
+{
+    if(current_square)
+    {
+      current_square->current_piece = nullptr;
+      current_square                = nullptr;
+    }
+}
+
+
 
 
 void    Piece::set_flag(uint32_t  v){flags |=  v;}
@@ -306,8 +341,8 @@ render(gmbb::Image&  dst, int  x, int  y) const
   auto  src_x = rendering_src_base.x+rendering_src_offset.x;
   auto  src_y = rendering_src_base.y+rendering_src_offset.y;
 
-  auto  dst_x = x+rendering_dst_offset.x+(24*current_square->point.x)   ;
-  auto  dst_y = y+rendering_dst_offset.y+(24*current_square->point.y)-24;
+  auto  dst_x = x+rendering_dst_offset.x+(24*current_point.x)   ;
+  auto  dst_y = y+rendering_dst_offset.y+(24*current_point.y)-24;
 
   sprite_image.transfer(src_x,
                         src_y,shape_reversing? -24:24,48,dst,dst_x,dst_y-4);
@@ -352,7 +387,7 @@ bool
 Piece::
 compare(Piece*  a, Piece*  b)
 {
-  return a->current_square->point.y < b->current_square->point.y;
+  return a->current_point.y < b->current_point.y;
 }
 
 

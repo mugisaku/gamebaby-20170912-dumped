@@ -17,8 +17,9 @@ Field
 
   gmbb::Image  image;
 
-  std::list<Piece*>         piece_list;
-  std::vector<Piece*>  dead_piece_list;
+  std::list<Piece*>          piece_list;
+  std::list<Piece*>    ghost_piece_list;
+  std::vector<Piece*>   dead_piece_list;
 
   Piece*  master;
 

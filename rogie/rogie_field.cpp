@@ -21,20 +21,11 @@ put(Piece*  p, int  x, int  y)
     {
       auto&  sq = table[x][y];
 
-        if(sq.current_piece)
-        {
-          printf("既に駒があります\n");
-
-          throw;
-        }
-
+      p->link_with_square(sq);
 
       piece_list.emplace_back(p);
 
       p->current_field  = this;
-      p->current_square = &sq;
-
-      sq.current_piece = p;
 
         if(!master)
         {

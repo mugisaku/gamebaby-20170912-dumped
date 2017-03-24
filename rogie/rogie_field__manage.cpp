@@ -24,14 +24,11 @@ manage()
 
       auto  p = *now;
 
-        if(p != master)
+        if(p->test_flag(Piece::died_flag))
         {
-            if(p->test_flag(Piece::died_flag))
+            if(!p->own_task.callback)
             {
               piece_list.erase(now);
-
-              p->current_square->current_piece = nullptr;
-              p->current_square                = nullptr;
 
                 if(master == p)
                 {
@@ -42,11 +39,12 @@ manage()
 
 
               dead_piece_list.emplace_back(p);
-
-              continue;
             }
+        }
 
-          else
+      else
+        if(p != master)
+        {
             if(p->action_currency > 0)
             {
               ++n;

@@ -51,12 +51,7 @@ move_to_direction(Task&  tsk, void*  caller)
       piece.action_currency -= piece.moving_cost;
 
 
-
-      ln->current_piece = &piece;
-
-      piece.current_square->current_piece = nullptr;
-
-      piece.current_square = ln;
+      piece.link_with_square(*ln);
 
 
       piece.rendering_dst_offset.x = 0;
@@ -368,6 +363,8 @@ disappear(Task&  tsk, void*  caller)
     switch(phase)
     {
   case(0):
+      piece.unlink_with_square();
+
       last_counter = c;
       counter = 16;
 

@@ -54,6 +54,8 @@ Piece
 
   uint32_t  flags;
 
+  gmbb::Point  current_point;
+
   Field*    current_field;
   Square*  current_square;
 
@@ -120,6 +122,9 @@ public:
   const std::stack<Task>&  get_task_stack() const;
 
   const Firearm*  get_current_firearm() const;
+
+  void    link_with_square(Square&  sq);
+  void  unlink_with_square();
 
   void  step();
 
