@@ -3,11 +3,13 @@
 
 
 #include"gmbb_controller.hpp"
+#include"gmbb_color_table.hpp"
 #include"gmbb_media.hpp"
 #include"gmbb_image.hpp"
+#include"gmbb_subimage.hpp"
 #include"gmbb_sprite.hpp"
 #include"gmbb_garden.hpp"
-#include"gmbb_message.hpp"
+#include"gmbb_textmanager.hpp"
 #include"gmbb_font.hpp"
 #include"gmbb_formatted.hpp"
 #include"gmbb_rectangle.hpp"

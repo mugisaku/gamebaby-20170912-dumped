@@ -1,5 +1,5 @@
-#ifndef GMBB_MESSAGE_HPP_INCLUDED
-#define GMBB_MESSAGE_HPP_INCLUDED
+#ifndef GMBB_TEXTMANAGER_HPP_INCLUDED
+#define GMBB_TEXTMANAGER_HPP_INCLUDED
 
 
 #include<cstdint>
@@ -9,6 +9,7 @@
 #include"gmbb_rectangle.hpp"
 #include"gmbb_controller.hpp"
 #include"gmbb_image.hpp"
+#include"gmbb_text.hpp"
 
 
 
@@ -17,41 +18,11 @@ namespace gmbb{
 
 
 class
-MessagePage
-{
-  struct Line;
-
-  int  column_number;
-  int     row_number;
-
-  Line*    first;
-  Line*  current;
-  Line*     last;
-
-  char16_t  last_char;
-
-public:
-  MessagePage(int  col_n, int  row_n);
-
-  void  clear();
-
-  void  rotate();
-
-  void  push(char16_t  c);
-
-  bool  is_full() const;
-
-  void  render(Image&  dst, int  x, int  y) const;
-
-};
-
-
-class
-Message
+TextManager
 {
   Rectangle  rectangle;
 
-  MessagePage  page;
+  Text  text;
 
   int  fast_flag;
 
@@ -67,7 +38,7 @@ Message
   uint32_t  last_update_time;
 
 public:
-  Message(int  column_number, int  row_number);
+  TextManager(int  column_number, int  row_number);
 
   void  clear();
 

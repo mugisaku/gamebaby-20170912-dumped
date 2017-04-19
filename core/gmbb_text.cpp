@@ -1,4 +1,4 @@
-#include"gmbb_message.hpp"
+#include"gmbb_text.hpp"
 
 
 
@@ -7,7 +7,7 @@ namespace gmbb{
 
 
 struct
-MessagePage::
+Text::
 Line
 {
   std::u16string  string;
@@ -17,8 +17,8 @@ Line
 };
 
 
-MessagePage::
-MessagePage(int  col_n, int  row_n):
+Text::
+Text(int  col_n, int  row_n):
 column_number(col_n),
 row_number(row_n)
 {
@@ -49,7 +49,7 @@ row_number(row_n)
 
 
 void
-MessagePage::
+Text::
 clear()
 {
   auto  next = first;
@@ -67,7 +67,7 @@ clear()
 
 
 void
-MessagePage::
+Text::
 rotate()
 {
   auto  old_first = first;
@@ -88,7 +88,7 @@ rotate()
 
 
 void
-MessagePage::
+Text::
 push(char16_t  c)
 {
     if(!is_full())
@@ -113,7 +113,7 @@ push(char16_t  c)
 
 
 bool
-MessagePage::
+Text::
 is_full() const
 {
   return !current;
@@ -121,7 +121,7 @@ is_full() const
 
 
 void
-MessagePage::
+Text::
 render(Image&  dst, int  x, int  y) const
 {
   auto  next = first;

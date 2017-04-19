@@ -38,53 +38,53 @@ resize(int  w, int  h)
 
 void
 Image::
-dot(uint8_t  v, int  x, int  y)
+dot(color_table::Index  i, int  x, int  y)
 {
-  pixels[(width*y)+x] = v;
+  pixels[(width*y)+x] = i;
 }
 
 
 void
 Image::
-vline(uint8_t  v, int  x, int  y, int  l)
+vline(color_table::Index  i, int  x, int  y, int  l)
 {
     while(l--)
     {
-      dot(v,x,y++);
+      dot(i,x,y++);
     }
 }
 
 
 void
 Image::
-hline(uint8_t  v, int  x, int  y, int  l)
+hline(color_table::Index  i, int  x, int  y, int  l)
 {
     while(l--)
     {
-      dot(v,x++,y);
+      dot(i,x++,y);
     }
 }
 
 
 void
 Image::
-rectangle(uint8_t  v, int  x, int  y, int  w, int  h)
+rectangle(color_table::Index  i, int  x, int  y, int  w, int  h)
 {
-  hline(v,x,y    ,w);
-  hline(v,x,y+h-1,w);
+  hline(i,x,y    ,w);
+  hline(i,x,y+h-1,w);
 
-  vline(v,x    ,y+1,h-2);
-  vline(v,x+w-1,y+1,h-2);
+  vline(i,x    ,y+1,h-2);
+  vline(i,x+w-1,y+1,h-2);
 }
 
 
 void
 Image::
-fill_rectangle(uint8_t  v, int  x, int  y, int  w, int  h)
+fill_rectangle(color_table::Index  i, int  x, int  y, int  w, int  h)
 {
     while(h--)
     {
-      hline(v,x,y++,w);
+      hline(i,x,y++,w);
     }
 }
 
@@ -98,11 +98,11 @@ compose(const Image&  rhs)
 
     for(int  y = 0;  y < h;  y += 1){
     for(int  x = 0;  x < w;  x += 1){
-      auto  v = rhs.const_pixel(x,y);
+      auto  i = rhs.const_pixel(x,y);
 
-        if(v&8)
+        if(i.test())
         {
-          pixel(x,y) = v;
+          pixel(x,y) = i;
         }
     }}
 }
@@ -138,10 +138,10 @@ int  Image::get_width() const{return width;}
 int  Image::get_height() const{return height;}
 
 
-      uint8_t&  Image::pixel(      int  x, int  y)      {return pixels[(width*y)+x];}
-const uint8_t&  Image::const_pixel(int  x, int  y) const{return pixels[(width*y)+x];}
+      color_table::Index&  Image::pixel(      int  x, int  y)      {return pixels[(width*y)+x];}
+const color_table::Index&  Image::const_pixel(int  x, int  y) const{return pixels[(width*y)+x];}
 
-void  Image::fill(uint8_t  v){std::memset(pixels.data(),v,width*height);}
+void  Image::fill(color_table::Index  i){std::fill(pixels.begin(),pixels.end(),i);}
 
 
 void
@@ -244,11 +244,11 @@ transfer(int  src_x, int  src_y, int  src_w, int  src_h, Image&  dst, int  dst_x
 
             for(int  xx = 0;  xx < src_w;  xx += 1)
             {
-              auto  v = const_pixel(x--,src_y+yy);
+              auto  i = const_pixel(x--,src_y+yy);
 
-                if(v&8)
+                if(i.test())
                 {
-                  dst.dot(v,dst_x+xx,dst_y+yy);
+                  dst.dot(i,dst_x+xx,dst_y+yy);
                 }
             }
         }
@@ -257,11 +257,11 @@ transfer(int  src_x, int  src_y, int  src_w, int  src_h, Image&  dst, int  dst_x
         {
             for(int  xx = 0;  xx < src_w;  xx += 1)
             {
-              auto  v = const_pixel(src_x+xx,src_y+yy);
+              auto  i = const_pixel(src_x+xx,src_y+yy);
 
-                if(v&8)
+                if(i.test())
                 {
-                  dst.dot(v,dst_x+xx,dst_y+yy);
+                  dst.dot(i,dst_x+xx,dst_y+yy);
                 }
             }
         }

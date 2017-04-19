@@ -46,6 +46,8 @@ set(CORE_SOURCES
   core/gmbb_filewriter.cpp
   core/gmbb_media.cpp
   core/gmbb_formatted.cpp
+  core/gmbb_color_table.cpp
+  core/gmbb_subimage.cpp
   core/gmbb_image.cpp
   core/gmbb_image__png.cpp
   core/gmbb_image__mgf.cpp
@@ -58,8 +60,8 @@ set(CORE_SOURCES
   core/gmbb_font.cpp
   core/gmbb_font__large.cpp
   core/gmbb_environment.cpp
-  core/gmbb_message.cpp
-  core/gmbb_message_page.cpp
+  core/gmbb_text.cpp
+  core/gmbb_textmanager.cpp
   core/gmbb_unicode.cpp
   core/gmbb_random_number.cpp
 )
@@ -94,16 +96,25 @@ set(ROGIE_SOURCES
 )
 
 
+set(ACT_SOURCES
+  act/act_object.cpp
+  act/act_gamemanager.cpp
+)
+
+
 include_directories(./core)
-include_directories(./trpt)
-include_directories(./rogie)
+#include_directories(./trpt)
+#include_directories(./rogie)
+#include_directories(./act)
 include_directories(/usr/include/SDL2)
-add_executable("Trpt${EXECUTABLE_EXTENSION}" trpt.cpp ${CORE_SOURCES} ${TRPT_SOURCES})
-add_executable("Rogie${EXECUTABLE_EXTENSION}" rogie.cpp ${CORE_SOURCES} ${ROGIE_SOURCES})
+add_executable("Rs${EXECUTABLE_EXTENSION}" rs.cpp ${CORE_SOURCES})
+#add_executable("Rogie${EXECUTABLE_EXTENSION}" rogie.cpp ${CORE_SOURCES} ${ROGIE_SOURCES})
+#add_executable("Act${EXECUTABLE_EXTENSION}" act.cpp ${CORE_SOURCES} ${ACT_SOURCES})
 
 
 if(EMSCRIPTEN)
   add_custom_target(font.bin cp /usr/local/share/oat/font.bin ./)
+  set_target_properties("Act${EXECUTABLE_EXTENSION}"  PROPERTIES LINK_FLAGS "--shell-file act_shell.html")
   set_target_properties("Trpt${EXECUTABLE_EXTENSION}"  PROPERTIES LINK_FLAGS "--shell-file trpt_shell.html")
   set_target_properties("Rogie${EXECUTABLE_EXTENSION}" PROPERTIES LINK_FLAGS "--shell-file rogie_shell.html")
 endif()

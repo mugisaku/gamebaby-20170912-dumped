@@ -4,6 +4,7 @@
 
 #include<string>
 #include"gmbb_controller.hpp"
+#include"gmbb_color_table.hpp"
 
 
 
@@ -28,6 +29,9 @@ extern Controller  ctrl;
 
 void  change_time(uint32_t  v);
 uint32_t  get_time();
+
+void               change_base_color_index(color_table::Index  i);
+color_table::Index    get_base_color_index();
 
 void                   set_value(const char16_t*  name, const char16_t*  value);
 const std::u16string&  get_value(const char16_t*  name                        );

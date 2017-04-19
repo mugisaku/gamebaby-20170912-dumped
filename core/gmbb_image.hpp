@@ -5,8 +5,11 @@
 #include<cstdint>
 #include<vector>
 #include<string>
+#include<memory>
 #include"gmbb_font.hpp"
 #include"gmbb_media.hpp"
+#include"gmbb_color_table.hpp"
+#include"gmbb_palette.hpp"
 #include"gmbb_printpoint.hpp"
 
 
@@ -24,7 +27,7 @@ Image
   int  width;
   int  height;
 
-  std::vector<uint8_t>  pixels;
+  std::vector<color_table::Index>  pixels;
 
 public:
   Image();
@@ -43,18 +46,18 @@ public:
   int  get_width() const;
   int  get_height() const;
 
-        uint8_t&        pixel(int  x, int  y)      ;
-  const uint8_t&  const_pixel(int  x, int  y) const;
+        color_table::Index&        pixel(int  x, int  y)      ;
+  const color_table::Index&  const_pixel(int  x, int  y) const;
 
-  void  fill(uint8_t  v=0);
+  void  fill(color_table::Index  i);
 
 
-  void  dot(uint8_t  v, int  x, int  y);
-  void  vline(uint8_t  v, int  x, int  y, int  l);
-  void  hline(uint8_t  v, int  x, int  y, int  l);
+  void    dot(color_table::Index  i, int  x, int  y);
+  void  vline(color_table::Index  i, int  x, int  y, int  l);
+  void  hline(color_table::Index  i, int  x, int  y, int  l);
 
-  void       rectangle(uint8_t  v, int  x, int  y, int  w, int  h);
-  void  fill_rectangle(uint8_t  v, int  x, int  y, int  w, int  h);
+  void       rectangle(color_table::Index  i, int  x, int  y, int  w, int  h);
+  void  fill_rectangle(color_table::Index  i, int  x, int  y, int  w, int  h);
 
   void  frame_top(   int  x, int  y, int  w);
   void  frame_body(  int  x, int  y, int  w, int  h);

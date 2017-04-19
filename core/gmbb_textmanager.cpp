@@ -1,4 +1,4 @@
-#include"gmbb_message.hpp"
+#include"gmbb_textmanager.hpp"
 #include"gmbb_environment.hpp"
 #include<cctype>
 
@@ -8,9 +8,9 @@
 namespace gmbb{
 
 
-Message::
-Message(int  column_number, int  row_number):
-page(column_number,row_number),
+TextManager::
+TextManager(int  column_number, int  row_number):
+text(column_number,row_number),
 fast_flag(0),
 scroll_count(0),
 scroll_key(0),
@@ -120,10 +120,10 @@ sscan_id(const char16_t*  s, char16_t*  buf, size_t  n)
 
 
 void
-Message::
+TextManager::
 clear()
 {
-  page.clear();
+  text.clear();
 
   scroll_count  = 0;
   scroll_key    = 0;
@@ -136,7 +136,7 @@ clear()
 
 
 bool
-Message::
+TextManager::
 is_finished() const
 {
   return finished_flag;
@@ -144,7 +144,7 @@ is_finished() const
 
 
 void
-Message::
+TextManager::
 push(const char16_t*  src)
 {
     if(finished_flag)
@@ -196,7 +196,7 @@ push(const char16_t*  src)
 
 
 void
-Message::
+TextManager::
 push(std::initializer_list<const char16_t*>  ls)
 {
     for(auto  s: ls)
@@ -214,7 +214,7 @@ push(std::initializer_list<const char16_t*>  ls)
 
 
 void
-Message::
+TextManager::
 controll(const Controller&  ctrl)
 {
     if(ctrl.test_pressed(p_flag))
@@ -251,7 +251,7 @@ controll(const Controller&  ctrl)
 
 
 void
-Message::
+TextManager::
 update()
 {
     if(character_iterator == character_end)
@@ -276,15 +276,15 @@ update()
     {
       last_update_time = now;
 
-        if(!page.is_full())
+        if(!text.is_full())
         {
-          page.push(*character_iterator++);
+          text.push(*character_iterator++);
         }
 
       else
         if(scroll_count)
         {
-          page.rotate();
+          text.rotate();
 
           scroll_count -= 1;
         }
@@ -298,10 +298,10 @@ update()
 
 
 void
-Message::
+TextManager::
 render(Image&  dst)
 {
-  page.render(dst,rectangle.x,rectangle.y);
+  text.render(dst,rectangle.x,rectangle.y);
 }
 
 

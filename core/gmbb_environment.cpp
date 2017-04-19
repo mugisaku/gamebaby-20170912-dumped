@@ -25,6 +25,10 @@ uint32_t
 time;
 
 
+color_table::Index
+base_color_index;
+
+
 }
 
 
@@ -36,6 +40,24 @@ Controller  ctrl;
 
 void  change_time(uint32_t  v){time = v;}
 uint32_t  get_time(){return time;}
+
+
+
+
+void
+change_base_color_index(color_table::Index  i)
+{
+  base_color_index = i;
+}
+
+
+color_table::Index
+get_base_color_index()
+{
+  return base_color_index;
+}
+
+
 
 
 void

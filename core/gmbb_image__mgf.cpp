@@ -24,6 +24,7 @@ load_mgf(FileReader&  r)
 
     for(int  y = 0;  y < h;  y += 1)
     {
+/*
       uint8_t*  p = &pixels[w*y];
 
         for(int  x = 0;  x < n;  x += 1)
@@ -39,6 +40,7 @@ load_mgf(FileReader&  r)
         {
           *p = r.get()>>4;
         }
+*/
     }
 }
 
@@ -57,6 +59,7 @@ save_mgf(FileWriter&  w) const
 
     for(int  y = 0;  y < height;  y += 1)
     {
+/*
       const uint8_t*  p = &pixels[width*y];
 
         for(int  i = 0;  i < n;  i += 1)
@@ -72,6 +75,7 @@ save_mgf(FileWriter&  w) const
         {
           w.put((*p)<<4);
         }
+*/
     }
 }
 

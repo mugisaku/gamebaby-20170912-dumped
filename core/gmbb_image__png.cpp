@@ -27,43 +27,96 @@ void
 Image::
 load_png(FileReader&  r)
 {
-  png_structp  png = png_create_read_struct(PNG_LIBPNG_VER_STRING,nullptr,nullptr,nullptr);
-  png_infop    png_info = png_create_info_struct(png);
+  auto  png      = png_create_read_struct(PNG_LIBPNG_VER_STRING,nullptr,nullptr,nullptr);
+  auto  png_info = png_create_info_struct(png);
 
   png_set_read_fn(png,&r,read);
 
   png_read_info(png,png_info);
 
-  int  depth = png_get_bit_depth(png,png_info);
-  int  color_type = png_get_color_type(png,png_info);
 
-    if(color_type != PNG_COLOR_TYPE_PALETTE)
+  const auto      w = png_get_image_width( png,png_info);
+  const auto      h = png_get_image_height(png,png_info);
+  const auto  depth = png_get_bit_depth(   png,png_info);
+
+    if(depth >= 16)
     {
-      printf("パレットでないPNGは読めません\n");
-
-      throw;
+      png_set_strip_16(png);
     }
 
-
-  auto  w = png_get_image_width( png,png_info);
-  auto  h = png_get_image_height(png,png_info);
 
   resize(w,h);
 
-  png_color*  tmp_palette;
+  const auto  color_type = png_get_color_type(png,png_info);
 
-  int  color_number;
+  const bool  a_valid = (color_type&PNG_COLOR_MASK_ALPHA);
 
-  png_get_PLTE(png,png_info,&tmp_palette,&color_number);
+    if((color_type == PNG_COLOR_TYPE_GRAY) && (depth < 8))
+    {
+      png_set_gray_1_2_4_to_8(png);
+    }
 
 
-  png_set_packing(png);
+    if((color_type == PNG_COLOR_TYPE_GRAY      ) ||
+       (color_type == PNG_COLOR_TYPE_GRAY_ALPHA))
+    {
+      png_set_gray_to_rgb(png);
+    }
+
+
+    if(color_type == PNG_COLOR_TYPE_PALETTE)
+    {
+      png_set_palette_to_rgb(png);
+    }
+
+
+    if(color_type == PNG_COLOR_TYPE_RGB_ALPHA)
+    {
+    }
+
+
+    if(color_type == PNG_COLOR_TYPE_RGB)
+    {
+//
+    }
+
+
+    if(depth < 8)
+    {
+      png_set_packing(png);
+    }
+
+
+  auto  buffer = new uint8_t[w*4];
+
+  auto  dst = pixels.begin();
 
     for(int  y = 0;  y < h;  ++y)
     {
-      png_read_row(png,&pixels[w*y],nullptr);
+      png_read_row(png,buffer,nullptr);
+
+      const uint8_t*  src = buffer;
+
+        for(int  x = 0;  x < w;  ++x)
+        {
+          uint8_t  r = *src++;
+          uint8_t  g = *src++;
+          uint8_t  b = *src++;
+
+            if(!a_valid || *src++)
+            {
+              *dst++ = color_table::Index(r>>5,g>>5,b>>5);
+            }
+
+          else
+            {
+              *dst++ = color_table::Index();
+            }
+        }
     }
 
+
+  delete[]  buffer;
 
   png_read_end(png,png_info);
   png_destroy_read_struct(&png,&png_info,nullptr);
