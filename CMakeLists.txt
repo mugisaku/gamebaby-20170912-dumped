@@ -34,7 +34,7 @@ if(EMSCRIPTEN)
   set(CMAKE_CXX_COMPILER  em++)
   set(CMAKE_CXX_FLAGS "-std=c++14 -Werror -Wno-switch -O2")
   set(CMAKE_CXX_FLAGS_DEBUG "")
-  set(CMAKE_CXX_LINK_FLAGS  "${CMAKE_CXX_LINK_FLAGS} -s USE_ZLIB=1 -s USE_SDL=2 --embed-file font.bin --embed-file data.bin")
+  set(CMAKE_CXX_LINK_FLAGS  "${CMAKE_CXX_LINK_FLAGS} -s USE_ZLIB=1 -s USE_LIBPNG=1 -s USE_SDL=2 --embed-file motion.png")
 endif()
 
 
@@ -48,9 +48,9 @@ set(CORE_SOURCES
   core/gmbb_formatted.cpp
   core/gmbb_color_table.cpp
   core/gmbb_subimage.cpp
+  core/gmbb_subimage__png.cpp
   core/gmbb_image.cpp
   core/gmbb_image__png.cpp
-  core/gmbb_image__mgf.cpp
   core/gmbb_image__print.cpp
   core/gmbb_image__frame.cpp
   core/gmbb_garden.cpp
@@ -113,10 +113,7 @@ add_executable("Rs${EXECUTABLE_EXTENSION}" rs.cpp ${CORE_SOURCES})
 
 
 if(EMSCRIPTEN)
-  add_custom_target(font.bin cp /usr/local/share/oat/font.bin ./)
-  set_target_properties("Act${EXECUTABLE_EXTENSION}"  PROPERTIES LINK_FLAGS "--shell-file act_shell.html")
-  set_target_properties("Trpt${EXECUTABLE_EXTENSION}"  PROPERTIES LINK_FLAGS "--shell-file trpt_shell.html")
-  set_target_properties("Rogie${EXECUTABLE_EXTENSION}" PROPERTIES LINK_FLAGS "--shell-file rogie_shell.html")
+#  set_target_properties("Act${EXECUTABLE_EXTENSION}"  PROPERTIES LINK_FLAGS "--shell-file act_shell.html")
 endif()
 
 

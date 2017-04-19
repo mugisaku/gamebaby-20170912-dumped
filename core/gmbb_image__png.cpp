@@ -53,7 +53,7 @@ load_png(FileReader&  r)
 
     if((color_type == PNG_COLOR_TYPE_GRAY) && (depth < 8))
     {
-      png_set_gray_1_2_4_to_8(png);
+//      png_set_gray_1_2_4_to_8(png);
     }
 
 

@@ -18,9 +18,6 @@
 namespace gmbb{
 
 
-constexpr int  font_color = 7|8;
-
-
 class
 Image
 {
@@ -39,9 +36,6 @@ public:
   void  load(const uint8_t*  src, int  w, int  h, int  pitch);
 
   void  load_png(FileReader&  r);
-  void  load_mgf(FileReader&  r);
-
-  void  save_mgf(FileWriter&  w) const;
 
   int  get_width() const;
   int  get_height() const;
@@ -49,7 +43,7 @@ public:
         color_table::Index&        pixel(int  x, int  y)      ;
   const color_table::Index&  const_pixel(int  x, int  y) const;
 
-  void  fill(color_table::Index  i);
+  void  fill(color_table::Index  i=color_table::Index());
 
 
   void    dot(color_table::Index  i, int  x, int  y);
@@ -64,17 +58,17 @@ public:
   void  frame_bottom(int  x, int  y, int  w);
   void  frame(       int  x, int  y, int  w, int  h);
 
-  void  print(      char16_t   c, uint8_t  color, int  x, int  y);
-  void  print(const char*      s, uint8_t  color, int  x, int  y);
-  void  print(const char16_t*  s, uint8_t  color, int  x, int  y);
+  void  print(      char16_t   c, color_table::Index  i, int  x, int  y);
+  void  print(const char*      s, color_table::Index  i, int  x, int  y);
+  void  print(const char16_t*  s, color_table::Index  i, int  x, int  y);
 
-  void  print_tall(      char16_t   c, uint8_t  color, int  x, int  y);
-  void  print_tall(const char*      s, uint8_t  color, int  x, int  y);
-  void  print_tall(const char16_t*  s, uint8_t  color, int  x, int  y);
+  void  print_tall(      char16_t   c, color_table::Index  i, int  x, int  y);
+  void  print_tall(const char*      s, color_table::Index  i, int  x, int  y);
+  void  print_tall(const char16_t*  s, color_table::Index  i, int  x, int  y);
 
-  void  print_large(      char16_t   c, uint8_t  color, int  x, int  y);
-  void  print_large(const char*      s, uint8_t  color, int  x, int  y);
-  void  print_large(const char16_t*  s, uint8_t  color, int  x, int  y);
+  void  print_large(      char16_t   c, color_table::Index  i, int  x, int  y);
+  void  print_large(const char*      s, color_table::Index  i, int  x, int  y);
+  void  print_large(const char16_t*  s, color_table::Index  i, int  x, int  y);
 
   void  compose(const Image&  rhs);
 

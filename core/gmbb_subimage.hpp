@@ -33,10 +33,7 @@ public:
 
   void  resize(int  w, int  h);
 
-  void  load_png(FileReader&  r);
-  void  load_mgf(FileReader&  r);
-
-  void  save_mgf(FileWriter&  w) const;
+  void  load_png(const char*  path);
 
   int  get_width() const;
   int  get_height() const;

@@ -102,7 +102,7 @@ push(char16_t  c)
         {
           current->string.push_back(c);
 
-            if(current->string.size() >= (column_number-1))
+            if(current->string.size() > (column_number-1))
             {
               current = current->next;
             }
@@ -128,7 +128,7 @@ render(Image&  dst, int  x, int  y) const
 
     while(next)
     {
-      dst.print_tall(next->string.data(),gmbb::font_color,x,y);
+      dst.print_tall(next->string.data(),color_table::Index(32),x,y);
 
       y += font::tall_size;
 

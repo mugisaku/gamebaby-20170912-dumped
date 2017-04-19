@@ -19,8 +19,8 @@ character_iterator(character_buffer),
 character_end(character_buffer),
 last_update_time(0)
 {
-  rectangle.reset(gmbb::font::base_size*column_number,
-                  gmbb::font::tall_size*row_number);
+  rectangle.reset(0,0,font::base_size*column_number,
+                      font::tall_size*row_number);
 }
 
 

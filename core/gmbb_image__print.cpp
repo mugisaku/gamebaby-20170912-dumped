@@ -12,7 +12,7 @@ namespace gmbb{
 
 void
 Image::
-print(char16_t  c, uint8_t  color, int  x, int  y)
+print(char16_t  c, color_table::Index  i, int  x, int  y)
 {
   auto  g = font::get_glyph(c);
 
@@ -29,7 +29,7 @@ print(char16_t  c, uint8_t  color, int  x, int  y)
             {
                 if(code&0x80)
                 {
-                  *dst = color;
+                  *dst = *i;
                 }
 
 
@@ -46,7 +46,7 @@ print(char16_t  c, uint8_t  color, int  x, int  y)
 void
 Image::
 Image::
-print(const char*  s, uint8_t  color, int  x, int  y)
+print(const char*  s, color_table::Index  i, int  x, int  y)
 {
     while(*s)
     {
@@ -56,7 +56,7 @@ print(const char*  s, uint8_t  color, int  x, int  y)
 
       s += byte_number;
 
-      print(static_cast<char16_t>(c),color,x,y);
+      print(static_cast<char16_t>(c),i,x,y);
 
       x += font::base_size;
     }
@@ -67,11 +67,11 @@ print(const char*  s, uint8_t  color, int  x, int  y)
 
 void
 Image::
-print(const char16_t*  s, uint8_t  color, int  x, int  y)
+print(const char16_t*  s, color_table::Index  i, int  x, int  y)
 {
     while(*s)
     {
-      print(*s++,color,x,y);
+      print(*s++,i,x,y);
 
       x += font::base_size;
     }
@@ -82,14 +82,14 @@ print(const char16_t*  s, uint8_t  color, int  x, int  y)
 
 void
 Image::
-print_tall(char16_t  c, uint8_t  color, int  x, int  y)
+print_tall(char16_t  c, color_table::Index  i, int  x, int  y)
 {
   auto  g = font::get_combined(c);
 
     if(g)
     {
-      print(g->upper,color,x,y                );
-      print(g->lower,color,x,y+font::base_size);
+      print(g->upper,i,x,y                );
+      print(g->lower,i,x,y+font::base_size);
     }
 }
 
@@ -98,7 +98,7 @@ print_tall(char16_t  c, uint8_t  color, int  x, int  y)
 
 void
 Image::
-print_tall(const char*  s, uint8_t  color, int  x, int  y)
+print_tall(const char*  s, color_table::Index  i, int  x, int  y)
 {
     while(*s)
     {
@@ -108,7 +108,7 @@ print_tall(const char*  s, uint8_t  color, int  x, int  y)
 
       s += byte_number;
 
-      print_tall(static_cast<char16_t>(c),color,x,y);
+      print_tall(static_cast<char16_t>(c),i,x,y);
 
       x += font::base_size;
     }
@@ -119,11 +119,11 @@ print_tall(const char*  s, uint8_t  color, int  x, int  y)
 
 void
 Image::
-print_tall(const char16_t*  s, uint8_t  color, int  x, int  y)
+print_tall(const char16_t*  s, color_table::Index  i, int  x, int  y)
 {
     while(*s)
     {
-      print_tall(*s++,color,x,y);
+      print_tall(*s++,i,x,y);
 
       x += font::base_size;
     }
@@ -134,7 +134,7 @@ print_tall(const char16_t*  s, uint8_t  color, int  x, int  y)
 
 void
 Image::
-print_large(char16_t  c, uint8_t  color, int  x, int  y)
+print_large(char16_t  c, color_table::Index  i, int  x, int  y)
 {
   auto  g = font::get_large_glyph(c);
 
@@ -154,7 +154,7 @@ print_large(char16_t  c, uint8_t  color, int  x, int  y)
             {
                 if(code&0x8000)
                 {
-                  *dst = color;
+                  *dst = *i;
                 }
 
 
@@ -168,7 +168,7 @@ print_large(char16_t  c, uint8_t  color, int  x, int  y)
 
 void
 Image::
-print_large(const char*  s, uint8_t  color, int  x, int  y)
+print_large(const char*  s, color_table::Index  i, int  x, int  y)
 {
     while(*s)
     {
@@ -184,7 +184,7 @@ print_large(const char*  s, uint8_t  color, int  x, int  y)
 
       s += byte_number;
 
-      print_large(static_cast<char16_t>(c),color,x,y);
+      print_large(static_cast<char16_t>(c),i,x,y);
 
       x += 16;
     }
@@ -193,7 +193,7 @@ print_large(const char*  s, uint8_t  color, int  x, int  y)
 
 void
 Image::
-print_large(const char16_t*  s, uint8_t  color, int  x, int  y)
+print_large(const char16_t*  s, color_table::Index  i, int  x, int  y)
 {
     while(*s)
     {
@@ -203,7 +203,7 @@ print_large(const char16_t*  s, uint8_t  color, int  x, int  y)
         }
 
 
-      print_large(*s++,color,x,y);
+      print_large(*s++,i,x,y);
 
       x += 16;
     }
